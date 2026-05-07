@@ -1,0 +1,183 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+  PROVIDER
+}
+
+enum ProviderStatus {
+  PENDING
+  VERIFIED
+  SUSPENDED
+  REJECTED
+}
+
+enum OpportunityStatus {
+  DRAFT
+  OPEN
+  CLOSED
+  ARCHIVED
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ACCEPTED
+  CANCELED
+  EXPIRED
+}
+
+model User {
+  id              String   @id @default(cuid())
+
+  clerkId         String   @unique
+  email           String   @unique
+
+  role            Role     @default(USER)
+
+  tokenVersion    Int      @default(0)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  applications    Application[]
+
+  // jika user menjadi provider
+  providerProfile ProviderProfile?
+
+  @@index([role])
+}
+
+model ProviderProfile {
+  id                String          @id @default(cuid())
+
+  userId            String          @unique
+
+  companyName       String
+  companySlug       String          @unique
+
+  description       String?         @db.Text
+
+  websiteUrl        String?
+  logoUrl           String?
+
+  phoneNumber       String?
+  address           String?
+
+  verifiedAt        DateTime?
+  suspendedAt       DateTime?
+
+  status            ProviderStatus  @default(PENDING)
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  opportunities     Opportunity[]
+
+  @@index([status])
+  @@index([companySlug])
+  @@index([companyName])
+}
+
+model Opportunity {
+  id                String            @id @default(cuid())
+
+  providerId        String
+
+  slug              String            @unique
+
+  title             String
+  description       String            @db.Text
+
+  quota             Int
+  acceptedCount     Int               @default(0)
+
+  status            OpportunityStatus @default(DRAFT)
+
+  expiresAt         DateTime?
+
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  provider          ProviderProfile   @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  applications      Application[]
+
+  @@index([providerId])
+  @@index([status])
+  @@index([expiresAt])
+  @@index([createdAt])
+}
+
+model Application {
+  id                String            @id @default(cuid())
+
+  userId            String
+  opportunityId     String
+
+  status            ApplicationStatus @default(PENDING)
+
+  appliedAt         DateTime          @default(now())
+
+  reviewedAt        DateTime?
+  acceptedAt        DateTime?
+
+  canceledAt        DateTime?
+  expiredAt         DateTime?
+
+  note              String?           @db.Text
+
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  opportunity       Opportunity       @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  auditLogs         ApplicationAudit[]
+
+  @@index([userId, status])
+  @@index([opportunityId, status])
+
+  @@index([status, createdAt])
+
+  @@index([expiredAt])
+}
+
+model ApplicationAudit {
+  id                String             @id @default(cuid())
+
+  applicationId     String
+
+  actorId           String?
+  actorRole         Role?
+
+  fromStatus        ApplicationStatus?
+  toStatus          ApplicationStatus
+
+  reason            String?            @db.Text
+
+  createdAt         DateTime           @default(now())
+
+  application       Application        @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([actorId])
+  @@index([createdAt])
+}
