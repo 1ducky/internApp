@@ -15,8 +15,9 @@ CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "clerkId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "name" TEXT,
+    "imageUrl" TEXT,
     "role" "Role" NOT NULL DEFAULT 'USER',
-    "tokenVersion" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -166,6 +167,7 @@ ALTER TABLE "Application" ADD CONSTRAINT "Application_opportunityId_fkey" FOREIG
 
 -- AddForeignKey
 ALTER TABLE "ApplicationAudit" ADD CONSTRAINT "ApplicationAudit_applicationId_fkey" FOREIGN KEY ("applicationId") REFERENCES "Application"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
 
 -- user hanya boleh punya 1 accepted aktif
 
