@@ -1,10 +1,27 @@
 import prisma from "@/libs/db"
 import { UserCreatedInput, UserDeletedInput, UserUpdatedInput } from "../webhook/clerk/clerk.schema"
+import { success } from "zod"
 
 export const userRepository = {
     userCreate,
     userUpdate,
-    userDelete
+    userDelete,
+    userInitalizeSession
+}
+
+async function userInitalizeSession (clerkId:string ) {
+    const db = await prisma.user.findUnique({
+        where:{
+            clerkId:clerkId
+        }, select:{
+            role:true,
+            // initalize impoertant field
+        }
+    })
+    if(!db){
+        return {success:false}
+    }
+    return {success: true, data: db}
 }
 
 async function userCreate (input: UserCreatedInput) {
@@ -28,13 +45,18 @@ async function userCreate (input: UserCreatedInput) {
             imageUrl: input.imageUrl,
             createdAt: input.createdAt,
             updatedAt: input.updatedAt,
+        },
+        select:{
+            role:true,
+            clerkId: true,
         }
     })
     if(!db){
         return {success: false}
     }
-    return {success: true}
+    return {success: true, data: db}
 }
+
 
 async function userUpdate (input: UserUpdatedInput) {
     const db = await prisma.user.upsert({
@@ -56,12 +78,16 @@ async function userUpdate (input: UserUpdatedInput) {
             imageUrl: input.imageUrl, 
             createdAt: input.createdAt,
             updatedAt: input.updatedAt,
+        },
+        select:{
+            role:true,
+            clerkId: true,
         }
     })
     if(!db){
         return {success: false}
     }
-    return {success: true}
+    return {success: true, data: db}
 }
 
 async function userDelete (input: UserDeletedInput) {

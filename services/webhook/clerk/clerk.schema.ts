@@ -29,6 +29,11 @@ export function normalizeClerkUser(evt: WebhookEvent) {
     return {
         clerkId: user.id,
     }
+  }else if(evt.type === 'session.created'){
+    const user = evt.data.user
+    return {
+        clerkId: user?.id,
+    }
   }
 }
 
@@ -56,6 +61,11 @@ export const userDeletedSchema = z.object({
     clerkId: z.string(),
 })
 
+export const userMetaDataSchema = z.object({
+    role: z.string(),
+})
+
+export type UserMetaDataInput = z.infer<typeof userMetaDataSchema>
 export type UserCreatedInput = z.infer<typeof userCreatedSchema>
 export type UserUpdatedInput = z.infer<typeof userUpdatedSchema>
 export type UserDeletedInput = z.infer<typeof userDeletedSchema>

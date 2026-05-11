@@ -1,5 +1,5 @@
-import { WebhookEvent } from "@clerk/nextjs/server"
-import { normalizeClerkUser, userCreatedSchema, userDeletedSchema, userUpdatedSchema } from "./clerk.schema"
+import { clerkClient, WebhookEvent } from "@clerk/nextjs/server"
+import { normalizeClerkUser, userCreatedSchema, userDeletedSchema, userMetaDataSchema, userUpdatedSchema } from "./clerk.schema"
 import { userRepository } from "@/services/user/user.repository"
 import { logger } from "@/infrastructure/lib/logger"
 import { failed, ok } from "@/utils/responseMapper"
@@ -7,7 +7,29 @@ import { failed, ok } from "@/utils/responseMapper"
 export const clerkService = {
     userCreated,
     userUpdated,
-    userDeleted
+    userDeleted,
+    sessionCreated
+}
+
+async function sessionCreated (evt: WebhookEvent) {
+    logger.debug(evt.type, 'ClerkService')
+    const input = normalizeClerkUser(evt)
+    const clerkId = input?.clerkId
+    if(!clerkId){
+        logger.error('Validate Error', 'sessionCreated')
+        return failed(400, {message: 'Validate Error'}, 'Validate Error')
+    }
+    console.log(clerkId)
+    const res = await userRepository.userInitalizeSession(clerkId)
+    if(!res.success){
+        logger.error('Failed to initialize session', 'sessionCreated')
+        return failed(400, {message: 'Failed to initialize session'}, 'Failed to initialize session')
+    }
+    if(res.data){
+        await setUserMetaData(clerkId,res.data)
+        logger.info(`Set User MetaData`, 'sessionCreated')
+    }
+    return ok(null, 'Updated Meta Data')
 }
 
 async function userCreated (evt: WebhookEvent) {
@@ -22,6 +44,10 @@ async function userCreated (evt: WebhookEvent) {
     if(!res.success){
         logger.error('Failed to create user', 'userCreated')
         return failed(400, {message: 'Failed to create user'}, 'Failed to create user')
+    }
+    if(res.data){
+        await setUserMetaData(res.data.clerkId,res.data)
+        logger.info('Set user metadata', 'userCreated')
     }
     return ok(null, 'User created successfully')
 }
@@ -38,6 +64,10 @@ async function userUpdated (evt: WebhookEvent) {
     if(!res.success){
         logger.error('Failed to update user', 'userUpdated')
         return failed(400, {message: 'Failed to update user'}, 'Failed to update user')
+    }
+    if(res.data){
+        logger.info('Set user metadata', 'userCreated')
+        await setUserMetaData(res.data.clerkId,res.data)
     }
     return ok(null, 'User updated successfully')
 }
@@ -56,4 +86,17 @@ async function userDeleted (evt: WebhookEvent) {
         return failed(400, {message: 'Failed to delete user'}, 'Failed to delete user')
     }
     return ok(null, 'User deleted successfully')
+}
+
+async function setUserMetaData(userId:string, metadata:unknown) {
+    const validatedMetadata = userMetaDataSchema.safeParse(metadata)
+    if(validatedMetadata.error){
+        logger.error('Validate Error', 'setUserMetaData')
+        return failed(400,validatedMetadata.error.flatten().fieldErrors, 'Validate Error')
+    }
+    const client = await clerkClient()
+    await client.users.updateUserMetadata(userId,{
+        publicMetadata: validatedMetadata.data
+    })
+    logger.info('Set user metadata', 'setUserMetaData')
 }

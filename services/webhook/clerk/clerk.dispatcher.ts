@@ -12,6 +12,9 @@ export const clerkWebhookDispatcher = async (evt: WebhookEvent) => {
             return clerkService.userUpdated(evt);
         case "user.deleted":
             return clerkService.userDeleted(evt);
+        case 'session.created':
+            // Login events are used to set session metadata on the backend
+            return clerkService.sessionCreated(evt)
         default:
             logger.info(`No handler for event type ${evt.type}`, 'ClerkWebhookDispatcher')
             return ok(null, `No handler for event type ${evt.type}`)

@@ -2,7 +2,6 @@ import { logger } from "@/infrastructure/lib/logger"
 import { clerkWebhookDispatcher } from "@/services/webhook/clerk/clerk.dispatcher"
 import { failed } from "@/utils/responseMapper"
 import { verifyWebhook } from "@clerk/nextjs/webhooks"
-import { ok } from "assert"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(request: NextRequest) {
