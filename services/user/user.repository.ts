@@ -10,12 +10,15 @@ export const userRepository = {
 async function userCreate (input: UserCreatedInput) {
     const db = await prisma.user.upsert({
         where:{
-            clerkId: input.clerkId,
+            email: input.email,
         },
         update: {
+            clerkId: input.clerkId,
             email: input.email,
             name: input.username,
             imageUrl: input.imageUrl,
+            createdAt: input.createdAt,
+            updatedAt: input.updatedAt,
             
         },
         create: {
@@ -36,12 +39,14 @@ async function userCreate (input: UserCreatedInput) {
 async function userUpdate (input: UserUpdatedInput) {
     const db = await prisma.user.upsert({
         where:{
-            clerkId: input.clerkId,
+            email: input.email,
         },
         update: {
+            clerkId:input.clerkId,
             email: input.email,
             name: input.username,
             imageUrl: input.imageUrl,
+            createdAt: input.createdAt,
             updatedAt: input.updatedAt,
         },
         create: {
@@ -65,8 +70,8 @@ async function userDelete (input: UserDeletedInput) {
             clerkId: input.clerkId,
         }
     })
-    if(!db){
-        return {success: false}
-    }
+    // if(!db){
+    //     return {success: false}
+    // }
     return {success: true}
 }
