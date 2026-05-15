@@ -15,6 +15,7 @@ async function userInitalizeSession (clerkId:string ) {
             clerkId:clerkId
         }, select:{
             role:true,
+            id:true
             // initalize impoertant field
         }
     })
@@ -49,6 +50,7 @@ async function userCreate (input: UserCreatedInput) {
         select:{
             role:true,
             clerkId: true,
+            id:true
         }
     })
     if(!db){
@@ -82,6 +84,7 @@ async function userUpdate (input: UserUpdatedInput) {
         select:{
             role:true,
             clerkId: true,
+            id:true
         }
     })
     if(!db){

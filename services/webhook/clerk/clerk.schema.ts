@@ -63,6 +63,7 @@ export const userDeletedSchema = z.object({
 
 export const userMetaDataSchema = z.object({
     role: z.string(),
+    id:z.string()
 })
 
 export type UserMetaDataInput = z.infer<typeof userMetaDataSchema>
