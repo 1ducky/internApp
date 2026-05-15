@@ -10,7 +10,7 @@ export function SocialButtons() {
     const oauthLogin = async (strategy: OAuthStrategy) => {
         const { error } = await signIn.sso({
             strategy,
-            redirectCallbackUrl: '/sso-callback',
+            redirectCallbackUrl: '/sign-in/continue',
             redirectUrl: '/',
         })
         if (error) {
@@ -23,7 +23,7 @@ export function SocialButtons() {
             // See https://clerk.com/docs/guides/development/custom-flows/authentication/client-trust
         } else {
             // Check why the sign-in is not complete
-            console.log('Sign-in attempt not complete:', signIn)
+            console.log('Sign-in attempt not complete:', error)
         }
     }
 

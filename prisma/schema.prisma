@@ -41,54 +41,89 @@ enum ApplicationStatus {
   EXPIRED
 }
 
+enum Gender {
+  GIRL
+  BOY
+}
+
+enum Grade {
+  X
+  XI
+  XII
+  ALUMNI
+}
+
 model User {
-  id              String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  clerkId         String   @unique
-  email           String   @unique
-  name            String?
-  imageUrl        String?
+  clerkId  String  @unique
+  email    String  @unique
+  name     String?
+  imageUrl String?
 
-  role            Role     @default(USER)
+  role Role @default(USER)
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  applications    Application[]
+  applications Application[]
 
+  profile         UserProfile?
   // jika user menjadi provider
   providerProfile ProviderProfile?
 
   @@index([role])
 }
 
+model UserProfile {
+  id String @id @default(cuid())
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  bio String?
+
+  avatarUrl String?
+
+  phoneNumber String?
+
+  birthDate DateTime?
+
+  gender Gender?
+
+  location String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model ProviderProfile {
-  id                String          @id @default(cuid())
+  id String @id @default(cuid())
 
-  userId            String          @unique
+  userId String @unique
 
-  companyName       String
-  companySlug       String          @unique
+  companyName String
+  companySlug String @unique
 
-  description       String?         @db.Text
+  description String? @db.Text
 
-  websiteUrl        String?
-  logoUrl           String?
+  websiteUrl String?
+  logoUrl    String?
 
-  phoneNumber       String?
-  address           String?
+  phoneNumber String?
+  address     String?
 
-  verifiedAt        DateTime?
-  suspendedAt       DateTime?
+  verifiedAt  DateTime?
+  suspendedAt DateTime?
 
-  status            ProviderStatus  @default(PENDING)
+  status ProviderStatus @default(PENDING)
 
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  opportunities     Opportunity[]
+  opportunities Opportunity[]
 
   @@index([status])
   @@index([companySlug])
@@ -96,28 +131,28 @@ model ProviderProfile {
 }
 
 model Opportunity {
-  id                String            @id @default(cuid())
+  id String @id @default(cuid())
 
-  providerId        String
+  providerId String
 
-  slug              String            @unique
+  slug String @unique
 
-  title             String
-  description       String            @db.Text
+  title       String
+  description String @db.Text
 
-  quota             Int
-  acceptedCount     Int               @default(0)
+  quota         Int
+  acceptedCount Int @default(0)
 
-  status            OpportunityStatus @default(DRAFT)
+  status OpportunityStatus @default(DRAFT)
 
-  expiresAt         DateTime?
+  expiresAt DateTime?
 
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  provider          ProviderProfile   @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  provider ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
 
-  applications      Application[]
+  applications Application[]
 
   @@index([providerId])
   @@index([status])
@@ -126,56 +161,54 @@ model Opportunity {
 }
 
 model Application {
-  id                String            @id @default(cuid())
+  id String @id @default(cuid())
 
-  userId            String
-  opportunityId     String
+  userId        String
+  opportunityId String
 
-  status            ApplicationStatus @default(PENDING)
+  status ApplicationStatus @default(PENDING)
 
-  appliedAt         DateTime          @default(now())
+  appliedAt DateTime @default(now())
 
-  reviewedAt        DateTime?
-  acceptedAt        DateTime?
+  reviewedAt DateTime?
+  acceptedAt DateTime?
 
-  canceledAt        DateTime?
-  expiredAt         DateTime?
+  canceledAt DateTime?
+  expiredAt  DateTime?
 
-  note              String?           @db.Text
+  note String? @db.Text
 
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  opportunity       Opportunity       @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
 
-  auditLogs         ApplicationAudit[]
+  auditLogs ApplicationAudit[]
 
   @@index([userId, status])
   @@index([opportunityId, status])
-
   @@index([status, createdAt])
-
   @@index([expiredAt])
 }
 
 model ApplicationAudit {
-  id                String             @id @default(cuid())
+  id String @id @default(cuid())
 
-  applicationId     String
+  applicationId String
 
-  actorId           String?
-  actorRole         Role?
+  actorId   String?
+  actorRole Role?
 
-  fromStatus        ApplicationStatus?
-  toStatus          ApplicationStatus
+  fromStatus ApplicationStatus?
+  toStatus   ApplicationStatus
 
-  reason            String?            @db.Text
+  reason String? @db.Text
 
-  createdAt         DateTime           @default(now())
+  createdAt DateTime @default(now())
 
-  application       Application        @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   @@index([applicationId])
   @@index([actorId])

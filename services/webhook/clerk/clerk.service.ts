@@ -38,6 +38,7 @@ async function userCreated (evt: WebhookEvent) {
     const validatedInput = userCreatedSchema.safeParse(input)
     if(validatedInput.error){
         logger.error('Validate Error', 'userCreated')
+        console.log(validatedInput.error.flatten().fieldErrors)
         return failed(400,validatedInput.error.flatten().fieldErrors, 'Validate Error')
     }
     const res = await userRepository.userCreate(validatedInput.data)

@@ -1,7 +1,13 @@
-export default function DashboardPage() {
+import { UserProfileForm } from "@/component/dashboard/profile/userProfile";
+import { currentUser } from "@clerk/nextjs/server";
+
+export default async function DashboardPage() {
+    const clerkUser = await currentUser()
+
+
     return (
-        <div>
-            <h1>Dashboard</h1>
-        </div>
+        <>
+            <UserProfileForm email={clerkUser?.emailAddresses[0].emailAddress as string} />
+        </>
     )
 }

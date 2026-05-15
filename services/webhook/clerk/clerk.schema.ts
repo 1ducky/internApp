@@ -39,7 +39,7 @@ export function normalizeClerkUser(evt: WebhookEvent) {
 
 export const userCreatedSchema = z.object({
     clerkId: z.string(),
-    username: z.string(),
+    username: z.string().nullish().optional(),
     email: z.string(),
     imageUrl: z.string(),
     isBanned: z.boolean(),
@@ -49,7 +49,7 @@ export const userCreatedSchema = z.object({
 
 export const userUpdatedSchema = z.object({
     clerkId: z.string(),
-    username: z.string(),
+    username: z.string().nullish().optional(),
     email: z.string(),
     imageUrl: z.string(),
     isBanned: z.boolean(),

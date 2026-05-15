@@ -2,6 +2,7 @@
 
 import { useUser } from "@clerk/nextjs";
 import { hasPermission } from "@/services/auth/signup.services"
+import AuthProcessing from "@/component/auth/AuthProcessing"
 
 export default function TestPage(){
     const { user } = useUser()
@@ -19,5 +20,7 @@ export default function TestPage(){
         </div>
     }
     
-    return <div>Role: {role}</div>
+    return (
+        <AuthProcessing />
+    )
 }
