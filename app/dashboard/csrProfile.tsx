@@ -1,28 +1,39 @@
 'use client'
 import { UserProfileForm } from "@/component/dashboard/profile/userProfile"
-import { ProfileSubmitInput } from "@/services/user/profile.schema"
+import { ProfileSchema } from "@/services/profile/profile.schema"
 
-export default function CsrProfile({ email }: { email: string }) {
-    const handlerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
-        e.preventDefault()
-        const formData = new FormData(e.currentTarget)
-        const payload = {
-            gender: formData.get('gender'),
-            birthDate: formData.get('birthDate'),
-            bio: formData.get('bio'),
-            phoneNumber: formData.get('phoneNumber'),
-            location: formData.get('location')
+export default function CsrProfile({ email, data }: { email: string, data: unknown }) {
+    const profileData = ProfileSchema.safeParse(data)
 
+    const handlerSubmit = async (value: unknown) => {
+
+
+        try {
+            const res = await fetch('/api/profile', {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(value),
+                method: "POST",
+
+            })
+            const data = await res.json()
+            if (data.success) {
+                alert('Profile Submitted')
+            } else if (!data.success) {
+                alert(data.message)
+                console.log(data.error)
+            }
         }
-        console.log(payload)
+        catch {
+            alert('something went wrong try again')
+        }
 
     }
-
-
     return (
         <>
-            <UserProfileForm action={handlerSubmit} email={email} />
+            <UserProfileForm action={handlerSubmit} email={email} profileData={profileData.success ? profileData.data : null} />
         </>
     )
 }

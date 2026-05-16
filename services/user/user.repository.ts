@@ -1,6 +1,5 @@
 import prisma from "@/libs/db"
 import { UserCreatedInput, UserDeletedInput, UserUpdatedInput } from "../webhook/clerk/clerk.schema"
-import { success } from "zod"
 
 export const userRepository = {
     userCreate,
@@ -99,8 +98,9 @@ async function userDelete (input: UserDeletedInput) {
             clerkId: input.clerkId,
         }
     })
-    // if(!db){
-    //     return {success: false}
-    // }
+    if(!db){
+        // tech Debt
+        return {success: true}
+    }
     return {success: true}
 }

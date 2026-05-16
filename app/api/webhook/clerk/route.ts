@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
         }
         logger.error(data.message? data.message : 'Something went wrong', 'ClerkWebhookRoute->Fail')
         return NextResponse.json(failed(data.status, data.error, data.message ? data.message : 'Something went wrong'), {status: data.status})
-    } catch (err) {
+    } catch {
         logger.error("Webhook verification failed", 'ClerkWebhookRoute->CatchBlock',)
 
         return NextResponse.json(

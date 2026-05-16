@@ -1,5 +1,5 @@
 import AuthProcessing from "@/component/auth/AuthProcessing"
-import { AuthenticateWithRedirectCallback, useSignUp } from "@clerk/nextjs"
+import { AuthenticateWithRedirectCallback, } from "@clerk/nextjs"
 
 export default function ContinuePage() {
     return (

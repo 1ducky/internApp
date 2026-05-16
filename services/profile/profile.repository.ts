@@ -1,8 +1,9 @@
 import prisma from "@/libs/db"
-import { ProfileSubmitInput } from "./profile.schema"
+import { ProfileInput } from "./profile.schema"
 
 export const profileRepository = {
-    getProfileByUserId
+    getProfileByUserId,
+    submitProfile
 }
 
 async function getProfileByUserId(id:string){
@@ -13,26 +14,33 @@ async function getProfileByUserId(id:string){
             bio:true,
             gender:true,
             phoneNumber:true,
-            location:true
+            location:true,
+            userName:true,
         }
     })
     if(!db) return { success:false}
     return {success:true, data:db}
 }
 
-async function submitProfile(data: ProfileSubmitInput){
+const parseDate = (date: string | null | undefined) => {
+    return date ? new Date(date) : null
+}
+
+async function submitProfile(id:string,data: ProfileInput){
     const db = await prisma.userProfile.upsert({
-        where:{userId:data.userId},
+        where:{userId:id},
         update: {
-            birthDate:data.birthDate,
+            birthDate:parseDate(data.birthDate),
+            userName:data.userName,
             bio:data.bio,
             gender:data.gender,
             phoneNumber:data.phoneNumber,
             location:data.location
         },
         create: {
-            userId:data.userId,
-            birthDate:data.birthDate,
+            userId:id,
+            birthDate:parseDate(data.birthDate),
+            userName:data.userName,
             bio:data.bio,
             gender:data.gender,
             phoneNumber:data.phoneNumber,

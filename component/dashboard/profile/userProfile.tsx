@@ -1,13 +1,34 @@
 'use client'
 
+import { ProfileInput, ProfileSchema } from '@/services/profile/profile.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Info, MapPin } from 'lucide-react';
+import { useForm } from 'react-hook-form';
 
-export const UserProfileForm = ({ action, email }: { action: (e: React.FormEvent<HTMLFormElement>) => void, email: string }) => {
+
+export const UserProfileForm = ({ action, email, profileData }: { action: (e: unknown) => void, email: string, profileData: ProfileInput | null }) => {
     function formatNumber(inputEl: React.ChangeEvent<HTMLInputElement>) {
         const input = inputEl.target;
         const sanitized = input.value.replace(/\D/g, '');
         input.value = sanitized.match(/.{1,4}/g)?.join('-') ?? '';
     }
+
+    const form = useForm<ProfileInput>({
+        resolver: zodResolver(ProfileSchema),
+        defaultValues: {
+            userName: profileData?.userName ?? '',
+            phoneNumber: profileData?.phoneNumber ?? '',
+            birthDate: profileData?.birthDate ?? '',
+            gender: profileData?.gender ?? 'BOY',
+            bio: profileData?.bio ?? '',
+            location: profileData?.location ?? '',
+        }
+    })
+
+    const onSubmited = form.handleSubmit(async (values) => {
+        await action(values)
+    })
+
     return (
         <div className="max-w-7xl h-screen mx-auto p-4 sm:p-8 bg-white rounded-xl shadow-sm border border-gray-100">
             {/* Header */}
@@ -16,7 +37,7 @@ export const UserProfileForm = ({ action, email }: { action: (e: React.FormEvent
                 <p className="text-gray-500 text-sm">Atur Informasi diri Anda</p>
             </div>
 
-            <form className="space-y-6" onSubmit={(e) => action(e)}>
+            <form className="space-y-6" onSubmit={onSubmited}>
                 {/* Profile Photo */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-20">
                     <label className="text-sm font-medium text-gray-700 sm:w-48">Foto Profil</label>
@@ -34,7 +55,7 @@ export const UserProfileForm = ({ action, email }: { action: (e: React.FormEvent
                         Nama Lengkap <Info size={14} className="text-gray-400" />
                     </label>
                     <div className="flex w-full sm:flex-1 gap-0 border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
-                        <input type="text" placeholder="Maria" name="name" className="capitalize w-full p-2.5 outline-none border-r border-gray-300" />
+                        <input type="text" {...form.register("userName")} placeholder="Maria" className="capitalize w-full p-2.5 outline-none border-r border-gray-300" />
                     </div>
                 </div>
 
@@ -45,7 +66,7 @@ export const UserProfileForm = ({ action, email }: { action: (e: React.FormEvent
                     </label>
                     <div className="w-full sm:flex-1">
                         <div className="flex border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
-                            <input onBlur={(e) => formatNumber(e)} type="text" name='phoneNumber' placeholder="xxxx-xxxx-xxxx (Auto Format)" className="flex-1 p-2.5 outline-none border-r border-gray-300 min-w-0" />
+                            <input type="text" {...form.register("phoneNumber")} onBlur={formatNumber} placeholder="xxxx-xxxx-xxxx (Auto Format)" className="flex-1 p-2.5 outline-none border-r border-gray-300 min-w-0" />
                         </div>
                         <button type="button" className="mt-2 text-blue-600 text-sm font-medium flex items-center gap-1 hover:underline">
                         </button>
@@ -58,7 +79,7 @@ export const UserProfileForm = ({ action, email }: { action: (e: React.FormEvent
                     </label>
                     <div className="w-full sm:flex-1">
                         <div className="flex border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
-                            <input type="text" name="location" placeholder="City, Country" className="flex-1 p-2.5 outline-none border-r border-gray-300 min-w-0" />
+                            <input type="text" {...form.register("location")} placeholder="City, Country" className="flex-1 p-2.5 outline-none border-r border-gray-300 min-w-0" />
                             <div className="flex items-center px-3 bg-white gap-2 cursor-pointer flex-shrink-0">
                                 <MapPin size={16} className="text-gray-400" />
                             </div>
@@ -73,7 +94,7 @@ export const UserProfileForm = ({ action, email }: { action: (e: React.FormEvent
                     </label>
                     <div className="w-full sm:flex-1">
                         <div className="flex border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
-                            <input type="date" name="birthDate" className="flex-1 p-2.5 outline-none border-r border-gray-300 min-w-0" />
+                            <input type="date" {...form.register("birthDate")} className="flex-1 p-2.5 outline-none border-r border-gray-300 min-w-0" />
 
                         </div>
                     </div>
@@ -84,10 +105,10 @@ export const UserProfileForm = ({ action, email }: { action: (e: React.FormEvent
                     <label className="text-sm font-medium text-gray-700 sm:w-48">Jenis Kelamin</label>
                     <div className="flex w-full sm:flex-1 border border-gray-300 rounded-lg divide-x divide-gray-300">
                         <label className="flex-1 flex items-center justify-center p-2.5 cursor-pointer hover:bg-gray-50">
-                            <input type="radio" name="gender" value="BOY" className="mr-2" defaultChecked /> <span className="text-sm text-gray-500">Laki-laki</span>
+                            <input type="radio" {...form.register("gender")} value="BOY" className="mr-2" /> <span className="text-sm text-gray-500">Laki-laki</span>
                         </label>
                         <label className="flex-1 flex items-center justify-center p-2.5 cursor-pointer hover:bg-gray-50">
-                            <input type="radio" name="gender" value="GIRL" className="mr-2" /> <span className="text-sm text-gray-500">Perempuan</span>
+                            <input type="radio" {...form.register("gender")} value="GIRL" className="mr-2" /> <span className="text-sm text-gray-500">Perempuan</span>
                         </label>
                     </div>
                 </div>
@@ -97,7 +118,7 @@ export const UserProfileForm = ({ action, email }: { action: (e: React.FormEvent
                     <label className="text-sm font-medium text-gray-700 sm:w-48">BIO</label>
                     <textarea
                         rows={4}
-                        name='bio'
+                        {...form.register("bio")}
                         placeholder="Masukan Bio Data Ando..."
                         className="w-full sm:flex-1 p-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                     ></textarea>
@@ -108,7 +129,7 @@ export const UserProfileForm = ({ action, email }: { action: (e: React.FormEvent
                     <button type="button" className="w-full sm:w-auto px-5 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
                         Batal
                     </button>
-                    <input type="submit" className="w-full sm:w-auto px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition" value="Simpan Perubahan" />
+                    <input disabled={!form.formState.isDirty || form.formState.isSubmitting} type="submit" className="w-full sm:w-auto px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition" value={form.formState.isSubmitting ? "Processing..." : "Save Changes"} />
                 </div>
             </form>
         </div>
