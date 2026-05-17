@@ -129,7 +129,7 @@ export const UserProfileForm = ({ action, email, profileData }: { action: (e: un
                     <button type="button" className="w-full sm:w-auto px-5 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
                         Batal
                     </button>
-                    <input disabled={!form.formState.isDirty || form.formState.isSubmitting} type="submit" className="w-full sm:w-auto px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition" value={form.formState.isSubmitting ? "Processing..." : "Save Changes"} />
+                    <input disabled={!form.formState.isDirty || form.formState.isSubmitting} type="submit" className={`w-full sm:w-auto px-5 py-2 text-white rounded-lg text-sm font-medium transition ${form.formState.isSubmitting || !form.formState.isDirty ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`} value={form.formState.isSubmitting ? "Processing..." : "Save Changes"} />
                 </div>
             </form>
         </div>

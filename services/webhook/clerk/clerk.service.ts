@@ -19,7 +19,6 @@ async function sessionCreated (evt: WebhookEvent) {
         logger.error('Validate Error', 'sessionCreated')
         return failed(400, {message: 'Validate Error'}, 'Validate Error')
     }
-    console.log(clerkId)
     const res = await userRepository.userInitalizeSession(clerkId)
     if(!res.success){
         logger.error('Failed to initialize session', 'sessionCreated')
@@ -90,6 +89,7 @@ async function userDeleted (evt: WebhookEvent) {
 }
 
 async function setUserMetaData(userId:string, metadata:unknown) {
+    logger.info('Set user metadata request', 'setUserMetaData')
     const validatedMetadata = userMetaDataSchema.safeParse(metadata)
     if(validatedMetadata.error){
         logger.error('Validate Error', 'setUserMetaData')
