@@ -40,6 +40,9 @@ export default function SignInPage() {
                 await signIn.mfa.sendEmailCode()
                 setShowCode(true)
             }
+            if (signIn.status === 'complete') {
+                router.push('/')
+            }
 
         } catch {
 

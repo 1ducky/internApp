@@ -1,19 +1,23 @@
-export const ROLE_PERMISSIONS = {
+
+export const ROLES = ['ADMIN', 'USER', 'PROVIDER'] as const
+export type ROLES_TYPE = typeof ROLES[number]
+
+export const PERMISSIONS_CONFIG = {
+    ADMIN: [
+        "post:create",
+        "post:update",
+        "post:delete",
+    ],
+
     USER: [
-        'EDIT_PROFILE',
-        'READ_HISTORY',
-        "APPLY_OPPORTUNITY"
+        "post:create",
+        "post:update",
+        "post:delete",
     ],
 
     PROVIDER: [
-        'EDIT_PROFILE',
-        "CREATE_OPPORTUNITY",
-        "EDIT_OWN_OPPORTUNITY"
-    ],
-
-    ADMIN: [
-        'EDIT_PROFILE',
-        "BAN_USER",
-        "VERIFY_PROVIDER"
+        "post:create",
+        "post:update",
+        "post:delete",
     ]
 }

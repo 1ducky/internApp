@@ -45,7 +45,7 @@ export const Sidebar = () => {
             )}
 
             <div className={`
-                fixed inset-y-0 left-0 z-40 transform transition-all duration-300 ease-in-out md:relative md:translate-x-0 flex h-screen bg-gray-100 p-4
+                fixed inset-y-0 left-0 z-40 transform transition-all duration-300 ease-in-out md:relative md:translate-x-0 flex h-screen p-4
                 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
             `}>
                 <aside

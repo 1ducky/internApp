@@ -7,17 +7,17 @@ import { useForm } from 'react-hook-form';
 
 
 export const UserProfileForm = ({ action, email, profileData }: { action: (e: unknown) => void, email: string, profileData: ProfileInput | null }) => {
-    function formatNumber(inputEl: React.ChangeEvent<HTMLInputElement>) {
-        const input = inputEl.target;
-        const sanitized = input.value.replace(/\D/g, '');
-        input.value = sanitized.match(/.{1,4}/g)?.join('-') ?? '';
+    function formatNumber(num: string) {
+
+        const sanitized = num.replace(/\D/g, '');
+        return sanitized.match(/.{1,4}/g)?.join('-') ?? '';
     }
 
     const form = useForm<ProfileInput>({
         resolver: zodResolver(ProfileSchema),
         defaultValues: {
             userName: profileData?.userName ?? '',
-            phoneNumber: profileData?.phoneNumber ?? '',
+            phoneNumber: formatNumber(profileData?.phoneNumber ?? ''),
             birthDate: profileData?.birthDate ?? '',
             gender: profileData?.gender ?? 'BOY',
             bio: profileData?.bio ?? '',
@@ -27,6 +27,7 @@ export const UserProfileForm = ({ action, email, profileData }: { action: (e: un
 
     const onSubmited = form.handleSubmit(async (values) => {
         await action(values)
+        form.reset(values)
     })
 
     return (
@@ -66,7 +67,7 @@ export const UserProfileForm = ({ action, email, profileData }: { action: (e: un
                     </label>
                     <div className="w-full sm:flex-1">
                         <div className="flex border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
-                            <input type="text" {...form.register("phoneNumber")} onBlur={formatNumber} placeholder="xxxx-xxxx-xxxx (Auto Format)" className="flex-1 p-2.5 outline-none border-r border-gray-300 min-w-0" />
+                            <input type="text" {...form.register("phoneNumber")} onBlur={(e) => e.target.value = formatNumber(e.target.value)} placeholder="xxxx-xxxx-xxxx (Auto Format)" className="flex-1 p-2.5 outline-none border-r border-gray-300 min-w-0" />
                         </div>
                         <button type="button" className="mt-2 text-blue-600 text-sm font-medium flex items-center gap-1 hover:underline">
                         </button>

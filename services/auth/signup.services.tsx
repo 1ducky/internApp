@@ -1,8 +1,6 @@
 import { SignUpFutureResource } from "@clerk/nextjs/types"
 import { SignUpSchema } from "./signup.schema"
-import { ROLE_PERMISSIONS } from "@/config/auth/auth.config"
 import { logger } from "@/infrastructure/lib/logger"
-
 
 export const SignUpServices = async (formData: FormData, signUp: SignUpFutureResource) => {
     logger.info("SignUp request received", 'SignUpServices')
@@ -62,7 +60,8 @@ export const verificationsCode = async (signUp: SignUpFutureResource, code: stri
     }
 }
 
-export function hasPermission(role: string, permission: string): boolean {
-    logger.debug(role + permission, 'hasPermission')
-    return ROLE_PERMISSIONS[role as keyof typeof ROLE_PERMISSIONS].includes(permission)
-}
+// export function hasPermission(role: string, permission: string): boolean {
+//     logger.debug(role + permission, 'hasPermission')
+//     return ROLE_PERMISSIONS[role as keyof typeof ROLE_PERMISSIONS].includes(permission)
+// }
+
