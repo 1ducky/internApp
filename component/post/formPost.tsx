@@ -4,16 +4,16 @@ import { SubmitPostInput, submitPostSchema } from "@/services/post/post.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-const PostForm = ({ action }: { action: (value: unknown) => void }) => {
+const PostForm = ({ action,initialData }: { action: (value: unknown) => void, initialData?:SubmitPostInput }) => {
 
     const form = useForm<SubmitPostInput>({
         resolver: zodResolver(submitPostSchema),
         defaultValues: {
-            title: "",
-            description: "",
-            type: "ANNOUNCEMENT",
-            status: "DRAFT",
-            slug: "",
+            title: initialData ? initialData.title??  "" : "",
+            description: initialData ? initialData.description?? "" : "",
+            type: initialData ? initialData.type?? "" : "ANNOUNCEMENT",
+            status: initialData ? initialData.status?? "" : "DRAFT",
+            slug:"",
         }
     })
     const onSubmited = form.handleSubmit(async (values) => {

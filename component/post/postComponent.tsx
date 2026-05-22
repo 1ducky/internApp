@@ -2,7 +2,7 @@
 import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal, Calendar } from 'lucide-react';
 import { PostInput } from '@/services/post/post.schema';
 
-const InstagramPost = ({ post }: { post: PostInput }) => {
+const InstagramPost = ({ post,children }: { post: PostInput, children:React.ReactNode }) => {
     // Format tanggal agar lebih rapi (Contoh: May 19, 2026)
     const formattedDate = new Date(post.createdAt).toLocaleDateString('id-ID', {
         day: 'numeric',
@@ -38,9 +38,10 @@ const InstagramPost = ({ post }: { post: PostInput }) => {
                     </div>
                 </div>
                 {/* Tombol Opsi */}
-                <button className="text-gray-600 hover:text-black transition">
+                <div className="text-gray-600 hover:text-black transition flex gap-3">
                     <MoreHorizontal size={20} />
-                </button>
+                    {children}
+                </div>
             </div>
 
             {/* AREA KONTEN UTAMA (Pengganti Gambar Instagram) */}
