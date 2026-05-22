@@ -2,6 +2,7 @@
 
 import { SubmitPostInput, submitPostSchema } from "@/services/post/post.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 
 const PostForm = ({ action,initialData }: { action: (value: unknown) => void, initialData?:SubmitPostInput }) => {
@@ -91,12 +92,12 @@ const PostForm = ({ action,initialData }: { action: (value: unknown) => void, in
 
                 {/* TOMBOL AKSI (Responsive: Full width di mobile, otomatis/fit di layar besar) */}
                 <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t">
-                    <button
+                    <Link href="/dashboard/post"
                         type="button"
                         className="w-full sm:w-auto px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                     >
                         Batal
-                    </button>
+                    </Link>
                     <input disabled={!form.formState.isDirty || form.formState.isSubmitting} type="submit" className={`w-full sm:w-auto px-5 py-2 text-white rounded-lg text-sm font-medium transition ${form.formState.isSubmitting || !form.formState.isDirty ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`} value={form.formState.isSubmitting ? "Processing..." : "Save Changes"} />
                 </div>
             </form>

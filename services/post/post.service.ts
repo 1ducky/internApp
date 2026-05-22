@@ -3,6 +3,7 @@ import { submitPostSchema } from "./post.schema"
 import { failed, ok } from "@/utils/responseMapper"
 import { postRepository } from "./post.repository"
 import { slugify } from "@/utils/slugify"
+import { toPostDto, toPostDtoList } from "./post.dto"
 
 export const postService = {
     submitPost,
@@ -27,12 +28,12 @@ async function submitPost(user: UserPublicMetadata, body: unknown) {
         logger.info(`Post submission request for user ${user.id} is valid`, 'Post Service')
         validated.data.slug = slugify(validated.data.title)
         const res = await postRepository.CreatePost(user.id as string, validated.data)
-        if(!res.success){
+        if(!res.success || !res.data){
             logger.error(`Post submission request for user ${user.id} failed`, 'Post Service')
             return failed(500,'INTERNAL','internal')
         }
         logger.info(`Post submission request for user ${user.id} success`, 'Post Service')
-        return ok(res.data,'Submited')
+        return ok(toPostDto(res.data),'Submited')
     } catch (error) {
         logger.error(`Post submission request for user ${user.id} Internak Error`, 'Post Service')
         console.log(error)
@@ -49,12 +50,12 @@ async function getUserAllPost(user:UserPublicMetadata){
     logger.info(`Post submission request for user ${user.id}`, `Post Service`)
     try{
         const res = await postRepository.GetAllUserPost(user.id as string)
-        if(!res.success){
+        if(!res.success || !res.data){
             logger.error(`Post submission request for user ${user.id} failed`, 'Post Service')
             return failed(500,'INTERNAL','internal')
         }
         logger.info(`Post submission request for user ${user.id} success`, 'Post Service')
-        return ok(res.data,'Submited')
+        return ok(toPostDtoList(res.data),'Submited')
     }catch(error){
         logger.error(`Post submission request for user ${user.id} failed`, 'Post Service')
         console.log(error)
@@ -71,7 +72,7 @@ async function getPostById(id:string){
         }
         logger.info(`Get Post By Id request for post ${id} success`, 'Post Service')
         res.data.imageUrl = res.data?.imageUrl ? res.data.imageUrl : null
-        return ok(res.data,'Post Found')
+        return ok(toPostDto(res.data),'Post Found')
     }
     catch(error){
         logger.error(`Get Post By Id request for post ${id} failed`, 'Post Service')

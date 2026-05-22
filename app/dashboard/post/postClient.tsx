@@ -3,22 +3,14 @@
 import PostLayout from "@/component/post/layout"
 import InstagramPost from "@/component/post/postComponent"
 import { useConfirm } from "@/provider/comfirm-provider"
-import { RawPostInput} from "@/services/post/post.schema"
+import { PostDto } from "@/services/post/post.dto"
 import { PenBoxIcon, Trash } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 
-function serializePostDate<T extends { createdAt: Date, updatedAt: Date }>(post: T){
-    return{
-        ...post,
-        createdAt: new Date(post.createdAt).toISOString(),
-        updatedAt: new Date(post.updatedAt).toISOString(),
-    }
-}
-
-export function PostPageClient({data}: {data: RawPostInput[] | undefined}) {
+export function PostPageClient({data}: {data: PostDto[]}) {
     const confirm = useConfirm()
-    const [post,setPost] = useState<RawPostInput[]>(data || [])
+    const [post,setPost] = useState<PostDto[]>(data || [])
 
     const handleDelete = async (id: string) => {
         const ok = await confirm({
@@ -52,7 +44,7 @@ export function PostPageClient({data}: {data: RawPostInput[] | undefined}) {
                     post ? post.map((item) => {
                         return (
                             <li key={item.id}>
-                                <InstagramPost post={serializePostDate(item)}>
+                                <InstagramPost post={item}>
                                     <Link href={`/dashboard/post/edit/${item.id}`}><PenBoxIcon size={20}/></Link>
                                     <button onClick={() => handleDelete(item.id)}><Trash size={20}/></button>
                                 </InstagramPost>

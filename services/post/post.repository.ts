@@ -63,7 +63,11 @@ async function getPostById(id:string){
             type:true,
             status:true,
             slug:true,
+            authorId:true,
+            viewCount:true,
             imageUrl:true,
+            createdAt:true,
+            updatedAt:true,
         }
     })
     if(!db){
@@ -83,6 +87,8 @@ async function GetAllUserPost(userId:string){
             type:true,
             status:true,
             slug:true,
+            authorId:true,
+            viewCount:true,
             imageUrl:true,
             createdAt:true,
             updatedAt:true,

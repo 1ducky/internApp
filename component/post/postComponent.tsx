@@ -1,8 +1,8 @@
 'use client'
 import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal, Calendar } from 'lucide-react';
-import { PostInput } from '@/services/post/post.schema';
+import { PostDto } from '@/services/post/post.dto';
 
-const InstagramPost = ({ post,children }: { post: PostInput, children:React.ReactNode }) => {
+const InstagramPost = ({ post,children }: { post: PostDto, children:React.ReactNode }) => {
     // Format tanggal agar lebih rapi (Contoh: May 19, 2026)
     const formattedDate = new Date(post.createdAt).toLocaleDateString('id-ID', {
         day: 'numeric',
@@ -17,8 +17,8 @@ const InstagramPost = ({ post,children }: { post: PostInput, children:React.Reac
             <div className="flex items-center justify-between p-3 border-b border-gray-100">
                 <div className="flex items-center space-x-3">
                     {/* Avatar (Placeholder) */}
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-yellow-500 to-purple-600 p-[2px]">
-                        <div className="w-full h-full bg-white rounded-full flex items-center justify-center p-[2px]">
+                    <div className="w-9 h-9 rounded-full bg-linear-to-tr from-yellow-500 to-purple-600 p-0.5">
+                        <div className="w-full h-full bg-white rounded-full flex items-center justify-center p-0.5">
                             <div className="w-full h-full bg-gray-300 rounded-full flex items-center justify-center text-xs font-bold text-gray-600">
                                 Admin
                             </div>
@@ -45,7 +45,7 @@ const InstagramPost = ({ post,children }: { post: PostInput, children:React.Reac
             </div>
 
             {/* AREA KONTEN UTAMA (Pengganti Gambar Instagram) */}
-            <div className="bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700 p-8 min-h-[250px] flex flex-col justify-between text-white relative">
+            <div className="bg-linear-to-br from-indigo-900 via-purple-800 to-pink-700 p-8 min-h-62.5 flex flex-col justify-between text-white relative">
                 {/* Badge Type di pojok kanan atas */}
                 <div className="absolute top-3 right-3 bg-white/20 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">
                     📢 {post.type}
