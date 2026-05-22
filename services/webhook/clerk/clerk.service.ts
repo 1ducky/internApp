@@ -88,7 +88,7 @@ async function userDeleted (evt: WebhookEvent) {
     return ok(null, 'User deleted successfully')
 }
 
-async function setUserMetaData(userId:string, metadata:unknown) {
+async function setUserMetaData(userClerkId:string, metadata:unknown) {
     logger.info('Set user metadata request', 'setUserMetaData')
     const validatedMetadata = userMetaDataSchema.safeParse(metadata)
     if(validatedMetadata.error){
@@ -96,7 +96,7 @@ async function setUserMetaData(userId:string, metadata:unknown) {
         return failed(400,validatedMetadata.error.flatten().fieldErrors, 'Validate Error')
     }
     const client = await clerkClient()
-    await client.users.updateUserMetadata(userId,{
+    await client.users.updateUserMetadata(userClerkId,{
         publicMetadata: validatedMetadata.data
     })
     logger.info('Set user metadata', 'setUserMetaData')

@@ -25,9 +25,10 @@ async function SubmitProfile(id:string,data:unknown) {
     return ok(res.data,'Submited')
 }
 
-async function getProfile(id:string) {
+async function getProfile(userId:string) {
+
     logger.info("Profile retrieval request received", 'getProfile')
-    const res = await profileRepository.getProfileByUserId(id)
+    const res = await profileRepository.getProfileByUserId(userId)
     if(!res.success){
         logger.error("Profile retrieval failed", 'getProfile')
         return failed(500,'INTERNAL','internal')

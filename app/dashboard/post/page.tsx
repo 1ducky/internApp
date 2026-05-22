@@ -1,17 +1,17 @@
-import { getClerkUserSSR, hasPermission } from "@/services/clerk/clerk.service"
 import { postService } from "@/services/post/post.service"
 import { forbidden, unauthorized } from "next/navigation"
 import { PostPageClient } from "./postClient"
+import { authService } from "@/services/auth/auth.service"
+import { hasPermission } from "@/services/clerk/clerk.service"
 
 
 
 export default async function PostPage() {
-    const user = await getClerkUserSSR()
-    if(!user) return unauthorized()
-    const isAuthorized = hasPermission(user.publicMetadata.role, 'post:create')
-    if (!isAuthorized) return forbidden()
+    const user = await authService.getSession()
+    if(!user) unauthorized()
+    if(!hasPermission(user.role,'post:create')) forbidden()
 
-    const res = await postService.getUserAllPost(user.publicMetadata)
+    const res = await postService.getUserAllPost(user.userId)
 
     if(!res.success) return <div>{res.message}</div>
     return (
