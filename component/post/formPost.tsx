@@ -4,8 +4,12 @@ import { SubmitPostInput, submitPostSchema } from "@/services/post/post.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import ImageUpload from "../objectStore/image.upload";
+import ImagePreview from "../objectStore/image.preview";
+import { useState } from "react";
 
 const PostForm = ({ action,initialData }: { action: (value: unknown) => void, initialData?:SubmitPostInput }) => {
+    const [previewUrl, setPreviewUrl] = useState<string[]>([])
 
     const form = useForm<SubmitPostInput>({
         resolver: zodResolver(submitPostSchema),
@@ -15,11 +19,13 @@ const PostForm = ({ action,initialData }: { action: (value: unknown) => void, in
             type: initialData ? initialData.type?? "" : "ANNOUNCEMENT",
             status: initialData ? initialData.status?? "" : "DRAFT",
             slug:"",
+            assets: initialData ? initialData.assets?? [] : []
         }
     })
     const onSubmited = form.handleSubmit(async (values) => {
         action(values)
         form.reset(values)
+
     }, (error) => {
         console.log(error)
     })
@@ -89,6 +95,15 @@ const PostForm = ({ action,initialData }: { action: (value: unknown) => void, in
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-900 placeholder-gray-400 resize-y"
                     ></textarea>
                 </div>
+                <ImageUpload onChange={(url,id) => {
+                    form.setValue("assets", [...(form.getValues("assets") ?? []), id])
+                    setPreviewUrl([...previewUrl, url])
+                }} />
+                {previewUrl.map((url) => {
+                    return (<>
+                        <ImagePreview url={url}/>
+                    </>)
+                })}
 
                 {/* TOMBOL AKSI (Responsive: Full width di mobile, otomatis/fit di layar besar) */}
                 <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t">
@@ -100,6 +115,7 @@ const PostForm = ({ action,initialData }: { action: (value: unknown) => void, in
                     </Link>
                     <input disabled={!form.formState.isDirty || form.formState.isSubmitting} type="submit" className={`w-full sm:w-auto px-5 py-2 text-white rounded-lg text-sm font-medium transition ${form.formState.isSubmitting || !form.formState.isDirty ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`} value={form.formState.isSubmitting ? "Processing..." : "Save Changes"} />
                 </div>
+                
             </form>
         </div>
     );

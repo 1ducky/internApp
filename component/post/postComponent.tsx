@@ -1,6 +1,7 @@
 'use client'
 import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal, Calendar } from 'lucide-react';
 import { PostDto } from '@/services/post/post.dto';
+import ImagePreview from '../objectStore/image.preview';
 
 const InstagramPost = ({ post,children }: { post: PostDto, children:React.ReactNode }) => {
     // Format tanggal agar lebih rapi (Contoh: May 19, 2026)
@@ -8,7 +9,7 @@ const InstagramPost = ({ post,children }: { post: PostDto, children:React.ReactN
         day: 'numeric',
         month: 'short',
         year: 'numeric',
-    });
+    }) ;
 
     return (
         <div className="max-w-md mx-auto bg-white border border-gray-200 rounded-lg overflow-hidden my-4 shadow-sm font-sans">
@@ -46,7 +47,13 @@ const InstagramPost = ({ post,children }: { post: PostDto, children:React.ReactN
 
             {/* AREA KONTEN UTAMA (Pengganti Gambar Instagram) */}
             <div className="bg-linear-to-br from-indigo-900 via-purple-800 to-pink-700 p-8 min-h-62.5 flex flex-col justify-between text-white relative">
-                {/* Badge Type di pojok kanan atas */}
+                    {post.assets && post.assets.map((item,index) => {
+                        return(
+                            <div key={post.id + index}>
+                                <ImagePreview url={item.fileUrl}/>
+                            </div>
+                        )
+                    })}
                 <div className="absolute top-3 right-3 bg-white/20 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">
                     📢 {post.type}
                 </div>

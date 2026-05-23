@@ -67,7 +67,6 @@ async function getPostById(id:string){
             return failed(404,'Post Not Found','Not Found')
         }
         logger.info(`Get Post By Id request for post ${id} success`, 'Post Service')
-        res.data.imageUrl = res.data?.imageUrl ? res.data.imageUrl : null
         return ok(toPostDto(res.data),'Post Found')
     }
     catch(error){

@@ -7,17 +7,20 @@ export const PERMISSIONS_CONFIG = {
         "post:create",
         "post:update",
         "post:delete",
+        "file:upload",
     ],
 
     USER: [
         "post:create",
         "post:update",
         "post:delete",
+        "file:upload",
     ],
 
     PROVIDER: [
         "post:create",
         "post:update",
         "post:delete",
+        "file:upload",
     ]
 }

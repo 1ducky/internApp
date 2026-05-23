@@ -12,6 +12,7 @@ export function PostPageClient({data}: {data: PostDto[]}) {
     const confirm = useConfirm()
     const [post,setPost] = useState<PostDto[]>(data || [])
 
+
     const handleDelete = async (id: string) => {
         const ok = await confirm({
             actionLabel: "Hapus",
@@ -41,12 +42,13 @@ export function PostPageClient({data}: {data: PostDto[]}) {
         <>
             <PostLayout>
                 {
-                    post ? post.map((item) => {
+                    post ? post.map((item,index) => {
+                        // console.log(item)
                         return (
-                            <li key={item.id}>
+                            <li key={item.id || index}>
                                 <InstagramPost post={item}>
                                     <Link href={`/dashboard/post/edit/${item.id}`}><PenBoxIcon size={20}/></Link>
-                                    <button onClick={() => handleDelete(item.id)}><Trash size={20}/></button>
+                                    <button onClick={() => handleDelete(item.id as string)}><Trash size={20}/></button>
                                 </InstagramPost>
                             </li>
                         )

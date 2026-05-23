@@ -60,6 +60,19 @@ enum PostType {
   NEWS
 }
 
+enum FileStatus {
+  ACTIVE
+  TEMP
+  ORPHAN
+  DELETED
+}
+
+enum FileType {
+  IMAGE
+  DOCUMENT
+  OTHER
+}
+
 enum PostStatus {
   DRAFT
   PUBLISHED
@@ -83,6 +96,7 @@ model User {
 
   profile         UserProfile?
   post            Post[]
+  assets           Files[]
   // jika user menjadi provider
   providerProfile ProviderProfile?
 
@@ -127,26 +141,38 @@ model Post {
   title       String
   slug        String  @unique
   description String  @db.Text
-  imageUrl    String?
+  assets     Files[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([slug])
-  @@index([id])
+  @@index([authorId])
+  @@index([status,type])
 }
 
-// model File {
-//   id String @id @default(cuid())
+model Files {
+  id String @id @default(cuid())
+  authorId String?
+  author   User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
-//   postId String
-//   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String?
+  post   Post? @relation(fields: [postId], references: [id], onDelete: SetNull)
 
-//   url String
+  fileName String
+  fileKey String @unique
+  fileSize Int
+  fileType FileType
+  fileUrl String
+  fileStatus FileStatus @default(TEMP) // default to TEMP || ACTIVE || ORPHAN (trigern cron job) || DELETED (soft delete)
+  mimeType String
 
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-// }
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([fileType])
+  @@index([fileStatus, createdAt]) //cronjob
+  @@index([postId])
+}
 
 model ProviderProfile {
   id String @id @default(cuid())

@@ -13,7 +13,12 @@ async function CreatePost(userId: string, data:SubmitPostInput) {
     const db = await prisma.post.create({
         data:{
             authorId: userId,
-            ...data
+            description:data.description,
+            slug:data.slug,
+            status:data.status,
+            title:data.title,
+            type:data.type,
+            assets:{connect: data.assets?.map((id) => ({id}))}
         }
     })
     if(!db){
@@ -23,13 +28,18 @@ async function CreatePost(userId: string, data:SubmitPostInput) {
 }
 
 async function updatePostById(userId:string, data:SubmitPostInput, id:string){
-    const db = await prisma.post.updateMany({
+    const db = await prisma.post.update({
         where:{
             id:id,
             authorId:userId
         },
         data:{
-            ...data
+            description:data.description,
+            slug:data.slug,
+            status:data.status,
+            title:data.title,
+            type:data.type,
+            assets:{connect: data.assets?.map((id) => ({id}))}
         }
     })
     if(!db){
@@ -65,9 +75,9 @@ async function getPostById(id:string){
             slug:true,
             authorId:true,
             viewCount:true,
-            imageUrl:true,
             createdAt:true,
             updatedAt:true,
+            assets:true
         }
     })
     if(!db){
@@ -89,9 +99,9 @@ async function GetAllUserPost(userId:string){
             slug:true,
             authorId:true,
             viewCount:true,
-            imageUrl:true,
             createdAt:true,
             updatedAt:true,
+            assets:true,
         }
     })
     if(!db){
