@@ -1,6 +1,5 @@
 import { authService } from "@/services/auth/auth.service";
 import { hasPermission } from "@/services/clerk/clerk.service";
-import { objectStorageService } from "@/services/objectStorage/obj.service";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 
@@ -21,22 +20,15 @@ export const uploadRouter = {
       };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      const obj = await objectStorageService.uploadFileImage({
+
+      return {
         fileUrl: file.ufsUrl,
         fileSize: file.size,
         mimeType: file.type,
         fileName: file.name,
         fileKey: file.key,
         authorId: metadata.userId,
-      })
-      return {
-        fileUrl: file.ufsUrl,
-        fileSize: file.size,
-        fileMime: file.type,
-        fileName: file.name,
-        fileKey: file.key,
-        authorId: metadata.userId,
-        fileId: obj.success ? obj.data?.id : null
+        id:file.fileHash.slice(0,10)+crypto.randomUUID()
       };
     }),
 } satisfies FileRouter;

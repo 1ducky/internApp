@@ -7,9 +7,11 @@ export const objSchema = z.object({
     mimeType: z.string(),
     fileName: z.string(),
     fileKey: z.string(),
-    authorId: z.string()
+    authorId: z.string(),
+    id:z.string()
 })
 
+export const objListSchema = z.array(objSchema)
 export const ObjDetailSchema = z.object({
     id: z.string(),
     fileUrl: z.string(),
@@ -22,6 +24,6 @@ export const ObjDetailSchema = z.object({
     createdAt: z.string(),
     updatedAt: z.string(),
 })
-
+export type ObjListInput = z.infer<typeof objListSchema>
 export type ObjInput = z.infer<typeof objSchema>
 export type ObjType = z.infer<typeof ObjType>

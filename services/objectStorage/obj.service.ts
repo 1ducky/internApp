@@ -1,10 +1,11 @@
 import { logger } from "@/infrastructure/lib/logger"
-import { objSchema } from "./obj.schema"
+import { objListSchema, objSchema } from "./obj.schema"
 import { objrepository } from "./obj.repository"
-import { failed } from "@/utils/responseMapper"
+import { failed, ok } from "@/utils/responseMapper"
 
 export const objectStorageService = {
-    uploadFileImage
+    uploadFileImage,
+    uploadBulkFileImage
 }
 
 async function uploadFileImage(metadata: unknown) {
@@ -30,4 +31,25 @@ async function uploadFileImage(metadata: unknown) {
         return failed(500,'INTERNAL','catch internal')
     }
 
+}
+
+async function uploadBulkFileImage(metadata:unknown,userId:string) {
+    logger.info('Recaived', 'ObjService')
+    const validated = objListSchema.safeParse(metadata)
+    if(!validated || !validated.data){
+        return failed(400,validated.error.flatten().fieldErrors, 'Bad Request')
+    }
+    try{
+        const res = await objrepository.uploadBulkFile(validated.data,userId,'IMAGE')
+        if(!res){
+            logger.error('prisma internal', 'ObjService')
+            return failed(500,'INTERNAL', 'Internal')
+        }
+        logger.info('success', 'ObjService')
+        return ok(res.data,'success bulk upload')
+    }catch(err){
+        logger.error(`File bulk upload request failed`, 'Object Storage Service')
+        console.log(err)
+        return failed(500,'INTERNAL','catch internal')
+    }
 }

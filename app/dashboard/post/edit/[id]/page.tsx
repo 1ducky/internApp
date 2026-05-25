@@ -10,13 +10,9 @@ export default async function EditPostPage({ params }: { params: { id: string } 
     if(!post.success){
         return <div>Post not found</div>
     }
-    const normalizedData = {
-        ...post.data,
-        imageUrl: post.data?.imageUrl ? post.data.imageUrl : ""
-    }
 
 
     return (
-        <EditPostPageCSR id={id} initialData={normalizedData} />
+        <EditPostPageCSR id={id} initialData={post.data} />
     )
 }

@@ -4,27 +4,23 @@ import { SubmitPostInput, submitPostSchema } from "@/services/post/post.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import ImageUpload from "../objectStore/image.upload";
 import ImagePreview from "../objectStore/image.preview";
 import { useState } from "react";
+import { PostDto, toPostFormValues } from "@/services/post/post.dto";
+import { UploadMultipleFile } from "../objectStore/imageMultiple.upload";
+import { UploadedAssetMetadata } from "@/services/objectStorage/object.dto";
 
-const PostForm = ({ action,initialData }: { action: (value: unknown) => void, initialData?:SubmitPostInput }) => {
-    const [previewUrl, setPreviewUrl] = useState<string[]>([])
+const PostForm = ({ action,initialData }: { action: (value: unknown) => void, initialData?:PostDto }) => {
+    const [assetsEditor, setAssetEditor] = useState<UploadedAssetMetadata[] >(initialData?.assets ??[])
 
     const form = useForm<SubmitPostInput>({
         resolver: zodResolver(submitPostSchema),
-        defaultValues: {
-            title: initialData ? initialData.title??  "" : "",
-            description: initialData ? initialData.description?? "" : "",
-            type: initialData ? initialData.type?? "" : "ANNOUNCEMENT",
-            status: initialData ? initialData.status?? "" : "DRAFT",
-            slug:"",
-            assets: initialData ? initialData.assets?? [] : []
-        }
+        defaultValues:toPostFormValues(initialData)
     })
     const onSubmited = form.handleSubmit(async (values) => {
         action(values)
         form.reset(values)
+        // console.log(values)
 
     }, (error) => {
         console.log(error)
@@ -95,14 +91,15 @@ const PostForm = ({ action,initialData }: { action: (value: unknown) => void, in
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-900 placeholder-gray-400 resize-y"
                     ></textarea>
                 </div>
-                <ImageUpload onChange={(url,id) => {
+                {/* <ImageUpload onChange={(url,id) => {
                     form.setValue("assets", [...(form.getValues("assets") ?? []), id])
-                    setPreviewUrl([...previewUrl, url])
-                }} />
-                {previewUrl.map((url) => {
-                    return (<>
-                        <ImagePreview url={url}/>
-                    </>)
+                    setPreviewImage([...previewImage, url])
+                }} /> */}
+                <UploadMultipleFile action={(file: UploadedAssetMetadata[]) =>{ setAssetEditor(prev => [...prev,...file]); form.setValue('assets', [...(form.getValues('assets') ?? []), ...file.map(item => item.id)])} }/>
+                {assetsEditor.map((item) => {
+                    return (<div key={item.id}>
+                        <ImagePreview url={item.fileUrl} onClickAction={() => { setAssetEditor(prev => prev.filter(asset => asset.id !== item.id)); form.setValue('assets', form.getValues('assets')?.filter(id => id!== item.id))  }}/>
+                    </div>)
                 })}
 
                 {/* TOMBOL AKSI (Responsive: Full width di mobile, otomatis/fit di layar besar) */}

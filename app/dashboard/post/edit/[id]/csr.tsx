@@ -1,9 +1,9 @@
 "use client"
 import PostForm from "@/component/post/formPost"
-import { SubmitPostInput } from "@/services/post/post.schema"
+import { PostDto } from "@/services/post/post.dto"
 import { useRouter } from "next/navigation"
 
-export default function EditPostPageCSR({ id,initialData }: { id:string, initialData: SubmitPostInput }) {
+export default function EditPostPageCSR({ id,initialData }: { id:string, initialData: PostDto }) {
     const router = useRouter()
 
     async function handlerEditPost(value: unknown) {

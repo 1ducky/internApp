@@ -19,7 +19,7 @@ export default function ImageUpload({
                 onClientUploadComplete={(res) => {
                     if (!res?.[0]) return
 
-                    onChange(res[0].serverData.fileUrl,res[0].serverData.fileId || "")
+                    onChange(res[0].serverData.fileUrl,res[0].serverData.fileKey || "")
                     // debt
                 }}
 

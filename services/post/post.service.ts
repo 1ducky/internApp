@@ -23,7 +23,8 @@ async function submitPost(userId: string, body: unknown) {
         }
         logger.info(`Post submission request for user ${userId} is valid`, 'Post Service')
         validated.data.slug = slugify(validated.data.title)
-        const res = await postRepository.CreatePost(userId, validated.data)
+        console.log(validated.data)
+        const res = await postRepository.submitPostwithAssets(userId, validated.data)
         if(!res.success || !res.data){
             logger.error(`Post submission request for user ${userId} failed`, 'Post Service')
             return failed(500,'INTERNAL','internal')
@@ -90,7 +91,8 @@ async function updatePostById(userId:string, body:unknown, id:string){
         }
         logger.info(`Post update request for user ${userId} is valid`, 'Post Service')
         validated.data.slug = slugify(validated.data.title)
-        const res = await postRepository.updatePostById(userId as string, validated.data,id)
+        console.log(validated.data)
+        const res = await postRepository.updatePostByIdWithAssets(userId as string, validated.data,id)
         if(!res.success){
             logger.error(`Post update request for user ${userId} failed`, 'Post Service')
             return failed(500,'INTERNAL','internal')
@@ -111,7 +113,7 @@ async function deletePostById(userId:string, id:string){
     }
     logger.info(`Post delete request for user ${userId}`, `Post Service`)
     try {
-        const res = await postRepository.deletePostById(userId as string, id)
+        const res = await postRepository.deletePostByIdwithAsstes(userId as string, id)
         if(!res.success){
             logger.error(`Post delete request for user ${userId} failed`, 'Post Service')
             return failed(500,'INTERNAL','internal')
