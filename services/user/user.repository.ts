@@ -5,10 +5,10 @@ export const userRepository = {
     userCreate,
     userUpdate,
     userDelete,
-    userInitalizeSession
+    userInitializeSession
 }
 
-async function userInitalizeSession (clerkId:string ) {
+async function userInitializeSession (clerkId:string ) {
     const db = await prisma.user.findUnique({
         where:{
             clerkId:clerkId

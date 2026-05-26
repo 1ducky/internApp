@@ -10,12 +10,13 @@ import { PostDto, toPostFormValues } from "@/services/post/post.dto";
 import { UploadMultipleFile } from "../objectStore/imageMultiple.upload";
 import { UploadedAssetMetadata } from "@/services/objectStorage/object.dto";
 
-const PostForm = ({ action,initialData }: { action: (value: unknown) => void, initialData?:PostDto }) => {
-    const [assetsEditor, setAssetEditor] = useState<UploadedAssetMetadata[] >(initialData?.assets ??[])
+const PostForm = ({ action, initialData, tempImage }: { action: (value: unknown) => void, initialData?: PostDto, tempImage?: UploadedAssetMetadata[] | [] }) => {
+    const [assetsEditor, setAssetEditor] = useState<UploadedAssetMetadata[]>(initialData?.assets ?? [])
+    const [assetsTempImage, setAssetsTempImage] = useState<UploadedAssetMetadata[]>(tempImage ?? [])
 
     const form = useForm<SubmitPostInput>({
         resolver: zodResolver(submitPostSchema),
-        defaultValues:toPostFormValues(initialData)
+        defaultValues: toPostFormValues(initialData)
     })
     const onSubmited = form.handleSubmit(async (values) => {
         action(values)
@@ -91,16 +92,30 @@ const PostForm = ({ action,initialData }: { action: (value: unknown) => void, in
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-900 placeholder-gray-400 resize-y"
                     ></textarea>
                 </div>
-                {/* <ImageUpload onChange={(url,id) => {
-                    form.setValue("assets", [...(form.getValues("assets") ?? []), id])
-                    setPreviewImage([...previewImage, url])
-                }} /> */}
-                <UploadMultipleFile action={(file: UploadedAssetMetadata[]) =>{ setAssetEditor(prev => [...prev,...file]); form.setValue('assets', [...(form.getValues('assets') ?? []), ...file.map(item => item.id)])} }/>
+
+                <UploadMultipleFile action={(file: UploadedAssetMetadata[]) => { setAssetEditor(prev => [...prev, ...file]); form.setValue('assets', [...(form.getValues('assets') ?? []), ...file.map(item => item.id)]) }} />
                 {assetsEditor.map((item) => {
                     return (<div key={item.id}>
-                        <ImagePreview url={item.fileUrl} onClickAction={() => { setAssetEditor(prev => prev.filter(asset => asset.id !== item.id)); form.setValue('assets', form.getValues('assets')?.filter(id => id!== item.id))  }}/>
+                        <ImagePreview url={item.fileUrl} onClickAction={() => { setAssetEditor(prev => prev.filter(asset => asset.id !== item.id)); form.setValue('assets', form.getValues('assets')?.filter(id => id !== item.id)) }} />
                     </div>)
                 })}
+
+                {
+                    assetsTempImage.length !== 0 ?
+                        (
+                            <>
+                                <h2 className="text-sm font-medium text-gray-700 mb-1">file sementara</h2>
+                                <p className="text-xs text-gray-500 mb-2">Sepertinya Ada file yang kamu upload tidak tersimpan, <br /> anda bisa menautkan ulang dengan mengklik gambar dibawah ini tanpa perlu upload ulang, <br /> gambar tersebut akan dihapus secara periodik</p>
+                                {assetsTempImage.map((item) => {
+                                    return (<div key={item.id}>
+                                        <ImagePreview url={item.fileUrl} onClickAction={() => { setAssetEditor(prev => [...prev, item]); form.setValue('assets', [...(form.getValues('assets') ?? []), item.id]); setAssetsTempImage(prev => prev.filter(asset => asset.id !== item.id)) }} />
+                                    </div>)
+                                })}
+                            </>
+                        ) : null
+                }
+
+
 
                 {/* TOMBOL AKSI (Responsive: Full width di mobile, otomatis/fit di layar besar) */}
                 <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t">
@@ -112,7 +127,7 @@ const PostForm = ({ action,initialData }: { action: (value: unknown) => void, in
                     </Link>
                     <input disabled={!form.formState.isDirty || form.formState.isSubmitting} type="submit" className={`w-full sm:w-auto px-5 py-2 text-white rounded-lg text-sm font-medium transition ${form.formState.isSubmitting || !form.formState.isDirty ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`} value={form.formState.isSubmitting ? "Processing..." : "Save Changes"} />
                 </div>
-                
+
             </form>
         </div>
     );

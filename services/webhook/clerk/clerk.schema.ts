@@ -33,6 +33,12 @@ export function normalizeClerkUser(evt: WebhookEvent) {
     const user = evt.data.user
     return {
         clerkId: user?.id,
+        username: user?.username,
+        email: user?.email_addresses[0].email_address,
+        imageUrl: user?.image_url,
+        isBanned: user?.banned,
+        createdAt: new Date(user?.created_at as number),
+        updatedAt: new Date(user?.updated_at as number),
     }
   }
 }

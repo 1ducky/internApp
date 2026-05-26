@@ -13,16 +13,16 @@ export const clerkService = {
 
 async function sessionCreated (evt: WebhookEvent) {
     logger.debug(evt.type, 'ClerkService')
-    const input = normalizeClerkUser(evt)
-    const clerkId = input?.clerkId
+    const clerkId = evt.data.id
     if(!clerkId){
         logger.error('Validate Error', 'sessionCreated')
         return failed(400, {message: 'Validate Error'}, 'Validate Error')
     }
-    const res = await userRepository.userInitalizeSession(clerkId)
+    const res = await userRepository.userInitializeSession(clerkId)
     if(!res.success){
         logger.error('Failed to initialize session', 'sessionCreated')
-        return failed(400, {message: 'Failed to initialize session'}, 'Failed to initialize session')
+        const create = await userCreated(evt)
+        return create
     }
     if(res.data){
         await setUserMetaData(clerkId,res.data)

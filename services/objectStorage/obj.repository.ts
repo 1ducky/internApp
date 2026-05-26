@@ -1,10 +1,12 @@
 import prisma from "@/libs/db";
 import { ObjInput, ObjListInput, ObjType } from "./obj.schema";
 import { TransactionClient } from "@/generated/prisma/internal/prismaNamespace";
+import { FileType } from "@/generated/prisma/enums";
 
 export const objrepository = {
   uploadFile,
   uploadBulkFile,
+  getTempFile
 };
 
 export const transactionFilePostRepository = {
@@ -67,7 +69,29 @@ async function getActiveFilefromPost(tx: TransactionClient, postId: string) {
   });
   return db;
 }
-
+async function getTempFile(userId:string,type:FileType){
+  const db = await prisma.files.findMany({
+    where: {
+      authorId: userId,
+      fileStatus: "TEMP",
+      fileType: type,
+    },
+    select: {
+      id: true,
+      fileType: true,
+      fileUrl: true,
+      fileSize: true,
+      mimeType: true,
+      fileName: true,
+      fileKey: true,
+      authorId: true, // dari parameter, bukan item
+    },
+  });
+  if(!db){
+    return { success: false };
+  }
+  return { success: true, data: db };
+}
 async function uploadFile(metadata: ObjInput, type: ObjType) {
   const db = await prisma.files.create({
     data: {

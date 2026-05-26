@@ -22,7 +22,7 @@ async function submitPost(userId: string, body: unknown) {
             return failed(400,validated.error.flatten().fieldErrors, 'Bad Request')
         }
         logger.info(`Post submission request for user ${userId} is valid`, 'Post Service')
-        validated.data.slug = slugify(validated.data.title)
+        validated.data.slug = slugify(validated.data.title) + '-' + userId.slice(0,5)+ '-' + crypto.randomUUID()
         console.log(validated.data)
         const res = await postRepository.submitPostwithAssets(userId, validated.data)
         if(!res.success || !res.data){
@@ -90,7 +90,7 @@ async function updatePostById(userId:string, body:unknown, id:string){
             return failed(400,validated.error.flatten().fieldErrors, 'Bad Request')
         }
         logger.info(`Post update request for user ${userId} is valid`, 'Post Service')
-        validated.data.slug = slugify(validated.data.title)
+        validated.data.slug = slugify(validated.data.title) + '-' + userId.slice(0,5)+ '-' + crypto.randomUUID()
         console.log(validated.data)
         const res = await postRepository.updatePostByIdWithAssets(userId as string, validated.data,id)
         if(!res.success){
