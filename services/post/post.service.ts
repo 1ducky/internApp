@@ -1,7 +1,7 @@
 import { logger } from "@/infrastructure/lib/logger"
 import { submitPostSchema } from "./post.schema"
 import { failed, ok } from "@/utils/responseMapper"
-import { postRepository } from "./post.repository"
+import { CosummerPostRepository, postRepository } from "./post.repository"
 import { slugify } from "@/utils/slugify"
 import { toPostDto, toPostDtoList } from "./post.dto"
 
@@ -10,7 +10,8 @@ export const postService = {
     updatePostById,
     deletePostById,
     getUserAllPost,
-    getPostById
+    getPostById,
+    getFeedPost
 }
 
 async function submitPost(userId: string, body: unknown) {
@@ -23,7 +24,6 @@ async function submitPost(userId: string, body: unknown) {
         }
         logger.info(`Post submission request for user ${userId} is valid`, 'Post Service')
         validated.data.slug = slugify(validated.data.title) + '-' + userId.slice(0,5)+ '-' + crypto.randomUUID()
-        console.log(validated.data)
         const res = await postRepository.submitPostwithAssets(userId, validated.data)
         if(!res.success || !res.data){
             logger.error(`Post submission request for user ${userId} failed`, 'Post Service')
@@ -122,6 +122,22 @@ async function deletePostById(userId:string, id:string){
         return ok({message:'successfuly deleted'},'Deleted')
     } catch (error) {
         logger.error(`Post delete request for user ${userId} Internak Error`, 'Post Service')
+        console.log(error)
+        return failed(500,'INTERNAL','catch internal')
+    }
+}
+
+async function getFeedPost(){
+    try{
+        const res = await CosummerPostRepository.getFeedPost()
+        if(!res.success || !res.data){
+            logger.error(`Get Feed Post request failed`, 'Post Service')
+            return failed(500,'INTERNAL','internal')
+        }
+        logger.info(`Get Feed Post request success`, 'Post Service')
+        return ok(res.data,'Feed Post Found')
+    }catch(error){
+        logger.error(`Get Feed Post request failed`, 'Post Service')
         console.log(error)
         return failed(500,'INTERNAL','catch internal')
     }

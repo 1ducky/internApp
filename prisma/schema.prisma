@@ -96,7 +96,7 @@ model User {
 
   profile         UserProfile?
   post            Post[]
-  assets           Files[]
+  assets          Files[]
   // jika user menjadi provider
   providerProfile ProviderProfile?
 
@@ -108,7 +108,7 @@ model UserProfile {
 
   userId   String  @unique
   user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userName String?
+  userName String  @unique
   bio      String?
 
   avatarUrl String?
@@ -141,37 +141,36 @@ model Post {
   title       String
   slug        String  @unique
   description String  @db.Text
-  assets     Files[]
+  assets      Files[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([authorId])
-  @@index([status,type])
+  @@index([status, createdAt(sort: Desc)])
 }
 
 model Files {
-  id String @id @default(cuid())
+  id       String  @id @default(cuid())
   authorId String?
-  author   User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
   postId String?
-  post   Post? @relation(fields: [postId], references: [id], onDelete: SetNull)
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: SetNull)
 
-  fileName String
-  fileKey String @unique
-  fileSize Int
-  fileType FileType
-  fileUrl String
+  fileName   String
+  fileKey    String     @unique
+  fileSize   Int
+  fileType   FileType
+  fileUrl    String
   fileStatus FileStatus @default(TEMP) // default to TEMP || ACTIVE || ORPHAN (trigern cron job) || DELETED (soft delete)
-  mimeType String
+  mimeType   String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([fileType])
+  @@index([postId, fileStatus, fileType])
   @@index([fileStatus, createdAt]) //cronjob
-  @@index([postId])
 }
 
 model ProviderProfile {

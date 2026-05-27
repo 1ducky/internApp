@@ -13,6 +13,56 @@ export const postRepository = {
   deletePostByIdwithAsstes,
 };
 
+export const CosummerPostRepository = {
+  getFeedPost
+}
+
+async function getFeedPost() {
+  const db = await prisma.post.findMany({
+    take:10,
+    orderBy:{createdAt:'desc'},
+    where:{
+      status:'PUBLISHED',
+    },
+    select:{
+      id:true,
+      title:true,
+      description:true,
+      type:true,
+      status:true,
+      slug:true,
+      viewCount:true,
+      createdAt:true,
+      assets:{
+        where:{
+          fileStatus:'ACTIVE',
+          fileType:'IMAGE'
+        },
+        select:{
+          id:true,
+          fileUrl:true,
+        }
+      },
+      author:{
+        select:{
+          id:true,
+          name:true,
+          imageUrl:true,
+          profile:{
+            select:{
+              userName:true
+            }
+          }
+        }
+      }
+    }
+  })
+  if (!db) {
+    return { success: false };
+  }
+  return { success: true, data: db };
+}
+
 async function CreatePost(userId: string, data: SubmitPostInput) {
   const db = await prisma.post.create({
     data: {
