@@ -13,7 +13,7 @@ export default async function EditPostPage({ params }: { params: { id: string } 
     const tempImage = await objectStorageService.getTempFileImage(user.userId)
     const sanitize = tempImage.success && tempImage.data ? tempImage.data.map(item => ({
         ...item,
-        authorId: item.authorId as string, // kita tahu pasti string
+        authorId: item.authorId as string,
     })) : []
     if (!post.success) {
         return <div>Post not found</div>

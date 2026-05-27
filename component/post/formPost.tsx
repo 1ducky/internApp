@@ -93,10 +93,10 @@ const PostForm = ({ action, initialData, tempImage }: { action: (value: unknown)
                     ></textarea>
                 </div>
 
-                <UploadMultipleFile action={(file: UploadedAssetMetadata[]) => { setAssetEditor(prev => [...prev, ...file]); form.setValue('assets', [...(form.getValues('assets') ?? []), ...file.map(item => item.id)]) }} />
+                <UploadMultipleFile action={(file: UploadedAssetMetadata[]) => { setAssetEditor(prev => [...prev, ...file]); form.setValue('assets', [...(form.getValues('assets') ?? []), ...file.map(item => item.id)], { shouldDirty: true }) }} />
                 {assetsEditor.map((item) => {
                     return (<div key={item.id}>
-                        <ImagePreview url={item.fileUrl} onClickAction={() => { setAssetEditor(prev => prev.filter(asset => asset.id !== item.id)); form.setValue('assets', form.getValues('assets')?.filter(id => id !== item.id)) }} />
+                        <ImagePreview url={item.fileUrl} onClickAction={() => { setAssetEditor(prev => prev.filter(asset => asset.id !== item.id)); form.setValue('assets', form.getValues('assets')?.filter(id => id !== item.id), { shouldDirty: true }) }} />
                     </div>)
                 })}
 
@@ -108,7 +108,7 @@ const PostForm = ({ action, initialData, tempImage }: { action: (value: unknown)
                                 <p className="text-xs text-gray-500 mb-2">Sepertinya Ada file yang kamu upload tidak tersimpan, <br /> anda bisa menautkan ulang dengan mengklik gambar dibawah ini tanpa perlu upload ulang, <br /> gambar tersebut akan dihapus secara periodik</p>
                                 {assetsTempImage.map((item) => {
                                     return (<div key={item.id}>
-                                        <ImagePreview url={item.fileUrl} onClickAction={() => { setAssetEditor(prev => [...prev, item]); form.setValue('assets', [...(form.getValues('assets') ?? []), item.id]); setAssetsTempImage(prev => prev.filter(asset => asset.id !== item.id)) }} />
+                                        <ImagePreview url={item.fileUrl} onClickAction={() => { setAssetEditor(prev => [...prev, item]); form.setValue('assets', [...(form.getValues('assets') ?? []), item.id], { shouldDirty: true }); setAssetsTempImage(prev => prev.filter(asset => asset.id !== item.id)) }} />
                                     </div>)
                                 })}
                             </>

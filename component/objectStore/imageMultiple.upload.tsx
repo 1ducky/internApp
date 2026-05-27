@@ -3,27 +3,20 @@
 import { toUploadResponse, UploadedAssetMetadata } from "@/services/objectStorage/object.dto";
 import { useUploadThing } from "@/utils/uploadthing";
 
-export function UploadMultipleFile({action} : {action :(file: UploadedAssetMetadata[]) => void}){
-    const {startUpload} = useUploadThing('imageUploader')
+export function UploadMultipleFile({ action }: { action: (file: UploadedAssetMetadata[]) => void }) {
+    const { startUpload } = useUploadThing('imageUploader')
 
     const onUploaded = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const filesInput = Array.from(e.target.files || []);
         const files = await startUpload(filesInput)
-        if(!files) return
+        if (!files) return
         const FileDto = toUploadResponse(files)
-        const res = await fetch('/api/storage', {
-            method : 'POST',
-            headers: {
-                    "Content-Type": "application/json",
-                },
-            body: JSON.stringify(FileDto),
-        })
         action(FileDto)
     };
-    return(
+    return (
         <>
             <div >
-                <input type="file" name="file" id="file" multiple onChange={onUploaded}/>
+                <input type="file" name="file" id="file" multiple onChange={onUploaded} />
             </div>
         </>
     )

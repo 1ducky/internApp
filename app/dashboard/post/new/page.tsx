@@ -1,33 +1,17 @@
-'use client'
+import { authService } from "@/services/auth/auth.service"
+import { objectStorageService } from "@/services/objectStorage/obj.service"
+import NewPostPageCsr from "./csr"
 
-import PostForm from "@/component/post/formPost";
-import { useRouter } from "next/navigation";
 
-export default function NewPostPage() {
-    const router = useRouter()
-    const handlerSubmitPost = async (value: unknown) => {
-        console.log(value)
-        try {
-            const res = await fetch('/api/post', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(value),
-            })
-            if (res.status === 200) {
-                router.push('/dashboard/post')
-                router.refresh()
-                // const data = await res.json()
-                // console.log(data)
-            } else {
-            }
+export default async function NewPostPage() {
+    const user = await authService.getSession()
+    const tempImage = await objectStorageService.getTempFileImage(user.userId)
+    const sanitize = tempImage.success && tempImage.data ? tempImage.data.map(item => ({
+        ...item,
+        authorId: item.authorId as string,
+    })) : []
 
-        } catch (error) {
-            console.log(error)
-        }
-    }
     return (
-        <PostForm action={handlerSubmitPost} />
+        <NewPostPageCsr tempImage={sanitize} />
     )
 }
