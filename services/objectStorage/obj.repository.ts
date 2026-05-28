@@ -102,6 +102,7 @@ async function uploadFile(metadata: ObjInput, type: ObjType) {
       fileName: metadata.fileName,
       fileKey: metadata.fileKey,
       authorId: metadata.authorId,
+      id: metadata.id,
     },
     select: {
       id: true,

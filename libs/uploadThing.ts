@@ -43,7 +43,7 @@ export const uploadRouter = {
           fileName: file.name,
           fileKey: file.key,
           authorId: metadata.userId,
-          id: uuid
+          id: uuid.slice(0,20)
         }
         const res = await objectStorageService.uploadFileImage(payload)
 

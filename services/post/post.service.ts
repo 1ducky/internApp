@@ -91,7 +91,6 @@ async function updatePostById(userId:string, body:unknown, id:string){
         }
         logger.info(`Post update request for user ${userId} is valid`, 'Post Service')
         validated.data.slug = slugify(validated.data.title) + '-' + userId.slice(0,5)+ '-' + crypto.randomUUID()
-        console.log(validated.data)
         const res = await postRepository.updatePostByIdWithAssets(userId as string, validated.data,id)
         if(!res.success){
             logger.error(`Post update request for user ${userId} failed`, 'Post Service')

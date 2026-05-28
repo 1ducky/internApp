@@ -2,7 +2,7 @@ import { Sparkles, TrendingUp } from 'lucide-react';
 
 export default function FeedSidebar() {
   return (
-    <div className="space-y-6 fixed">
+    <div className="space-y-6 lg:fixed lg:top-25 top-20 lg:w-[400px]">
       {/* Sidebar Card 1: Trending topics */}
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs">
         <h3 className="text-sm font-bold text-zinc-800 dark:text-zinc-200 flex items-center gap-1.5 mb-4 uppercase tracking-wider">

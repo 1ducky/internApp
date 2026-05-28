@@ -103,6 +103,8 @@ async function submitPostwithAssets(userId: string, data: SubmitPostInput) {
       post.id,
     );
     if (activated.count !== assetIds.length) {
+      console.log(activated.count, assetIds.length)
+      console.log(assetIds,post.id,userId)
       throw new Error("INVALID_ASSET");
     }
     return post;
