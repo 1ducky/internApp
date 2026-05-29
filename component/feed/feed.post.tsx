@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Heart,
   MessageSquare,
@@ -19,6 +19,7 @@ import { PostType } from '@/generated/prisma/client';
 import FeedCarousel from './feed.carousel';
 import FeedCommentSection from './feed.comment';
 import { FeedPostProps } from '@/services/feed/feed.dto';
+import { useVisibilityHide } from '@/hooks/useVisibilityHide';
 
 export default function FeedPost({ post }: { post: FeedPostProps }) {
   const [isLiked, setIsLiked] = useState(false);
@@ -29,7 +30,11 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState<{ id: string; name: string; text: string; time: string }[]>([]);
+  const commentRef = useRef<HTMLDivElement>(null);
 
+  useVisibilityHide(commentRef, () => {
+    setShowCommentInput(false)
+  })
   // Format tanggal Indonesia
   const formattedDate = new Date(post.createdAt).toLocaleDateString('id-ID', {
     day: 'numeric',
@@ -237,13 +242,15 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
           </button>
 
           {/* Comment Toggle Button */}
-          <button
-            onClick={() => setShowCommentInput(!showCommentInput)}
-            className="flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition duration-200 focus:outline-none"
-          >
-            <MessageSquare size={19} />
-            <span>{comments.length > 0 ? comments.length : ''} Komentar</span>
-          </button>
+          <div ref={commentRef}>
+            <button
+              onClick={() => setShowCommentInput(!showCommentInput)}
+              className="flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition duration-200 focus:outline-none"
+            >
+              <MessageSquare size={19} />
+              <span>{comments.length > 0 ? comments.length : ''} Komentar</span>
+            </button>
+          </div>
 
           {/* Share Button (Salin Link) */}
           <div className="relative">
@@ -266,9 +273,9 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
 
         <div className="flex items-center space-x-3">
           {/* View Count Display */}
-          <div className="flex items-center gap-1 text-xs text-zinc-400 dark:text-zinc-500 font-medium select-none bg-zinc-50 dark:bg-zinc-850 px-2 py-1 rounded-md">
+          <div className="flex items-center gap-1 text-xs font-medium select-none dark:bg-zinc-850 px-2 py-1 rounded-md">
             <Eye size={13} />
-            <span>{post.view} Dilihat</span>
+            <span>{post.view}</span>
           </div>
 
           {/* Bookmark Button */}
