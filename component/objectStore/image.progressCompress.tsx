@@ -78,7 +78,7 @@ export default function ImageProgressCompress({
                 {/* Progress Bar */}
                 <div className="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300"
+                    className="h-full bg-linear-to-r from-indigo-500 to-purple-500 transition-all duration-300"
                     style={{ width: `${currentProgress}%` }}
                   />
                 </div>

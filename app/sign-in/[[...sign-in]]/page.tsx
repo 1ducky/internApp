@@ -6,6 +6,8 @@ import { useAuth, useSignIn } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
+export const dynamic = 'force-dynamic';
+
 export default function SignInPage() {
     const { signIn } = useSignIn()
     const { isSignedIn, isLoaded } = useAuth()

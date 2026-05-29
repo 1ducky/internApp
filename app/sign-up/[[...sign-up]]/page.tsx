@@ -9,6 +9,9 @@ import { EmailVerifyForm } from "@/component/auth/EmailVerifyForm"
 import RedirectInformation from "@/component/auth/ComplateRedirect"
 import { useRouter } from "next/navigation"
 
+export const dynamic = 'force-dynamic';
+
+
 enum SignUpPhase {
   form = 'form',
   verifications = 'verify',
