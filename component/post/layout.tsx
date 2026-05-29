@@ -65,7 +65,7 @@ export default function PostLayout({ children }: { children: React.ReactNode }) 
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         {/* Search Input Box */}
                         <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-md w-full">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white pointer-events-none" />
                             <input
                                 type="text"
                                 placeholder="Cari artikel berdasarkan judul..."
@@ -80,7 +80,7 @@ export default function PostLayout({ children }: { children: React.ReactNode }) 
                                         setSearchValue("");
                                         updateQueryParam("q", "");
                                     }}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-zinc-600 dark:text-zinc-505 dark:hover:text-zinc-350 transition-colors cursor-pointer"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-white dark:hover:text-white transition-colors cursor-pointer"
                                     title="Bersihkan pencarian"
                                 >
                                     <X className="h-3.5 w-3.5" />
@@ -88,7 +88,7 @@ export default function PostLayout({ children }: { children: React.ReactNode }) 
                             ) : (
                                 <button
                                     type="submit"
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-white uppercase tracking-wider"
                                     title="Tekan Enter untuk mencari"
                                 >
                                     Cari

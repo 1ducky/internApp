@@ -5,7 +5,7 @@ import {
   Heart,
   MessageSquare,
   Share2,
-  Bookmark,
+  // Bookmark,
   Eye,
   Calendar,
   Megaphone,
@@ -15,37 +15,15 @@ import {
   Check,
   MoreHorizontal
 } from 'lucide-react';
-import { PostType, PostStatus } from '@/generated/prisma/client';
+import { PostType } from '@/generated/prisma/client';
 import FeedCarousel from './feed.carousel';
 import FeedCommentSection from './feed.comment';
-
-export interface FeedPostProps {
-  id: string;
-  type: PostType;
-  status: PostStatus;
-  viewCount: number;
-  title: string;
-  slug: string;
-  description: string;
-  createdAt: Date | string;
-  author: {
-    id: string;
-    name: string | null;
-    imageUrl: string | null;
-    profile: {
-      userName: string | null;
-    } | null;
-  };
-  assets: {
-    id: string;
-    fileUrl: string;
-  }[];
-}
+import { FeedPostProps } from '@/services/feed/feed.dto';
 
 export default function FeedPost({ post }: { post: FeedPostProps }) {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  // const [isBookmarked, setIsBookmarked] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
@@ -99,8 +77,8 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
   const TypeIcon = typeConfig.icon;
 
   // Mendapatkan inisial untuk avatar placeholder
-  const getInitials = (name: string | null | undefined, username: string | null | undefined) => {
-    const text = name || username || 'Anonim';
+  const getInitials = (name: string | null) => {
+    const text = name || 'Anonim';
     return text.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
   };
 
@@ -143,7 +121,7 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
 
     const newComment = {
       id: Math.random().toString(36).substring(2, 9),
-      name: post.author.name || (post.author.profile?.userName ? `@${post.author.profile.userName}` : 'Anda'),
+      name: post.author.username ?? 'anda',
       text: commentText,
       time: 'Baru saja',
     };
@@ -168,34 +146,34 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
           <div className="relative group cursor-pointer">
             <div className="w-10 h-10 rounded-full bg-linear-to-tr from-indigo-500 via-purple-500 to-pink-500 p-[2px] transition-transform duration-300 group-hover:scale-105">
               <div className="w-full h-full bg-white dark:bg-zinc-950 rounded-full flex items-center justify-center p-[2px]">
-                {post.author.imageUrl ? (
+                {post.author.avatar ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={post.author.imageUrl}
-                    alt={post.author.name || 'Author'}
+                    src={post.author.avatar}
+                    alt={post.author.username || 'Author'}
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (
                   <div className="w-full h-full bg-linear-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-xs font-bold text-white uppercase tracking-wider">
-                    {getInitials(post.author.name, post.author.profile?.userName)}
+                    {getInitials(post.author.username)}
                   </div>
                 )}
               </div>
             </div>
             {/* Status Dot */}
-            <span className={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white dark:ring-zinc-900 ${post.status === 'PUBLISHED' ? 'bg-emerald-500' : post.status === 'DRAFT' ? 'bg-amber-500' : 'bg-zinc-400'
-              }`} />
+            {/* <span className={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white dark:ring-zinc-900 ${post.status === 'PUBLISHED' ? 'bg-emerald-500' : post.status === 'DRAFT' ? 'bg-amber-500' : 'bg-zinc-400'
+              }`} /> */}
           </div>
 
           {/* Author Details & Date */}
           <div>
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="font-semibold text-sm text-zinc-800 dark:text-zinc-200 hover:underline cursor-pointer">
-                {post.author.name || post.author.profile?.userName || 'Pengguna InternApp'}
+                {post.author.username || 'Pengguna InternApp'}
               </span>
-              {post.author.profile?.userName && (
+              {post.author.username && (
                 <span className="text-xs text-zinc-400 dark:text-zinc-500">
-                  @{post.author.profile.userName}
+                  @{post.author.username}
                 </span>
               )}
             </div>
@@ -255,7 +233,7 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
               }`}
           >
             <Heart size={19} fill={isLiked ? 'currentColor' : 'none'} className="transition-transform duration-200 active:scale-125" />
-            <span>{post.viewCount > 0 ? post.viewCount + likeCount : likeCount || ''} Suka</span>
+            <span>{post.view > 0 ? post.view + likeCount : likeCount || ''} Suka</span>
           </button>
 
           {/* Comment Toggle Button */}
@@ -290,11 +268,11 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
           {/* View Count Display */}
           <div className="flex items-center gap-1 text-xs text-zinc-400 dark:text-zinc-500 font-medium select-none bg-zinc-50 dark:bg-zinc-850 px-2 py-1 rounded-md">
             <Eye size={13} />
-            <span>{post.viewCount} Dilihat</span>
+            <span>{post.view} Dilihat</span>
           </div>
 
           {/* Bookmark Button */}
-          <button
+          {/* <button
             onClick={() => setIsBookmarked(!isBookmarked)}
             className={`p-1.5 rounded-full transition duration-150 focus:outline-none ${isBookmarked
               ? 'text-amber-500 scale-105'
@@ -303,7 +281,7 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
             aria-label="Simpan postingan"
           >
             <Bookmark size={19} fill={isBookmarked ? 'currentColor' : 'none'} />
-          </button>
+          </button> */}
         </div>
       </div>
 

@@ -40,6 +40,7 @@ export default function TestPage() {
             <div className="flex flex-col">
                 <ImageProgressCompress files={before} isCompressing={isCompressing} progress={progress} />
                 {after.map((file, i) => (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img key={i} src={URL.createObjectURL(file)} alt="after" />
                 ))}
             </div>

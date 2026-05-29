@@ -43,7 +43,7 @@ export const UserProfileForm = ({ action, email, profileData }: { action: (e: un
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-20">
                     <label className="text-sm font-medium text-gray-700 sm:w-48">Foto Profil</label>
                     <div className="flex flex-col items-center gap-4">
-                        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center shrink-0">
                             <span className="text-gray-400 text-2xl">👤</span>
                         </div>
                         <p className="text-sm text-gray-500">{email}</p>
@@ -81,7 +81,7 @@ export const UserProfileForm = ({ action, email, profileData }: { action: (e: un
                     <div className="w-full sm:flex-1">
                         <div className="flex border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
                             <input type="text" {...form.register("location")} placeholder="City, Country" className="flex-1 p-2.5 outline-none border-r border-gray-300 min-w-0" />
-                            <div className="flex items-center px-3 bg-white gap-2 cursor-pointer flex-shrink-0">
+                            <div className="flex items-center px-3 bg-white gap-2 cursor-pointer shrink-0">
                                 <MapPin size={16} className="text-gray-400" />
                             </div>
                         </div>

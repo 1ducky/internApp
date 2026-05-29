@@ -24,7 +24,6 @@ export default function FeedCarousel({ assets }: FeedCarouselProps) {
 
   return (
     <div className="relative w-full aspect-16/10 sm:aspect-video bg-zinc-950 flex items-center justify-center group overflow-hidden border-y border-zinc-100 dark:border-zinc-800">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <Image
         src={assets[activeAssetIndex].fileUrl}
         alt={`Slide ${activeAssetIndex + 1}`}

@@ -43,7 +43,7 @@ export function useImageCompressor(opts = {}) {
 
         setIsCompressing(false);
         return results;
-    }, []);
+    }, [options]);
 
     return { compress, progress, isCompressing };
 }

@@ -5,7 +5,6 @@ import CsrProfile from "./csrProfile";
 
 export default async function DashboardPage() {
     const clerkUser = await currentUser()
-    console.log(clerkUser)
     const clerkId = clerkUser?.publicMetadata?.id
     const profile = await profileRepository.getProfileByUserId(clerkId as string)
     if (!profile.success) {

@@ -67,7 +67,7 @@ export default function ImageProgressCompress({
                         Memproses
                       </span>
                     )}
-                    {progress[index] === 100  && !isProcessing && (
+                    {progress[index] === 100 && !isProcessing && (
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 rounded-full">
                         ✓ Selesai
                       </span>
@@ -86,7 +86,7 @@ export default function ImageProgressCompress({
                   <span className="text-xs text-zinc-500 dark:text-zinc-400">
                     {currentProgress}%
                   </span>
-                  
+
                 </div>
               </div>
 
@@ -100,6 +100,7 @@ export default function ImageProgressCompress({
                         Asli
                       </p>
                       <div className="w-full aspect-square bg-zinc-200 dark:bg-zinc-800 rounded-lg overflow-hidden flex items-center justify-center">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={URL.createObjectURL(item)}
                           alt={`Original ${item.name}`}
@@ -111,7 +112,7 @@ export default function ImageProgressCompress({
                       </p>
                     </div>
 
-                    
+
                   </div>
 
                   {/* File Info */}
