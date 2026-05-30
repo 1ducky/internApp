@@ -1,8 +1,8 @@
 'use client';
 
+import { CommentEntitty } from '@/services/comment/comment.dto';
 import Link from 'next/link';
-import { FormEvent } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 
 export interface FeedCommentItem {
   id: string;
@@ -12,29 +12,38 @@ export interface FeedCommentItem {
 }
 
 export interface FeedCommentSectionProps {
-  showCommentInput: boolean;
-  comments: FeedCommentItem[];
+  comments: CommentEntitty[];
   isSignedIn?: boolean
-  onAddComment: (content: string) => void;
+  onAddComment: (content: string) => Promise<{ success: boolean, message?: string }>
 }
 
 export default function FeedCommentSection({
-  showCommentInput,
   comments,
   isSignedIn = false,
   onAddComment,
 }: FeedCommentSectionProps) {
-  if (!showCommentInput) {
-    return null;
-  }
 
-  const { register, handleSubmit, watch, formState: { isSubmitting } } = useForm({
+  const { register, handleSubmit, control, formState, reset } = useForm({
     defaultValues: { comment: "" }
+  })
+
+  const handleSubmitForm = async (content: string) => {
+    const res = await onAddComment(content)
+    if (res.success) {
+      reset()
+    } else {
+      alert(res.message)
+    }
+  }
+  const commentValue = useWatch({
+    control,
+    name: "comment",
+    defaultValue: ""
   })
 
   return (
     <div className="p-4 bg-zinc-50 dark:bg-zinc-900/60 border-t border-zinc-150 dark:border-zinc-800/60">
-      <form onSubmit={handleSubmit((data) => onAddComment(data.comment))} className="flex gap-2 mb-3">
+      <form onSubmit={handleSubmit((data) => handleSubmitForm(data.comment))} className="flex gap-2 mb-3">
         {isSignedIn ? (
           <>
             <input
@@ -46,8 +55,8 @@ export default function FeedCommentSection({
             />
             <button
               type="submit"
-              disabled={!watch("comment").trim() || isSubmitting || !isSignedIn}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition duration-200 ${watch("comment").trim()
+              disabled={!commentValue.trim() || formState.isSubmitting || !isSignedIn}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition duration-200 ${commentValue.trim()
                 ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs'
                 : 'bg-zinc-200 dark:bg-zinc-850 text-zinc-400 dark:text-zinc-650 cursor-not-allowed'
                 }`}
@@ -64,14 +73,14 @@ export default function FeedCommentSection({
       </form>
 
       {comments.length > 0 ? (
-        <div className="space-y-3.5 mt-4 max-h-48 overflow-y-auto pr-1">
+        <div className="space-y-3.5 mt-4 max-h-48 overflow-y-auto pr-1 scrollbar-none">
           {comments.map((comment) => (
             <div key={comment.id} className="flex flex-col text-xs bg-white dark:bg-zinc-950 p-2.5 rounded-lg border border-zinc-150 dark:border-zinc-800/40 shadow-2xs">
               <div className="flex items-center justify-between mb-1">
-                <span className="font-semibold text-zinc-700 dark:text-zinc-300">{comment.name}</span>
-                <span className="text-[10px] text-zinc-400">{comment.time}</span>
+                <span className="font-semibold text-zinc-700 dark:text-zinc-300">{comment.author.name}</span>
+                <span className="text-[10px] text-zinc-400">{new Date(comment.date).toISOString()}</span>
               </div>
-              <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">{comment.text}</p>
+              <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">{comment.content}</p>
             </div>
           ))}
         </div>

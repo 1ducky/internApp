@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ['subtitle-backlands-thickness.ngrok-free.dev'],
   experimental: {
     authInterrupts: true,
   },

@@ -17,9 +17,9 @@ import {
 } from 'lucide-react';
 import { PostType } from '@/generated/prisma/client';
 import FeedCarousel from './feed.carousel';
-import FeedCommentSection from './feed.comment';
-import { FeedDetailProps, FeedPostProps } from '@/services/feed/feed.dto';
-import { useVisibilityHide } from '@/hooks/useVisibilityHide';
+// import FeedCommentSection from './feed.comment';
+import { FeedDetailProps } from '@/services/feed/feed.dto';
+// import { useVisibilityHide } from '@/hooks/useVisibilityHide';
 import Link from 'next/link';
 
 interface Viewer {
@@ -35,13 +35,11 @@ export default function FeedPost({ post, viewer, onZoom }: { post: FeedDetailPro
   // const [isBookmarked, setIsBookmarked] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
-  const [showCommentInput, setShowCommentInput] = useState(false);
-  const [comments, setComments] = useState<{ id: string; name: string; text: string; time: string }[]>([]);
   const commentRef = useRef<HTMLDivElement>(null);
 
-  useVisibilityHide(commentRef, () => {
-    setShowCommentInput(false)
-  })
+  // useVisibilityHide(commentRef, () => {
+  //   setShowCommentInput(false)
+  // })
   // Format tanggal Indonesia
   const formattedDate = new Date(post.createdAt).toLocaleDateString('id-ID', {
     day: 'numeric',
@@ -128,18 +126,18 @@ export default function FeedPost({ post, viewer, onZoom }: { post: FeedDetailPro
   };
 
   // Handler Submit Komentar
-  const handleAddComment = (content: string) => {
-    if (!content.trim()) return;
+  // const handleAddComment = (content: string) => {
+  //   if (!content.trim()) return;
 
-    const newComment = {
-      id: Math.random().toString(36).substring(2, 9),
-      name: post.author.username ?? 'anda',
-      text: content,
-      time: 'Baru saja',
-    };
+  //   const newComment = {
+  //     id: Math.random().toString(36).substring(2, 9),
+  //     name: post.author.username ?? 'anda',
+  //     text: content,
+  //     time: 'Baru saja',
+  //   };
 
-    setComments(prev => [newComment, ...prev]);
-  };
+  //   setComments(prev => [newComment, ...prev]);
+  // };
 
   // Deskripsi disingkat / dipotong jika terlalu panjang
   const shouldTruncate = post.description.length > 200;
@@ -250,13 +248,14 @@ export default function FeedPost({ post, viewer, onZoom }: { post: FeedDetailPro
 
           {/* Comment Toggle Button */}
           <div ref={commentRef}>
-            <button
-              onClick={() => setShowCommentInput(!showCommentInput)}
+            <Link
+              href={`/feed/${post.slug}`}
+              prefetch={false}
               className="flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition duration-200 focus:outline-none"
             >
               <MessageSquare size={19} />
-              <span>{comments.length > 0 ? comments.length : ''} Komentar</span>
-            </button>
+              <span> Komentar</span>
+            </Link>
           </div>
 
           {/* Share Button (Salin Link) */}
@@ -300,12 +299,6 @@ export default function FeedPost({ post, viewer, onZoom }: { post: FeedDetailPro
       </div>
 
       {/* 5. SEKSI KOMENTAR (AKSI & LIST KOMENTAR) */}
-      <FeedCommentSection
-        isSignedIn={viewer?.userId ? true : false}
-        showCommentInput={showCommentInput}
-        comments={comments}
-        onAddComment={handleAddComment}
-      />
 
     </article>
   );

@@ -31,7 +31,7 @@ async function submitProfile(id:string,data: ProfileInput){
         where:{userId:id},
         update: {
             birthDate:parseDate(data.birthDate),
-            userName:data.userName,
+            userName:data.userName ?? undefined,
             bio:data.bio,
             gender:data.gender,
             phoneNumber:data.phoneNumber,
@@ -40,7 +40,7 @@ async function submitProfile(id:string,data: ProfileInput){
         create: {
             userId:id,
             birthDate:parseDate(data.birthDate),
-            userName:data.userName,
+            userName:data.userName ?? '',
             bio:data.bio,
             gender:data.gender,
             phoneNumber:data.phoneNumber,

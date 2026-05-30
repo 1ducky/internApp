@@ -3,17 +3,85 @@ import FeedCarousel from "@/component/feed/feed.carousel";
 import FeedCommentSection from "@/component/feed/feed.comment";
 import { FeedHighLight } from "@/component/feed/feed.higlight";
 import { ClerkSession } from "@/services/clerk/clerk.session";
+import { CommentMetaProps } from "@/services/comment/comment.dto";
 import { FeedDetailProps } from "@/services/feed/feed.dto";
 import { renderFormattedDescription } from "@/utils/feed/ContentFormater";
-import { Check, Command, Eye, Heart, MessageSquare, Share2 } from "lucide-react";
-import { useState } from "react";
+import { InfiniteData, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { Check, Eye, Heart, MessageSquare, Share2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 
-export function FeedDetailCSR({ initialData, children, viewer }: { children: React.ReactNode, initialData: FeedDetailProps, viewer: ClerkSession }) {
+export function FeedDetailCSR({ initialData, viewer }: { children: React.ReactNode, initialData: FeedDetailProps, viewer: ClerkSession }) {
+    const queryClient = useQueryClient()
     const [activeImage, setActiveImage] = useState<string | undefined>(undefined)
     const [isLiked, setIsLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(0);
     const [showCopied, setShowCopied] = useState(false);
+    const observerRef = useRef<HTMLDivElement>(null)
+
+    const onAddComment = async (content: string) => {
+        const res = await fetch(`/api/comment/${initialData.id}`, { method: "POST", body: JSON.stringify({ content }) })
+        if (res.ok) {
+            const data = await res.json()
+            queryClient.setQueryData(
+                ['comment', initialData.id],
+                (oldData: InfiniteData<CommentMetaProps>) => {
+                    if (!oldData) return oldData
+
+                    return {
+                        ...oldData,
+                        pages: oldData.pages.map((page, index) => {
+                            if (index !== 0) return page // hanya update halaman pertama
+                            return {
+                                ...page,
+                                Comments: [data.comment, ...page.Comments]
+                            }
+                        })
+                    }
+                }
+            )
+            return { success: true }
+        } else {
+            return { success: false }
+        }
+    }
+
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useInfiniteQuery<CommentMetaProps>({
+        queryKey: ['comment', initialData.id],
+        queryFn: async ({ pageParam }) => {
+            const res = await fetch(`/api/comment/${initialData.id}?cursor=${pageParam}`)
+            const data = await res.json()
+            return data.comments as CommentMetaProps
+        },
+        initialPageParam: '',
+        getNextPageParam: (lastPage) => {
+            if (lastPage.Comments.length < 10) return undefined
+            return lastPage.NextCursor ?? undefined
+        },
+        staleTime: 5 * 60 * 1000,
+        gcTime: Infinity,
+        refetchOnWindowFocus: false
+    })
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+                    fetchNextPage()
+                }
+            },
+            { threshold: 0.1 }  // trigger saat 10% div terlihat
+        )
+
+        if (observerRef.current) observer.observe(observerRef.current)
+
+        return () => observer.disconnect()
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
     // Handler Salin Link
     const handleShare = async () => {
@@ -44,7 +112,7 @@ export function FeedDetailCSR({ initialData, children, viewer }: { children: Rea
         setIsLiked(!isLiked);
         setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
     };
-
+    const comment = data?.pages.flatMap((page) => page.Comments)
     return (
         <>
             {/* POST HEADER */}
@@ -152,7 +220,16 @@ export function FeedDetailCSR({ initialData, children, viewer }: { children: Rea
                     </div>
                 </div>
             </div>
-            <FeedCommentSection isSignedIn={viewer?.userId ? true : false} showCommentInput={true} comments={[]} onAddComment={(content: string) => console.log(content)} />
+            <FeedCommentSection isSignedIn={viewer?.userId ? true : false} comments={comment || []} onAddComment={onAddComment} />
+            {hasNextPage ? (
+                <div ref={observerRef} className="py-4 flex items-center justify-center">
+                    {isFetchingNextPage && <p className="text-sm text-zinc-500">Memuat...</p>}
+                </div>
+            ) : (
+                <div className="flex items-center justify-center py-4">
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400">Tidak ada komentar lagi</p>
+                </div>
+            )}
         </>
     )
 }

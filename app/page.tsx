@@ -2,10 +2,11 @@ import { Suspense } from "react"
 import FeedLayout from "@/component/feed/feed.layout"
 import FeedSidebar from "@/component/feed/feed.sidebar"
 import FeedLazyLoad from "@/component/feed/feed.lazyload"
-import { feedServices } from "@/services/feed/feed.service"
+// import { feedServices } from "@/services/feed/feed.service"
 import { FeedClient } from "@/component/feed/feed.client"
 import { FeedMetaProps } from "@/services/feed/feed.dto"
 import { Flame } from "lucide-react"
+import { feedServices } from "@/services/feed/feed.service"
 
 export const revalidate = 60;
 
@@ -23,9 +24,11 @@ export default async function Homepage() {
 }
 
 async function LazyPreview() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/feed`)
-  const data = await res.json() as any
-  const feed = data.feed as FeedMetaProps
+  // const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/feed`)
+  // const data = await res.json()
+  // const feed = data.feed as FeedMetaProps
+
+  const feed = await feedServices.getFeed()
 
 
 

@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Rss, Sparkles, Flame } from 'lucide-react';
+import { Rss, Sparkles } from 'lucide-react';
 
 interface FeedLayoutProps {
   children: ReactNode;

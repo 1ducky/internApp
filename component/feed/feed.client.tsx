@@ -37,7 +37,7 @@ export const FeedClient = ({ initialData }: { initialData: FeedMetaProps }) => {
         queryKey: ['feeds'],
         queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/feed?cursor=${pageParam}`)
-            const data = await res.json() as any
+            const data = await res.json()
             return data.feed as FeedMetaProps
         },
         initialPageParam: '',
