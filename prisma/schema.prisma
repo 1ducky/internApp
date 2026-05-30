@@ -97,6 +97,7 @@ model User {
   profile         UserProfile?
   post            Post[]
   assets          Files[]
+  comments        comment[]
   // jika user menjadi provider
   providerProfile ProviderProfile?
 
@@ -125,6 +126,24 @@ model UserProfile {
   updatedAt DateTime @updatedAt
 }
 
+model comment {
+  id String @id @default(cuid())
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  content String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([postId, createdAt(sort: Desc)])
+  @@index([authorId, createdAt(sort: Desc)])
+}
+
 model Post {
   id String @id @default(cuid())
 
@@ -139,9 +158,10 @@ model Post {
   // likeCount    Int @default(0)
 
   title       String
-  slug        String  @unique
-  description String  @db.Text
+  slug        String    @unique
+  description String    @db.Text
   assets      Files[]
+  comments    comment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

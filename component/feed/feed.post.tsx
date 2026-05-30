@@ -18,17 +18,24 @@ import {
 import { PostType } from '@/generated/prisma/client';
 import FeedCarousel from './feed.carousel';
 import FeedCommentSection from './feed.comment';
-import { FeedPostProps } from '@/services/feed/feed.dto';
+import { FeedDetailProps, FeedPostProps } from '@/services/feed/feed.dto';
 import { useVisibilityHide } from '@/hooks/useVisibilityHide';
+import Link from 'next/link';
 
-export default function FeedPost({ post }: { post: FeedPostProps }) {
+interface Viewer {
+  userClerkId: string | undefined,
+  userId: string | undefined,
+  email: string | undefined,
+  role: string | undefined
+}
+
+export default function FeedPost({ post, viewer, onZoom }: { post: FeedDetailProps, viewer?: Viewer, onZoom?: (val: string) => void }) {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   // const [isBookmarked, setIsBookmarked] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
-  const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState<{ id: string; name: string; text: string; time: string }[]>([]);
   const commentRef = useRef<HTMLDivElement>(null);
 
@@ -115,24 +122,23 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
 
   // Handler Like
   const handleLike = () => {
+    if (!viewer) return
     setIsLiked(!isLiked);
     setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
   };
 
   // Handler Submit Komentar
-  const handleAddComment = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!commentText.trim()) return;
+  const handleAddComment = (content: string) => {
+    if (!content.trim()) return;
 
     const newComment = {
       id: Math.random().toString(36).substring(2, 9),
       name: post.author.username ?? 'anda',
-      text: commentText,
+      text: content,
       time: 'Baru saja',
     };
 
     setComments(prev => [newComment, ...prev]);
-    setCommentText('');
   };
 
   // Deskripsi disingkat / dipotong jika terlalu panjang
@@ -205,9 +211,9 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
       {/* 2. AREA KONTEN UTAMA */}
       <div className="p-4 sm:p-5 pb-3">
         {/* Title */}
-        <h2 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100 leading-snug tracking-tight mb-2.5 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-150">
-          <a href={`/post/${post.slug}`}>{post.title}</a>
-        </h2>
+        <Link href={`/feed/${post.slug}`} prefetch={false} className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100 leading-snug tracking-tight mb-2.5 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-150">
+          {post.title}
+        </Link>
 
         {/* Description */}
         <div className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line mb-3">
@@ -224,7 +230,7 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
       </div>
 
       {/* 3. MULTIMEDIA ASSETS CAROUSEL (IF ANY) */}
-      {post.assets && post.assets.length > 0 && <FeedCarousel assets={post.assets} />}
+      {post.assets && post.assets.length > 0 && <FeedCarousel assets={post.assets} onZoom={onZoom} />}
 
       {/* 4. BAR INTERAKSI & METADATA */}
       <div className="p-3 px-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
@@ -232,6 +238,7 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
           {/* Like Button */}
           <button
             onClick={handleLike}
+            disabled={!viewer?.userId}
             className={`flex items-center gap-1.5 text-sm font-medium transition duration-200 focus:outline-none ${isLiked
               ? 'text-rose-500 scale-105 font-semibold'
               : 'text-zinc-500 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400'
@@ -294,10 +301,9 @@ export default function FeedPost({ post }: { post: FeedPostProps }) {
 
       {/* 5. SEKSI KOMENTAR (AKSI & LIST KOMENTAR) */}
       <FeedCommentSection
+        isSignedIn={viewer?.userId ? true : false}
         showCommentInput={showCommentInput}
-        commentText={commentText}
         comments={comments}
-        onCommentTextChange={(value) => setCommentText(value)}
         onAddComment={handleAddComment}
       />
 

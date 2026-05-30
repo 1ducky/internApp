@@ -1,6 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { FormEvent } from 'react';
+import { useForm } from 'react-hook-form';
 
 export interface FeedCommentItem {
   id: string;
@@ -11,43 +13,54 @@ export interface FeedCommentItem {
 
 export interface FeedCommentSectionProps {
   showCommentInput: boolean;
-  commentText: string;
   comments: FeedCommentItem[];
-  onCommentTextChange: (value: string) => void;
-  onAddComment: (e: FormEvent<HTMLFormElement>) => void;
+  isSignedIn?: boolean
+  onAddComment: (content: string) => void;
 }
 
 export default function FeedCommentSection({
   showCommentInput,
-  commentText,
   comments,
-  onCommentTextChange,
+  isSignedIn = false,
   onAddComment,
 }: FeedCommentSectionProps) {
   if (!showCommentInput) {
     return null;
   }
 
+  const { register, handleSubmit, watch, formState: { isSubmitting } } = useForm({
+    defaultValues: { comment: "" }
+  })
+
   return (
     <div className="p-4 bg-zinc-50 dark:bg-zinc-900/60 border-t border-zinc-150 dark:border-zinc-800/60">
-      <form onSubmit={onAddComment} className="flex gap-2 mb-3">
-        <input
-          type="text"
-          value={commentText}
-          onChange={(e) => onCommentTextChange(e.target.value)}
-          placeholder="Tulis tanggapan atau komentar..."
-          className="flex grow px-3 py-1.5 text-sm bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg text-zinc-800 dark:text-zinc-200 placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition"
-        />
-        <button
-          type="submit"
-          disabled={!commentText.trim()}
-          className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition duration-200 ${commentText.trim()
-            ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs'
-            : 'bg-zinc-200 dark:bg-zinc-850 text-zinc-400 dark:text-zinc-650 cursor-not-allowed'
-            }`}
-        >
-          Kirim
-        </button>
+      <form onSubmit={handleSubmit((data) => onAddComment(data.comment))} className="flex gap-2 mb-3">
+        {isSignedIn ? (
+          <>
+            <input
+              type="text"
+              {...register("comment")}
+              disabled={!isSignedIn}
+              placeholder="Tulis tanggapan atau komentar..."
+              className="flex grow px-3 py-1.5 text-sm bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg text-zinc-800 dark:text-zinc-200 placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition"
+            />
+            <button
+              type="submit"
+              disabled={!watch("comment").trim() || isSubmitting || !isSignedIn}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition duration-200 ${watch("comment").trim()
+                ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs'
+                : 'bg-zinc-200 dark:bg-zinc-850 text-zinc-400 dark:text-zinc-650 cursor-not-allowed'
+                }`}
+            >
+              Kirim
+            </button>
+          </>
+        ) : (
+          <>
+            <div className='flex grow justify-center items-center p-1.5 gap-2'><Link href={'/sign-in'} className='text-blue-600 font-semibold'>Login</Link> untuk memberikan komentar</div>
+          </>
+        )}
+
       </form>
 
       {comments.length > 0 ? (

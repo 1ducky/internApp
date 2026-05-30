@@ -9,9 +9,10 @@ export interface FeedCarouselProps {
     id: string;
     fileUrl: string;
   }[];
+  onZoom?: (val: string) => void
 }
 
-export default function FeedCarousel({ assets }: FeedCarouselProps) {
+export default function FeedCarousel({ assets, onZoom }: FeedCarouselProps) {
   const [activeAssetIndex, setActiveAssetIndex] = useState(0);
 
   const handleNextAsset = () => {
@@ -28,7 +29,9 @@ export default function FeedCarousel({ assets }: FeedCarouselProps) {
         src={assets[activeAssetIndex].fileUrl}
         alt={`Slide ${activeAssetIndex + 1}`}
         fill
+        sizes='1280px, 720px'
         className="w-full h-full object-cover transition-transform duration-500 hover:scale-[1.02]"
+        onClick={() => onZoom && onZoom(assets[activeAssetIndex].fileUrl)}
       />
 
       <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-black/10 pointer-events-none" />

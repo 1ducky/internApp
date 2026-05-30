@@ -4,7 +4,7 @@ import { Rss, Sparkles, Flame } from 'lucide-react';
 interface FeedLayoutProps {
   children: ReactNode;
   sidebar?: ReactNode;
-  title?: string;
+  title?: string | React.ReactNode;
   description?: string;
   headerRight?: ReactNode;
 }
@@ -57,7 +57,6 @@ export default function FeedLayout({
               <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs mb-2">
                 {title && (
                   <h2 className="text-xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 flex items-center gap-2">
-                    <Flame size={20} className="text-amber-500" />
                     {title}
                   </h2>
                 )}

@@ -1,5 +1,8 @@
 // 'use client'
 
+import { getAuthSessionClerk } from "@/services/clerk/clerk.session"
+import { commentService } from "@/services/comment/comment.service"
+
 // import { SubmitPostInput, submitPostSchema } from "@/services/post/post.schema";
 // import { zodResolver } from "@hookform/resolvers/zod";
 // import Link from "next/link";
@@ -150,7 +153,13 @@
 // };
 
 
-export default function testPage() {
+export default async function testPage() {
+    // const user = await getAuthSessionClerk()
+    // if (!user) return null
+
+    // const onAdd = async (content:string) =>{
+    //     await commentService.addComment(user.userId,content,"test","test")
+    // }
     return (
         <div>
             <h1>test</h1>
