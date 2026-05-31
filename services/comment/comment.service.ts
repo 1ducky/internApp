@@ -8,8 +8,7 @@ export const commentService = {
 
 async function addComment(userId:string,content:string,postId:string) {
     try{
-        const id = userId.slice(0,5)+postId.slice(0,5)+crypto.randomUUID()
-        const res = await commentRepository.addComment({authorId:userId,content:content,id,postId:postId})
+        const res = await commentRepository.addComment({authorId:userId,content:content,postId:postId})
         return toCommentDtoSinggle(res)
     }catch(err){
         console.log(err)

@@ -1,15 +1,18 @@
 import { getAuthSessionClerk } from "@/services/clerk/clerk.session";
 import { commentService } from "@/services/comment/comment.service";
-import { unstable_cache } from "next/cache";
+import { revalidateTag, unstable_cache } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
-const getCacheCommentFeed = unstable_cache(
-    async (postid: string, cursor?: string) => {
+const getCacheCommentFeed =(postid: string) => unstable_cache(
+    async (postid:string,cursor?: string) => {
         console.log('🔴 CACHE MISS - fetching from DB, cursor:', cursor)
         return await commentService.getCommentsByPostId(postid, cursor)
     },
     ['feed', 'comment'],
-    { revalidate: 5 * 60 * 60 }
+    { 
+        revalidate: 5 * 60 * 60, 
+        tags: [`feed-comment-${postid}`]
+    }
 )
 
 
@@ -31,6 +34,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ postid:
     if(!comment){
         return NextResponse.json({error:"Failed to add comment"},{status:500})
     }
+    revalidateTag(`feed-comment-${postid}`,'default')
     return NextResponse.json({comment},{status:200})
 }
 
@@ -40,7 +44,7 @@ export async function GET(req:NextRequest,{params} : {params: Promise<{postid:st
     if(!postid){
         return NextResponse.json({ error: "Feed not found" }, { status: 404 })
     }
-    const comments = await getCacheCommentFeed(postid,cursor)
+    const comments = await getCacheCommentFeed(postid)(postid,cursor)
     if(!comments){
         return NextResponse.json({error:"Failed to get comments"},{status:500})
     }

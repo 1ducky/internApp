@@ -9,11 +9,9 @@ async function addComment(payload: {
   postId: string;
   authorId: string;
   content: string;
-  id:string
 }) {
     const db = await prisma.comment.create({
         data:{
-            id: payload.id,
             postId: payload.postId,
             authorId: payload.authorId,
             content: payload.content,

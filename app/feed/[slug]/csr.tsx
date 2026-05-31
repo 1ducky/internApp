@@ -51,6 +51,7 @@ export function FeedDetailCSR({ initialData, viewer }: { children: React.ReactNo
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
+        isLoading,
     } = useInfiniteQuery<CommentMetaProps>({
         queryKey: ['comment', initialData.id],
         queryFn: async ({ pageParam }) => {
@@ -86,7 +87,7 @@ export function FeedDetailCSR({ initialData, viewer }: { children: React.ReactNo
     // Handler Salin Link
     const handleShare = async () => {
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
-        const shareUrl = `${origin}/post/${initialData.slug}`;
+        const shareUrl = `${origin}/feed/${initialData.slug}`;
 
         // Cek apakah device support Web Share API (mobile)
         if (navigator.share) {
@@ -220,16 +221,8 @@ export function FeedDetailCSR({ initialData, viewer }: { children: React.ReactNo
                     </div>
                 </div>
             </div>
-            <FeedCommentSection isSignedIn={viewer?.userId ? true : false} comments={comment || []} onAddComment={onAddComment} />
-            {hasNextPage ? (
-                <div ref={observerRef} className="py-4 flex items-center justify-center">
-                    {isFetchingNextPage && <p className="text-sm text-zinc-500">Memuat...</p>}
-                </div>
-            ) : (
-                <div className="flex items-center justify-center py-4">
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">Tidak ada komentar lagi</p>
-                </div>
-            )}
+            <FeedCommentSection hasNextPage={hasNextPage} isLoadMore={isFetchingNextPage} observerRef={observerRef} isSignedIn={viewer?.userId ? true : false} comments={comment || []} onAddComment={onAddComment} />
+
         </>
     )
 }

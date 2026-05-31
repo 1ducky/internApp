@@ -1,25 +1,26 @@
 'use client';
 
 import { CommentEntitty } from '@/services/comment/comment.dto';
+import { formattedDate } from '@/utils/dateFormateed';
 import Link from 'next/link';
 import { useForm, useWatch } from 'react-hook-form';
-
-export interface FeedCommentItem {
-  id: string;
-  name: string;
-  text: string;
-  time: string;
-}
 
 export interface FeedCommentSectionProps {
   comments: CommentEntitty[];
   isSignedIn?: boolean
+  // isLoading: boolean
+  hasNextPage: boolean
+  isLoadMore: boolean
+  observerRef?: React.RefObject<HTMLDivElement | null>
   onAddComment: (content: string) => Promise<{ success: boolean, message?: string }>
 }
 
 export default function FeedCommentSection({
   comments,
   isSignedIn = false,
+  hasNextPage,
+  isLoadMore,
+  observerRef,
   onAddComment,
 }: FeedCommentSectionProps) {
 
@@ -75,18 +76,49 @@ export default function FeedCommentSection({
       {comments.length > 0 ? (
         <div className="space-y-3.5 mt-4 max-h-48 overflow-y-auto pr-1 scrollbar-none">
           {comments.map((comment) => (
-            <div key={comment.id} className="flex flex-col text-xs bg-white dark:bg-zinc-950 p-2.5 rounded-lg border border-zinc-150 dark:border-zinc-800/40 shadow-2xs">
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-semibold text-zinc-700 dark:text-zinc-300">{comment.author.name}</span>
-                <span className="text-[10px] text-zinc-400">{new Date(comment.date).toISOString()}</span>
+            <div key={comment.id} className="flex gap-3 text-xs bg-white dark:bg-zinc-950 p-2.5 rounded-lg border border-zinc-150 dark:border-zinc-800/40 shadow-2xs">
+              <div className="shrink-0">
+                {comment.author.avatar ? (
+                  <img
+                    src={comment.author.avatar}
+                    alt={comment.author.name || 'User'}
+                    className="w-8 h-8 rounded-full object-cover border border-zinc-200 dark:border-zinc-800"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs border border-indigo-200/50 dark:border-indigo-900/30">
+                    {(comment.author.name || 'U').charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
-              <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">{comment.content}</p>
+              <div className="grow min-w-0">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-semibold text-zinc-700 dark:text-zinc-300 truncate">
+                    {comment.author.name || 'Anonim'}
+                  </span>
+                  <span className="text-[10px] text-zinc-400 ml-2 shrink-0">
+                    {formattedDate(comment.date)}
+                  </span>
+                </div>
+                <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed wrap-break-words">{comment.content}</p>
+              </div>
             </div>
           ))}
+
+          {hasNextPage ? (
+            <div ref={observerRef} className="py-4 flex items-center justify-center">
+              {isLoadMore && <p className="text-sm text-zinc-500">Memuat...</p>}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center py-4">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">Tidak ada komentar lagi</p>
+            </div>
+          )}
+
         </div>
-      ) : (
-        <p className="text-xs text-zinc-400 dark:text-zinc-500 text-center py-2 italic">Belum ada komentar. Jadilah yang pertama memberikan tanggapan!</p>
-      )}
+      ) : null}
+
+
+
     </div>
   );
 }

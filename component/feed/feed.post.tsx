@@ -21,6 +21,7 @@ import FeedCarousel from './feed.carousel';
 import { FeedDetailProps } from '@/services/feed/feed.dto';
 // import { useVisibilityHide } from '@/hooks/useVisibilityHide';
 import Link from 'next/link';
+import { formattedDate } from '@/utils/dateFormateed';
 
 interface Viewer {
   userClerkId: string | undefined,
@@ -41,11 +42,7 @@ export default function FeedPost({ post, viewer, onZoom }: { post: FeedDetailPro
   //   setShowCommentInput(false)
   // })
   // Format tanggal Indonesia
-  const formattedDate = new Date(post.createdAt).toLocaleDateString('id-ID', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
+
 
   // Helper untuk konfigurasi Type Badge
   const getTypeConfig = (type: PostType) => {
@@ -95,7 +92,7 @@ export default function FeedPost({ post, viewer, onZoom }: { post: FeedDetailPro
   // Handler Salin Link
   const handleShare = async () => {
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    const shareUrl = `${origin}/post/${post.slug}`;
+    const shareUrl = `${origin}/feed/${post.slug}`;
 
     // Cek apakah device support Web Share API (mobile)
     if (navigator.share) {
@@ -106,11 +103,9 @@ export default function FeedPost({ post, viewer, onZoom }: { post: FeedDetailPro
           url: shareUrl,
         });
       } catch (error) {
-        // User cancel share / error
         console.log('Share cancelled', error);
       }
     } else {
-      // Fallback: copy to clipboard (desktop / browser tidak support)
       navigator.clipboard.writeText(shareUrl).then(() => {
         setShowCopied(true);
         setTimeout(() => setShowCopied(false), 2000);
@@ -188,7 +183,7 @@ export default function FeedPost({ post, viewer, onZoom }: { post: FeedDetailPro
             </div>
             <div className="flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
               <Calendar size={11} className="inline" />
-              <span>{formattedDate}</span>
+              <span>{formattedDate(post.createdAt)}</span>
             </div>
           </div>
         </div>
