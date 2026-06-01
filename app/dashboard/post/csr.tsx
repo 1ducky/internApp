@@ -1,9 +1,9 @@
 'use client'
 import { FeedMetaProps } from "@/services/feed/feed.dto"
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
+import { InfiniteData, useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useRef, useState } from "react"
 import FeedPost from "@/component/feed/feed.post"
-import { useUser } from "@clerk/nextjs"
+// import { useUser } from "@clerk/nextjs"
 import { FeedHighLight } from "@/component/feed/feed.higlight"
 import { ClerkSession } from "@/services/clerk/clerk.session"
 import { useConfirm } from "@/provider/comfirm-provider"
@@ -42,13 +42,13 @@ export const FeedManagement = ({ viewer }: { viewer: ClerkSession }) => {
             if (res.status === 200) {
                 // Berhasil dihapus, lakukan sesuatu seperti refresh data atau tampilkan notifikasi
                 console.log('Post deleted successfully')
-                queryClient.setQueryData(['feed', viewer.userId], (oldData: any) => {
+                queryClient.setQueryData(['feed', viewer.userId], (oldData: InfiniteData<FeedMetaProps>) => {
                     if (!oldData) return oldData;
                     return {
                         ...oldData,
-                        pages: oldData.pages.map((page: any) => ({
+                        pages: oldData.pages.map((page) => ({
                             ...page,
-                            Feeds: page.Feeds.filter((item: any) => item.id !== id)
+                            Feeds: page.Feeds.filter((item) => item.id !== id)
                         }))
                     }
                 })

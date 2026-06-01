@@ -1,8 +1,8 @@
-import { postService } from "@/services/post/post.service"
-import { forbidden, unauthorized } from "next/navigation"
-import { PostPageClient } from "./postClient"
+// import { postService } from "@/services/post/post.service"
+// import { forbidden, unauthorized } from "next/navigation"
+// import { PostPageClient } from "./postClient"
 import { authService } from "@/services/auth/auth.service"
-import { hasPermission } from "@/services/clerk/clerk.service"
+// import { hasPermission } from "@/services/clerk/clerk.service"
 import { FeedManagement } from "./csr"
 
 
