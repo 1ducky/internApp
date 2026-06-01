@@ -1,7 +1,26 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  allowedDevOrigins: ['subtitle-backlands-thickness.ngrok-free.dev'],
+  experimental: {
+    authInterrupts: true,
+  },
+  images:{
+    remotePatterns:[
+      {
+        protocol:'https',
+        hostname:'**.ufs.sh',
+        port:'',
+        pathname:'/f/**'
+      },
+      {
+        protocol:'https',
+        hostname:'img.clerk.com',
+        port:'',
+        pathname:'/**'
+      }
+    ]
+  }
 };
 
 export default nextConfig;

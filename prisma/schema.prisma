@@ -41,54 +41,185 @@ enum ApplicationStatus {
   EXPIRED
 }
 
+enum Gender {
+  GIRL
+  BOY
+}
+
+enum Grade {
+  X
+  XI
+  XII
+  ALUMNI
+}
+
+enum PostType {
+  ANNOUNCEMENT
+  EVENT
+  DISCUSSION
+  NEWS
+}
+
+enum FileStatus {
+  ACTIVE
+  TEMP
+  ORPHAN
+  DELETED
+}
+
+enum FileType {
+  IMAGE
+  DOCUMENT
+  OTHER
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 model User {
-  id              String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  clerkId         String   @unique
-  email           String   @unique
+  clerkId  String  @unique
+  email    String  @unique
+  name     String?
+  imageUrl String?
 
-  role            Role     @default(USER)
+  role Role @default(USER)
 
-  tokenVersion    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  applications Application[]
 
-  applications    Application[]
-
+  profile         UserProfile?
+  post            Post[]
+  assets          Files[]
+  comments        comment[]
   // jika user menjadi provider
   providerProfile ProviderProfile?
 
   @@index([role])
 }
 
+model UserProfile {
+  id String @id @default(cuid())
+
+  userId   String  @unique
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userName String  @unique
+  bio      String?
+
+  avatarUrl String?
+
+  phoneNumber String?
+
+  birthDate DateTime?
+
+  gender Gender?
+
+  location String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model comment {
+  id String @id @default(cuid())
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  content String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([postId, createdAt(sort: Desc)])
+  @@index([authorId, createdAt(sort: Desc)])
+}
+
+model Post {
+  id String @id @default(cuid())
+
+  authorId String
+  author   User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  type     PostType
+  status   PostStatus
+
+  viewCount Int @default(0)
+  // advanced feature
+  // commentCount Int @default(0)
+  // likeCount    Int @default(0)
+
+  title       String
+  slug        String    @unique
+  description String    @db.Text
+  assets      Files[]
+  comments    comment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([status, createdAt(sort: Desc)])
+}
+
+model Files {
+  id       String  @id @default(cuid())
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  postId String?
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: SetNull)
+
+  fileName   String
+  fileKey    String     @unique
+  fileSize   Int
+  fileType   FileType
+  fileUrl    String
+  fileStatus FileStatus @default(TEMP) // default to TEMP || ACTIVE || ORPHAN (trigern cron job) || DELETED (soft delete)
+  mimeType   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([postId, fileStatus, fileType])
+  @@index([fileStatus, createdAt]) //cronjob
+}
+
 model ProviderProfile {
-  id                String          @id @default(cuid())
+  id String @id @default(cuid())
 
-  userId            String          @unique
+  userId String @unique
 
-  companyName       String
-  companySlug       String          @unique
+  companyName String
+  companySlug String @unique
 
-  description       String?         @db.Text
+  description String? @db.Text
 
-  websiteUrl        String?
-  logoUrl           String?
+  websiteUrl String?
+  logoUrl    String?
 
-  phoneNumber       String?
-  address           String?
+  phoneNumber String?
+  address     String?
 
-  verifiedAt        DateTime?
-  suspendedAt       DateTime?
+  verifiedAt  DateTime?
+  suspendedAt DateTime?
 
-  status            ProviderStatus  @default(PENDING)
+  status ProviderStatus @default(PENDING)
 
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  opportunities     Opportunity[]
+  opportunities Opportunity[]
 
   @@index([status])
   @@index([companySlug])
@@ -96,28 +227,28 @@ model ProviderProfile {
 }
 
 model Opportunity {
-  id                String            @id @default(cuid())
+  id String @id @default(cuid())
 
-  providerId        String
+  providerId String
 
-  slug              String            @unique
+  slug String @unique
 
-  title             String
-  description       String            @db.Text
+  title       String
+  description String @db.Text
 
-  quota             Int
-  acceptedCount     Int               @default(0)
+  quota         Int
+  acceptedCount Int @default(0)
 
-  status            OpportunityStatus @default(DRAFT)
+  status OpportunityStatus @default(DRAFT)
 
-  expiresAt         DateTime?
+  expiresAt DateTime?
 
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  provider          ProviderProfile   @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  provider ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
 
-  applications      Application[]
+  applications Application[]
 
   @@index([providerId])
   @@index([status])
@@ -126,56 +257,54 @@ model Opportunity {
 }
 
 model Application {
-  id                String            @id @default(cuid())
+  id String @id @default(cuid())
 
-  userId            String
-  opportunityId     String
+  userId        String
+  opportunityId String
 
-  status            ApplicationStatus @default(PENDING)
+  status ApplicationStatus @default(PENDING)
 
-  appliedAt         DateTime          @default(now())
+  appliedAt DateTime @default(now())
 
-  reviewedAt        DateTime?
-  acceptedAt        DateTime?
+  reviewedAt DateTime?
+  acceptedAt DateTime?
 
-  canceledAt        DateTime?
-  expiredAt         DateTime?
+  canceledAt DateTime?
+  expiredAt  DateTime?
 
-  note              String?           @db.Text
+  note String? @db.Text
 
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  opportunity       Opportunity       @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
 
-  auditLogs         ApplicationAudit[]
+  auditLogs ApplicationAudit[]
 
   @@index([userId, status])
   @@index([opportunityId, status])
-
   @@index([status, createdAt])
-
   @@index([expiredAt])
 }
 
 model ApplicationAudit {
-  id                String             @id @default(cuid())
+  id String @id @default(cuid())
 
-  applicationId     String
+  applicationId String
 
-  actorId           String?
-  actorRole         Role?
+  actorId   String?
+  actorRole Role?
 
-  fromStatus        ApplicationStatus?
-  toStatus          ApplicationStatus
+  fromStatus ApplicationStatus?
+  toStatus   ApplicationStatus
 
-  reason            String?            @db.Text
+  reason String? @db.Text
 
-  createdAt         DateTime           @default(now())
+  createdAt DateTime @default(now())
 
-  application       Application        @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   @@index([applicationId])
   @@index([actorId])

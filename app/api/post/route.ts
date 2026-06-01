@@ -1,0 +1,15 @@
+import { logger } from "@/infrastructure/lib/logger";
+import { authService } from "@/services/auth/auth.service";
+import { postService } from "@/services/post/post.service";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function POST(req:NextRequest){
+    const user = await authService.getSession()
+    logger.info("Clerk user metadata received", 'Post Route POST')
+    const body = await req.json()
+    const res = await postService.submitPost(user.userId,body)
+    if(!res.success){
+        return NextResponse.json({message:res.message,code:res.status},{status:res.status})
+    }
+    return NextResponse.json({message:"Submited",code:200}, {status:200})
+}
