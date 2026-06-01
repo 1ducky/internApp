@@ -36,7 +36,7 @@ export interface FeedDetailProps {
     username: string | null;
     avatar: string | null;
   };
-  assets: {
+  assets?: {
     id: string;
     fileUrl: string;
   }[];

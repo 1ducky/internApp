@@ -2,6 +2,7 @@
 
 import { CommentEntitty } from '@/services/comment/comment.dto';
 import { formattedDate } from '@/utils/dateFormateed';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useForm, useWatch } from 'react-hook-form';
 
@@ -79,11 +80,15 @@ export default function FeedCommentSection({
             <div key={comment.id} className="flex gap-3 text-xs bg-white dark:bg-zinc-950 p-2.5 rounded-lg border border-zinc-150 dark:border-zinc-800/40 shadow-2xs">
               <div className="shrink-0">
                 {comment.author.avatar ? (
-                  <img
-                    src={comment.author.avatar}
-                    alt={comment.author.name || 'User'}
-                    className="w-8 h-8 rounded-full object-cover border border-zinc-200 dark:border-zinc-800"
-                  />
+                  <div className="relative overflow-hidden w-8 h-8 rounded-full">
+                    <Image
+                      src={comment.author.avatar}
+                      alt={comment.author.name || 'User'}
+                      fill
+                      sizes="32px"
+                      className="rounded-full object-cover"
+                    />
+                  </div>
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs border border-indigo-200/50 dark:border-indigo-900/30">
                     {(comment.author.name || 'U').charAt(0).toUpperCase()}

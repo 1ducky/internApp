@@ -25,15 +25,18 @@ export default function FeedCarousel({ assets, onZoom }: FeedCarouselProps) {
 
   return (
     <div className="relative w-full aspect-16/10 sm:aspect-video bg-zinc-950 flex items-center justify-center group overflow-hidden border-y border-zinc-100 dark:border-zinc-800">
-      <Image
-        src={assets[activeAssetIndex].fileUrl}
-        alt={`Slide ${activeAssetIndex + 1}`}
-        fill
-        sizes='1280px, 720px'
-        priority
-        className="w-full h-full object-cover transition-transform duration-500 hover:scale-[1.02]"
-        onClick={() => onZoom && onZoom(assets[activeAssetIndex].fileUrl)}
-      />
+      {assets[activeAssetIndex]?.fileUrl && (
+        <Image
+          src={assets[activeAssetIndex].fileUrl}
+          alt={`Slide ${activeAssetIndex + 1}`}
+          fill
+          sizes='1280px, 720px'
+          priority
+          className="w-full h-full object-cover transition-transform duration-500 hover:scale-[1.02]"
+          onClick={() => onZoom && onZoom(assets[activeAssetIndex].fileUrl)}
+        />
+      )
+      }
 
       <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-black/10 pointer-events-none" />
 

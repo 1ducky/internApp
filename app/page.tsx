@@ -4,7 +4,6 @@ import FeedSidebar from "@/component/feed/feed.sidebar"
 import FeedLazyLoad from "@/component/feed/feed.lazyload"
 // import { feedServices } from "@/services/feed/feed.service"
 import { FeedClient } from "@/component/feed/feed.client"
-import { FeedMetaProps } from "@/services/feed/feed.dto"
 import { Flame } from "lucide-react"
 import { feedServices } from "@/services/feed/feed.service"
 

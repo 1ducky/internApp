@@ -8,6 +8,7 @@ import { FeedDetailProps } from "@/services/feed/feed.dto";
 import { renderFormattedDescription } from "@/utils/feed/ContentFormater";
 import { InfiniteData, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, Eye, Heart, MessageSquare, Share2 } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 
@@ -51,7 +52,6 @@ export function FeedDetailCSR({ initialData, viewer }: { children: React.ReactNo
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
-        isLoading,
     } = useInfiniteQuery<CommentMetaProps>({
         queryKey: ['comment', initialData.id],
         queryFn: async ({ pageParam }) => {
@@ -124,13 +124,14 @@ export function FeedDetailCSR({ initialData, viewer }: { children: React.ReactNo
                         {/* Author Avatar with Animated border */}
                         <div className="relative group cursor-pointer">
                             <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-indigo-500 via-purple-500 to-pink-500 p-[2.5px] transition-transform duration-300 group-hover:rotate-6">
-                                <div className="w-full h-full bg-white dark:bg-zinc-950 rounded-2xl flex items-center justify-center p-[2.5px] overflow-hidden">
+                                <div className="w-full h-full bg-white dark:bg-zinc-950 rounded-2xl flex items-center justify-center p-[2.5px] overflow-hidden relative">
                                     {initialData.author.avatar ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img
+                                        <Image
                                             src={initialData.author.avatar}
                                             alt={initialData.author.username || 'Author'}
-                                            className="w-full h-full rounded-xl object-cover"
+                                            fill
+                                            sizes="48px"
+                                            className="rounded-xl object-cover"
                                         />
                                     ) : (
                                         <div className="w-full h-full bg-linear-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-xs font-bold text-white uppercase tracking-wider">
@@ -168,7 +169,7 @@ export function FeedDetailCSR({ initialData, viewer }: { children: React.ReactNo
             <div className="text-zinc-850 dark:text-zinc-200">
                 {renderFormattedDescription(initialData.description)}
             </div>
-            <FeedCarousel assets={initialData.assets} onZoom={setActiveImage} />
+            <FeedCarousel assets={initialData.assets ?? []} onZoom={setActiveImage} />
             {activeImage && <FeedHighLight onCloseAction={setActiveImage} src={activeImage} />}
 
             {/* 4. BAR INTERAKSI & METADATA */}
