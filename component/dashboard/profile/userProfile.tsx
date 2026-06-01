@@ -4,6 +4,7 @@ import { ProfileInput, ProfileSchema } from '@/services/profile/profile.schema';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Info, MapPin } from 'lucide-react';
+import Image from 'next/image';
 import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -69,7 +70,7 @@ export const UserProfileForm = ({ action, email, profileData }: { action: (e: un
                         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center shrink-0 relative" onClick={handleUploadClick}>
                             <input type="file" name="image" id="image" ref={fileInputRef} className="hidden w-0 h-0" accept='image/*' onChange={handleImageChange} />
                             {user?.imageUrl ? (
-                                <img src={user.imageUrl} alt="Profile" className="w-full h-full rounded-full object-cover" />
+                                <Image src={user.imageUrl} fill sizes='80px' alt="Profile" className="rounded-full object-cover" />
                             ) : (
                                 <span className="text-gray-400 text-2xl">👤</span>
                             )}
