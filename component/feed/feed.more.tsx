@@ -2,10 +2,15 @@
 
 import { MoreHorizontal } from 'lucide-react';
 import { useState, useRef, useEffect, ReactNode } from 'react';
+import { useVisibilityHide } from '@/hooks/useVisibilityHide';
 
 export default function FeedMore({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  useVisibilityHide(menuRef, () => {
+    setIsOpen(false);
+  });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -27,7 +32,7 @@ export default function FeedMore({ children }: { children: ReactNode }) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 min-w-[12rem] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg py-1.5 z-50 overflow-hidden">
+        <div className="absolute right-0 mt-2 min-w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg py-1.5 z-50 overflow-hidden">
           <div className="flex flex-col">
             {children}
           </div>
