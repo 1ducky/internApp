@@ -249,6 +249,9 @@ async function getPostById(id: string) {
 
 async function GetAllUserPost(userId: string) {
   const db = await prisma.post.findMany({
+    orderBy:{
+      updatedAt:'desc'
+    },
     where: {
       authorId: userId,
     },

@@ -1,18 +1,41 @@
 'use client'
 
 import { ProfileInput, ProfileSchema } from '@/services/profile/profile.schema';
+import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Info, MapPin } from 'lucide-react';
+import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 
 
 export const UserProfileForm = ({ action, email, profileData }: { action: (e: unknown) => void, email: string, profileData: ProfileInput | null }) => {
+    const { user } = useUser()
     function formatNumber(num: string) {
 
         const sanitized = num.replace(/\D/g, '');
         return sanitized.match(/.{1,4}/g)?.join('-') ?? '';
     }
 
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const handleUploadClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !user) {
+            e.target.value = '';
+            return;
+        };
+
+        try {
+            await user.setProfileImage({ file });
+            await user.reload();
+        } catch (error) {
+            console.error("Gagal upload gambar:", error);
+        }
+    };
     const form = useForm<ProfileInput>({
         resolver: zodResolver(ProfileSchema),
         defaultValues: {
@@ -31,7 +54,7 @@ export const UserProfileForm = ({ action, email, profileData }: { action: (e: un
     })
 
     return (
-        <div className="max-w-7xl h-screen mx-auto p-4 sm:p-8 bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="max-w-7xl mx-auto p-4 md:mb-5 sm:p-8 bg-white rounded-xl shadow-sm border border-gray-100">
             {/* Header */}
             <div className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900">Profil</h2>
@@ -43,8 +66,13 @@ export const UserProfileForm = ({ action, email, profileData }: { action: (e: un
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-20">
                     <label className="text-sm font-medium text-gray-700 sm:w-48">Foto Profil</label>
                     <div className="flex flex-col items-center gap-4">
-                        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center shrink-0">
-                            <span className="text-gray-400 text-2xl">👤</span>
+                        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center shrink-0 relative" onClick={handleUploadClick}>
+                            <input type="file" name="image" id="image" ref={fileInputRef} className="hidden w-0 h-0" accept='image/*' onChange={handleImageChange} />
+                            {user?.imageUrl ? (
+                                <img src={user.imageUrl} alt="Profile" className="w-full h-full rounded-full object-cover" />
+                            ) : (
+                                <span className="text-gray-400 text-2xl">👤</span>
+                            )}
                         </div>
                         <p className="text-sm text-gray-500">{email}</p>
                     </div>

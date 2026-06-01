@@ -12,11 +12,11 @@ import {
   Trophy,
   MessageCircle,
   Newspaper,
-  Check,
-  MoreHorizontal
+  Check
 } from 'lucide-react';
 import { PostType } from '@/generated/prisma/client';
 import FeedCarousel from './feed.carousel';
+import FeedMore from './feed.more';
 // import FeedCommentSection from './feed.comment';
 import { FeedDetailProps } from '@/services/feed/feed.dto';
 // import { useVisibilityHide } from '@/hooks/useVisibilityHide';
@@ -195,9 +195,11 @@ export default function FeedPost({ post, viewer, onZoom }: { post: FeedDetailPro
             <TypeIcon size={12} />
             {typeConfig.label}
           </span>
-          <button className="p-1.5 text-zinc-400 dark:text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 rounded-full hover:bg-zinc-50 dark:hover:bg-zinc-850 transition duration-150">
-            <MoreHorizontal size={18} />
-          </button>
+          <FeedMore>
+            <button className="w-full text-left px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-150">
+              Laporkan Postingan
+            </button>
+          </FeedMore>
         </div>
       </div>
 
