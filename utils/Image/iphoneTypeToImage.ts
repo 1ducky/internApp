@@ -1,6 +1,8 @@
-import heic2any from 'heic2any';
+'use client'
+
 
 export const convertIfHeic = async (file: File): Promise<File> => {
+    const heic2any = (await import('heic2any')).default
 
     // cek apakah file type dari iphone
     const ext = file.name.split('.').pop()?.toLowerCase();
