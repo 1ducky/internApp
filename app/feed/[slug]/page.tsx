@@ -8,6 +8,7 @@ import FeedSidebar from "@/component/feed/feed.sidebar"
 import FeedLazyLoad from "@/component/feed/feed.lazyload"
 import { BookOpen } from "lucide-react"
 import { FeedDetailCSR } from "./csr"
+import { feedServices } from "@/services/feed/feed.service"
 
 export default async function FeedDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params
@@ -27,12 +28,10 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ slu
 
 
 async function LazyPreview({ slug }: { slug: string }) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/feed/${slug}`)
-    const data = await res.json()
+    const res = await feedServices.getDetailFeed(slug)
     const user = await getAuthSessionClerk()
-    const feed = data?.feed as FeedDetailProps
-    if (!feed) return notFound()
-    return <FeedDetailCSR initialData={feed} viewer={user}>
+    if (!res) return notFound()
+    return <FeedDetailCSR initialData={res} viewer={user}>
         <></>
     </FeedDetailCSR>
 }

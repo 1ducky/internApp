@@ -1,5 +1,3 @@
-
-
 export const convertIfHeic = async (file: File): Promise<File> => {
     const heic2any = (await import('heic2any')).default;
 
