@@ -30,7 +30,7 @@ interface Viewer {
   role: string | undefined
 }
 
-export default function FeedPost({ post, viewer, onZoom }: { post: FeedDetailProps, viewer?: Viewer, onZoom?: (val: string) => void }) {
+export default function FeedPost({ post, viewer, onZoom, option }: { post: FeedDetailProps, viewer?: Viewer, onZoom?: (val: string) => void, option?: React.ReactNode }) {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   // const [isBookmarked, setIsBookmarked] = useState(false);
@@ -195,11 +195,11 @@ export default function FeedPost({ post, viewer, onZoom }: { post: FeedDetailPro
             <TypeIcon size={12} />
             {typeConfig.label}
           </span>
-          <FeedMore>
-            <button className="w-full text-left px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-150">
-              Laporkan Postingan
-            </button>
-          </FeedMore>
+          {option && (
+            <FeedMore>
+              {option}
+            </FeedMore>
+          )}
         </div>
       </div>
 

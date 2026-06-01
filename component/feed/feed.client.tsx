@@ -73,7 +73,10 @@ export const FeedClient = ({ initialData }: { initialData: FeedMetaProps }) => {
     return (
         <>
             {feeds?.map((feed) => (
-                <FeedPost key={feed.id} post={feed} viewer={viewer} onZoom={onZoom} />
+                <FeedPost key={feed.id} post={feed} viewer={viewer} onZoom={onZoom} option={
+                    <button className="w-full text-left px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-150">
+                        Laporkan Postingan
+                    </button>} />
             ))}
             {hasNextPage ? (
                 <div ref={observerRef} className="py-4 flex items-center justify-center">
