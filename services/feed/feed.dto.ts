@@ -12,7 +12,6 @@ export interface FeedPostProps {
   slug: string;
   description: string;
   createdAt: Date | string;
-  nextCursor:string
   author: {
     id: string;
     username: string | null;
@@ -59,7 +58,6 @@ export const toFeedDto = (rawFeed: RawFeedPost) : FeedMetaProps => {
       slug:item.slug,
       description:item.description,
       createdAt:item.createdAt,
-      nextCursor:item.id,
       author:{
         id:item.author.id,
         username:item.author.profile?.userName ?? null,

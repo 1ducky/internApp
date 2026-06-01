@@ -1,6 +1,6 @@
 import { AlertTriangle } from "lucide-react";
 
-export function WarningBox({ isOpen, onClose, onConfirm } : { isOpen: boolean, onClose: () => void, onConfirm: () => void }) {
+export function WarningBox({ isOpen, onClose, onConfirm, title, description, consequences }: { isOpen: boolean, onClose: () => void, onConfirm: () => void, title?: string, description?: string, consequences?: string[] }) {
 
   if (!isOpen) return null;
 
@@ -11,7 +11,11 @@ export function WarningBox({ isOpen, onClose, onConfirm } : { isOpen: boolean, o
         <div className="dialog-header">
           <AlertTriangle />
           <div>
-            <p>Aksi berbahaya — tidak dapat dibatalkan</p>
+            <h3 className="font-bold">{title}</h3>
+            <p>{description}</p>
+            {consequences?.map((consequence, i) => {
+              return <p key={i} className="text-sm text-red-600 dark:text-red-400">-{consequence}</p>
+            })}
           </div>
         </div>
 

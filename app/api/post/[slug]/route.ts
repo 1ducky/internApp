@@ -1,6 +1,7 @@
 import { logger } from "@/infrastructure/lib/logger"
 import { authService } from "@/services/auth/auth.service"
 import { postService } from "@/services/post/post.service"
+import { revalidateTag } from "next/cache"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
@@ -24,5 +25,6 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ s
     if(!res.success){
         return NextResponse.json({message:res.message,code:res.status},{status:res.status})
     }
+    revalidateTag(`feed-${user.userId}`,'default')
     return NextResponse.json({message:"Deleted",code:200}, {status:200})
 }

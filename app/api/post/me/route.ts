@@ -1,20 +1,26 @@
-import { logger } from "@/infrastructure/lib/logger";
 import { authService } from "@/services/auth/auth.service";
-import { postService } from "@/services/post/post.service";
 import { NextResponse } from "next/server";
 
-export async function GET(){
+import { feedServices } from "@/services/feed/feed.service";
+import { unstable_cache } from "next/cache";
+import { NextRequest} from "next/server";
+
+const getCacheFeed = (userId:string) => unstable_cache(
+    async (cursor?:string) => { 
+        console.log('🔴 CACHE MISS - fetching from DB, cursor:', cursor)
+        return await feedServices.getOwnFeed(userId,cursor) 
+    },
+    ['feed',userId],
+    { revalidate: 5 * 60 * 60 , tags:[`feed-${userId}`]}
+)
+
+export async function GET(req: NextRequest) {
     const user = await authService.getSession()
-    logger.info("Clerk user metadata received", 'Post Route POST')
-    try{
-        const res = await postService.getUserAllPost(user.userId)
-        if(!res.success){
-            return NextResponse.json({message:res.message,code:res.status}, {status:res.status})
-        }
-        return NextResponse.json({message:res.message,code:res.status,data:res.data}, {status:res.status})
-    }catch(error){
-        logger.error(`Post submission request for user ${user.userId} failed`, 'Post Service')
-        console.log(error)
-        return NextResponse.json({message:'Internal Server Error',code:500}, {status:500})
+    const query = await req.nextUrl.searchParams
+    const cursor = query.get('cursor') ?? undefined
+    if (cursor && cursor.length < 20) {
+        return NextResponse.json({ Feeds: [], NextCursor: null }, { status: 200 })
     }
+    const feed = await getCacheFeed(user.userId)(cursor)
+    return NextResponse.json({ feed }, { status: 200 })
 }
