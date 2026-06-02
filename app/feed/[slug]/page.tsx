@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation"
 import { getAuthSessionClerk } from "@/services/clerk/clerk.session"
 // import FeedPost from "@/component/feed/feed.post"
-import { FeedDetailProps } from "@/services/feed/feed.dto"
 import { Suspense } from "react"
 import FeedLayout from "@/component/feed/feed.layout"
 import FeedSidebar from "@/component/feed/feed.sidebar"
