@@ -1,5 +1,4 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { redirect} from "next/navigation";
 import { userRepository } from "../user/user.repository";
 
 export type ClerkSession = {
@@ -14,17 +13,17 @@ export type UserPublicMetadata = {
     role: string
 }
 
-export async function getAuthSessionClerk() : Promise<ClerkSession> {
+export async function getAuthSessionClerk() : Promise<ClerkSession | undefined> {
     const user = await currentUser()
-    if(!user) redirect('/sign-in')
+    if(!user) return undefined
     const metadata = user?.publicMetadata as UserPublicMetadata
     if(!metadata.role && !metadata.id){
-        const publicData = await userRepository.userInitializeSession(user?.id!)
+        const publicData = await userRepository.userInitializeSession(user.id)
         if(publicData.data && publicData.success){
             return {
-                userClerkId: user?.id,
+                userClerkId: user.id,
                 userId: publicData.data.id,
-                email: user?.emailAddresses[0].emailAddress,
+                email: user.emailAddresses[0].emailAddress,
                 role: publicData.data.role
             }
         } 

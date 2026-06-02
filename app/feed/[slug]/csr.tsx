@@ -5,14 +5,12 @@ import { FeedHighLight } from "@/component/feed/feed.higlight";
 import { ClerkSession } from "@/services/clerk/clerk.session";
 import { CommentMetaProps } from "@/services/comment/comment.dto";
 import { FeedDetailProps } from "@/services/feed/feed.dto";
-import { renderFormattedDescription } from "@/utils/feed/ContentFormater";
 import { InfiniteData, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, Eye, Heart, MessageSquare, Share2 } from "lucide-react";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 
-export function FeedDetailCSR({ initialData, viewer }: { children: React.ReactNode, initialData: FeedDetailProps, viewer: ClerkSession }) {
+export function FeedDetailCSR({ initialData, viewer }: { initialData: FeedDetailProps, viewer?: ClerkSession }) {
     const queryClient = useQueryClient()
     const [activeImage, setActiveImage] = useState<string | undefined>(undefined)
     const [isLiked, setIsLiked] = useState(false);
@@ -116,59 +114,7 @@ export function FeedDetailCSR({ initialData, viewer }: { children: React.ReactNo
     const comment = data?.pages.flatMap((page) => page.Comments)
     return (
         <>
-            {/* POST HEADER */}
-            <div className="p-5 sm:p-6 border-b border-zinc-100 dark:border-zinc-850 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex items-center space-x-3.5">
 
-                    <div className="flex items-center space-x-3.5">
-                        {/* Author Avatar with Animated border */}
-                        <div className="relative group cursor-pointer">
-                            <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-indigo-500 via-purple-500 to-pink-500 p-[2.5px] transition-transform duration-300 group-hover:rotate-6">
-                                <div className="w-full h-full bg-white dark:bg-zinc-950 rounded-2xl flex items-center justify-center p-[2.5px] overflow-hidden relative">
-                                    {initialData.author.avatar ? (
-                                        <Image
-                                            src={initialData.author.avatar}
-                                            alt={initialData.author.username || 'Author'}
-                                            fill
-                                            sizes="48px"
-                                            className="rounded-xl object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full bg-linear-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-xs font-bold text-white uppercase tracking-wider">
-                                            {initialData.author.username?.split('')[0]}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="font-bold text-sm sm:text-base text-zinc-800 dark:text-zinc-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition cursor-pointer">
-                            {initialData.author.username || 'Pengguna InternApp'}
-                        </span>
-                        {initialData.author.username && (
-                            <span className="text-xs text-zinc-400 dark:text-zinc-500">
-                                @{initialData.author.username}
-                            </span>
-                        )}
-                    </div>
-
-                </div>
-            </div>
-
-            {/* POST HEADER END */}
-            <div className="p-6 sm:p-8 pb-4">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-50 leading-tight tracking-tight mb-4">
-                    {initialData.title}
-                </h1>
-
-
-            </div>
-            <div className="text-zinc-850 dark:text-zinc-200">
-                {renderFormattedDescription(initialData.description)}
-            </div>
             <FeedCarousel assets={initialData.assets ?? []} onZoom={setActiveImage} />
             {activeImage && <FeedHighLight onCloseAction={setActiveImage} src={activeImage} />}
 
