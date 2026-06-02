@@ -3,9 +3,9 @@ import { FeedMetaProps } from "@/services/feed/feed.dto"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useEffect, useRef, useState } from "react"
 import FeedPost from "./feed.post"
-import { useUser } from "@clerk/nextjs"
 import { FeedHighLight } from "./feed.higlight"
 import { FlagIcon } from "lucide-react"
+import { ClerkSession } from "@/services/clerk/clerk.session"
 
 // dapatkan initial state dari server cache
 // dapatkan nilai id terahir untuk cursor
@@ -15,16 +15,9 @@ import { FlagIcon } from "lucide-react"
 // jika hasil data kurang dari expeted maka disable fetch
 
 
-export const FeedClient = ({ initialData }: { initialData: FeedMetaProps }) => {
-    const { user, isSignedIn } = useUser()
+export const FeedClient = ({ initialData, viewer }: { initialData: FeedMetaProps, viewer?: ClerkSession }) => {
     const [activeImage, setActiveImage] = useState<string | undefined>(undefined);
-    const userMetadata = isSignedIn ? user.publicMetadata as UserPublicMetadata : undefined
-    const viewer = {
-        userClerkId: user ? user.id : undefined,
-        userId: user ? userMetadata?.id as string : undefined,
-        email: user ? user.emailAddresses[0].emailAddress : undefined,
-        role: user ? userMetadata?.role as string : undefined
-    }
+
     const observerRef = useRef<HTMLDivElement>(null)
     function onZoom(val: string | undefined) {
         setActiveImage(val)
