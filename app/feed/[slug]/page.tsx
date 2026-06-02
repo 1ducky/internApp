@@ -1,3 +1,4 @@
+import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getAuthSessionClerk } from "@/services/clerk/clerk.session"
 import { Suspense } from "react"
@@ -9,6 +10,28 @@ import { FeedDetailCSR } from "./csr"
 import Image from "next/image"
 import { renderFormattedDescription } from "@/utils/feed/ContentFormater"
 import { FeedCache } from "@/services/feed/feed.cache"
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params
+    const res = await FeedCache.detailFeed(slug)
+
+    if (!res) {
+        return {
+            title: 'Not Found',
+            description: 'The page is not found.'
+        }
+    }
+
+    return {
+        title: res.title,
+        description: res.description,
+        openGraph: {
+            title: res.title,
+            description: res.description,
+            images: res.assets && res.assets.length > 0 ? [res.assets[0].fileUrl] : [],
+        }
+    }
+}
 
 export default async function FeedDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params
