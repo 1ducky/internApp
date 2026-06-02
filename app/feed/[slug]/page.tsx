@@ -11,6 +11,7 @@ import { feedServices } from "@/services/feed/feed.service"
 
 export default async function FeedDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params
+    console.log(slug)
     if (!slug) return notFound()
     return (
 

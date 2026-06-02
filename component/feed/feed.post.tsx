@@ -22,6 +22,7 @@ import { FeedDetailProps } from '@/services/feed/feed.dto';
 // import { useVisibilityHide } from '@/hooks/useVisibilityHide';
 import Link from 'next/link';
 import { formattedDate } from '@/utils/dateFormateed';
+import { renderFormattedDescription } from '@/utils/feed/ContentFormater';
 
 interface Viewer {
   userClerkId: string | undefined,
@@ -212,10 +213,14 @@ export default function FeedPost({ post, viewer, onZoom, option }: { post: FeedD
 
         {/* Description */}
         <div className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line mb-3">
-          {displayDescription}
+          {renderFormattedDescription(displayDescription)}
           {shouldTruncate && (
             <button
-              onClick={() => setIsExpanded(!isExpanded)}
+              id={post.slug}
+              onClick={() => {
+                setIsExpanded(!isExpanded)
+                document.getElementById(post.slug)?.scrollIntoView({ behavior: 'smooth', block: isExpanded ? 'end' : 'start', inline: 'end', })
+              }}
               className="ml-1 text-indigo-600 dark:text-indigo-400 font-semibold hover:underline text-xs sm:text-sm focus:outline-none"
             >
               {isExpanded ? 'Sembunyikan' : 'Selengkapnya'}

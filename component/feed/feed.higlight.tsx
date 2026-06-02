@@ -6,7 +6,7 @@ export const FeedHighLight = ({ onCloseAction, src }: { onCloseAction: (val: str
         <>
             <div
                 onClick={() => onCloseAction(undefined)}
-                className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in cursor-zoom-out"
+                className="fixed inset-0 w-screen h-screen z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in cursor-zoom-out"
             >
                 {/* Close button indicator */}
                 <button
