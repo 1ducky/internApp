@@ -11,6 +11,11 @@ const isProtectedRoute = createRouteMatcher([
 
 
 export default clerkMiddleware(async (auth, req) => {
+  const pathname = req.nextUrl.pathname
+  
+  if (pathname.startsWith("/api/uploadthing")) {
+    return NextResponse.next()
+  }
   if (isProtectedRoute(req)) {
     const { userId } = await auth();
 
