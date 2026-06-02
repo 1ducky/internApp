@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react"
 import FeedPost from "./feed.post"
 import { useUser } from "@clerk/nextjs"
 import { FeedHighLight } from "./feed.higlight"
+import { FlagIcon } from "lucide-react"
 
 // dapatkan initial state dari server cache
 // dapatkan nilai id terahir untuk cursor
@@ -74,8 +75,8 @@ export const FeedClient = ({ initialData }: { initialData: FeedMetaProps }) => {
         <>
             {feeds?.map((feed) => (
                 <FeedPost key={feed.id} post={feed} viewer={viewer} onZoom={onZoom} option={
-                    <button className="w-full text-left px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-150">
-                        Laporkan Postingan
+                    <button className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-150">
+                        <FlagIcon size={20} />Laporkan Postingan
                     </button>} />
             ))}
             {hasNextPage ? (
