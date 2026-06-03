@@ -10,6 +10,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ sl
     logger.info("POST request received", 'Post Route POST')
     const user = await authService.getSession()
     const body = await req.json()
+    if(!user) return NextResponse.json({message:"User not found",code:401},{status:401})
     const res = await postService.updatePostById(user.userId,body,slug)
     if(!res.success){
         return NextResponse.json({message:res.message,code:res.status},{status:res.status})
@@ -21,6 +22,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ s
     const { slug } = await params
     logger.info("DELETE request received", 'Post Route DELETE')
     const user = await authService.getSession()
+    if(!user) return NextResponse.json({message:"User not found",code:401},{status:401})
     const res = await postService.deletePostById(user.userId,slug)
     if(!res.success){
         return NextResponse.json({message:res.message,code:res.status},{status:res.status})

@@ -7,6 +7,7 @@ export async function POST(req:NextRequest){
     const user = await authService.getSession()
     logger.info("Clerk user metadata received", 'Post Route POST')
     const body = await req.json()
+    if(!user) return NextResponse.json({message:"User not found",code:401},{status:401})
     const res = await postService.submitPost(user.userId,body)
     if(!res.success){
         return NextResponse.json({message:res.message,code:res.status},{status:res.status})

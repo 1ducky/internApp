@@ -2,7 +2,7 @@ import { feedServices } from "@/services/feed/feed.service";
 import { unstable_cache } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
-const getCahceDetailFeed = unstable_cache(
+export const getCahceDetailFeed = unstable_cache(
     async (slug: string) => {
         console.log('🔴 CACHE MISS - fetching from DB, cursor:', slug)
         return await feedServices.getDetailFeed(slug)

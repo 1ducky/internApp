@@ -6,6 +6,7 @@ import { logger } from "@/infrastructure/lib/logger";
 export async function GET(){
     logger.info("GET request received", 'ProfileRoute GET')
     const user = await authService.getSession()
+    if(!user) return NextResponse.json({message:"User not found",code:401},{status:401})
     const res = await profileService.getProfile(user.userId)
     if(!res.success){
         logger.error("Profile Service Cannot Resolve this request", 'ProfileRoute GET')
@@ -18,6 +19,7 @@ export async function GET(){
 export async function POST(req:NextRequest){
     logger.info("POST request received", 'ProfileRoute POST')
     const user = await authService.getSession()
+    if(!user) return NextResponse.json({message:"User not found",code:401},{status:401})
     const body = await req.json()
     const res = await profileService.SubmitProfile(user.userId,body)
     if(!res.success){

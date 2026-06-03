@@ -113,18 +113,20 @@ export const FeedManagement = ({ viewer }: { viewer: ClerkSession }) => {
                     </>
                 } />
             ))}
-            {hasNextPage || isLoading ? (
-                <div ref={observerRef} className="py-4 flex items-center justify-center">
-                    {isFetchingNextPage && <p className="text-sm text-zinc-500">Memuat...</p>}
-                </div>
-            ) : (
-                <div className="flex items-center justify-center py-4">
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">Tidak ada postingan lagi</p>
-                </div>
-            )}
-            {activeImage && (
-                <FeedHighLight onCloseAction={setActiveImage} src={activeImage} />
-            )}
+            <div className="w-full flex items-center justify-center my-10">
+                {hasNextPage || isLoading ? (
+                    <div ref={observerRef} className="py-4 flex items-center justify-center">
+                        {isFetchingNextPage && <p className="text-sm text-zinc-500">Memuat...</p>}
+                    </div>
+                ) : (
+                    <div className="flex items-center justify-center py-4">
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400">Tidak ada postingan lagi</p>
+                    </div>
+                )}
+                {activeImage && (
+                    <FeedHighLight onCloseAction={setActiveImage} src={activeImage} />
+                )}
+            </div>
         </>
     )
 }

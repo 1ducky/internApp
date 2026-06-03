@@ -31,7 +31,7 @@ export default function FeedCarousel({ assets, onZoom }: FeedCarouselProps) {
           alt={`Slide ${activeAssetIndex + 1}`}
           fill
           sizes='1280px, 720px'
-          priority
+          fetchPriority='auto'
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-[1.02]"
           onClick={() => onZoom && onZoom(assets[activeAssetIndex].fileUrl)}
         />

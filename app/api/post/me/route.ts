@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
     if (cursor && cursor.length < 20) {
         return NextResponse.json({ Feeds: [], NextCursor: null }, { status: 200 })
     }
+    if(!user) return NextResponse.json({message:"User not found",code:401},{status:401})
     const feed = await getCacheFeed(user.userId)(cursor)
     return NextResponse.json({ feed }, { status: 200 })
 }
