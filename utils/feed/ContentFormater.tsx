@@ -15,6 +15,22 @@ export const renderFormattedDescription = (text: string) => {
         parts.push({ type: 'text', content: text.slice(lastIndex) });
     }
 
+    const renderTextWithLinks = (text: string) => {
+        const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+        const textParts = text.split(urlRegex);
+        return textParts.map((part, i) => {
+            if (part.match(urlRegex)) {
+                const href = part.startsWith('www.') ? `https://${part}` : part;
+                return (
+                    <a key={i} href={href} target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:underline">
+                        {part}
+                    </a>
+                );
+            }
+            return part;
+        });
+    };
+
     return parts.map((part, pIdx) => {
         if (part.type === 'code') {
             return (
@@ -32,7 +48,7 @@ export const renderFormattedDescription = (text: string) => {
             if (paragraph.trim().startsWith('### ')) {
                 return (
                     <h3 key={key} className="text-lg sm:text-xl font-bold text-zinc-800 dark:text-zinc-100 mt-6 mb-3 flex items-center gap-2 border-l-4 border-indigo-500 pl-3">
-                        {paragraph.trim().replace('### ', '')}
+                        {renderTextWithLinks(paragraph.trim().replace('### ', ''))}
                     </h3>
                 );
             }
@@ -49,7 +65,7 @@ export const renderFormattedDescription = (text: string) => {
                             const parts = cleanedLine.split('**');
                             return (
                                 <li key={`${key}-${lIdx}`} className="leading-relaxed text-sm sm:text-base">
-                                    {parts.map((p, pIdx) => pIdx % 2 === 1 ? <strong key={pIdx} className="font-semibold text-zinc-950 dark:text-white">{p}</strong> : p)}
+                                    {parts.map((p, pIdx) => pIdx % 2 === 1 ? <strong key={pIdx} className="font-semibold text-zinc-950 dark:text-white">{p}</strong> : renderTextWithLinks(p))}
                                 </li>
                             );
                         })}
@@ -61,7 +77,7 @@ export const renderFormattedDescription = (text: string) => {
             const textParts = paragraph.split('**');
             return (
                 <p key={key} className="text-zinc-600 dark:text-zinc-300 leading-relaxed text-sm sm:text-base mb-4 whitespace-pre-line">
-                    {textParts.map((p, pIdx) => pIdx % 2 === 1 ? <strong key={pIdx} className="font-semibold text-zinc-950 dark:text-white">{p}</strong> : p)}
+                    {textParts.map((p, pIdx) => pIdx % 2 === 1 ? <strong key={pIdx} className="font-semibold text-zinc-950 dark:text-white">{p}</strong> : renderTextWithLinks(p))}
                 </p>
             );
         });
