@@ -22,7 +22,7 @@ import { FeedDetailProps } from '@/services/feed/feed.dto';
 // import { useVisibilityHide } from '@/hooks/useVisibilityHide';
 import Link from 'next/link';
 import { formattedDate } from '@/utils/dateFormateed';
-import { renderFormattedDescription } from '@/utils/feed/ContentFormater';
+import { renderFormattedDescription, stripFormatting, truncateText } from '@/utils/feed/ContentFormater';
 
 interface Viewer {
   userClerkId: string | undefined,
@@ -100,7 +100,7 @@ export default function FeedPost({ post, viewer, onZoom, option }: { post: FeedD
       try {
         await navigator.share({
           title: post.title,
-          text: post.description,
+          text: truncateText(stripFormatting(post.description), 250),
           url: shareUrl,
         });
       } catch (error) {
