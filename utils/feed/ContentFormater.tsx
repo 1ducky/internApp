@@ -83,3 +83,27 @@ export const renderFormattedDescription = (text: string) => {
         });
     });
 };
+
+export const stripFormatting = (text: string): string => {
+    if (!text) return text;
+    
+    // Remove code block backticks
+    let stripped = text.replace(/```([\s\S]*?)```/g, '$1');
+    
+    // Remove headers
+    stripped = stripped.replace(/^###\s+/gm, '');
+    
+    // Remove bullet points (* or -) at the beginning of a line
+    stripped = stripped.replace(/^[\*\-]\s+/gm, '');
+    
+    // Remove bold syntax
+    stripped = stripped.replace(/\*\*(.*?)\*\*/g, '$1');
+    
+    return stripped.trim();
+};
+
+export const truncateText = (text: string, end: number, start: number = 0): string => {
+    if (!text) return text;
+    if (text.length <= end) return text;
+    return text.substring(start, end) + '...';
+};

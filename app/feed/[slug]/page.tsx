@@ -8,7 +8,7 @@ import FeedLazyLoad from "@/component/feed/feed.lazyload"
 import { BookOpen } from "lucide-react"
 import { FeedDetailCSR } from "./csr"
 import Image from "next/image"
-import { renderFormattedDescription } from "@/utils/feed/ContentFormater"
+import { renderFormattedDescription, stripFormatting } from "@/utils/feed/ContentFormater"
 import { FeedCache } from "@/services/feed/feed.cache"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         description: res.description,
         openGraph: {
             title: res.title,
-            description: res.description,
+            description: stripFormatting(res.description),
             images: res.assets && res.assets.length > 0 ? [res.assets[0].fileUrl] : [],
         }
     }
