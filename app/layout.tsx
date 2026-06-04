@@ -19,11 +19,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "InternApp",
+  metadataBase: new URL('https://sgintern.my.id'),
   description: "Aplikasi magang terbaik untuk menemukan dan melamar pekerjaan.",
   openGraph: {
     title: "InternApp",
     description: "Aplikasi magang terbaik untuk menemukan dan melamar pekerjaan.",
-    url: "https://intern-app-silk.vercel.app/",
+    url: "https://sgintern.my.id",
     siteName: "InternApp",
     images: [
       {

@@ -18,13 +18,18 @@ export default function NewPostPageCsr({ tempImage }: { tempImage: UploadedAsset
             })
             if (res.status === 200) {
                 router.push('/dashboard/post')
+                return true
                 // const data = await res.json()
                 // console.log(data)
             } else {
+                console.log('Failed to submit post')
+                console.log(res)
+                return false
             }
 
         } catch (error) {
             console.log(error)
+            return null
         }
     }
     return (

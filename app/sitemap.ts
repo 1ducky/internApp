@@ -22,6 +22,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         select:{
           fileUrl:true
         }
+      },
+      author:{
+        select:{
+          imageUrl:true
+        }
       }
     },
     orderBy: {
@@ -34,7 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: post.updatedAt,
     changeFrequency: 'weekly',
     priority: 0.8,
-    images: post.assets.map((asset) => asset.fileUrl) ?? undefined,
+    images: post.assets.map((asset) => asset.fileUrl) || [post.author.imageUrl] || undefined,
   }));
 
   return [
