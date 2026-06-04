@@ -17,9 +17,10 @@ export const FeedHighLight = ({ onCloseAction, src }: { onCloseAction: (val: str
                 </button>
                 <div
                     onClick={(e) => e.stopPropagation()}
-                    className="relative w-full h-full max-w-5xl max-h-[85vh] overflow-hidden rounded-2xl border border-white/10 shadow-2xl transition-transform duration-500 scale-100"
+                    className="relative w-full h-full max-w-5xl max-h-[65vh] overflow-hidden rounded-2xl border border-white/10 shadow-2xl transition-transform duration-500 scale-100"
                 >
                     <Image
+                        onClick={() => onCloseAction(undefined)}
                         src={src}
                         alt="Lampiran media resolusi penuh"
                         fill

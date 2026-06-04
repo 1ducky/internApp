@@ -82,37 +82,40 @@ async function CreatePost(userId: string, data: SubmitPostInput) {
 }
 
 async function submitPostwithAssets(userId: string, data: SubmitPostInput) {
-  const assetIds = data.assets ?? [];
+  const assetIds = [...new Set(data.assets ?? [])];
+  
 
-  const db = await prisma.$transaction(async (tx) => {
-    const post = await tx.post.create({
-      data: {
+  const post = await prisma.post.create({
+    data: {
         authorId: userId,
         description: data.description,
         slug: data.slug,
         status: data.status,
         title: data.title,
         type: data.type,
-      },
-    });
-
-    const activated = await transactionFilePostRepository.activeFilefromPost(
-      tx,
-      assetIds,
-      userId,
-      post.id,
-    );
-    if (activated.count !== assetIds.length) {
-      console.log(activated.count, assetIds.length)
-      console.log(assetIds,post.id,userId)
-      throw new Error("INVALID_ASSET");
+      }
     }
-    return post;
-  });
+  )
+  if(assetIds.length > 0 ){
+    await prisma.files.updateMany({
+      where:{
+        id:{
+          in:assetIds
+        },
+        fileStatus:'TEMP',
+        postId:null,
+        authorId:userId
+      },
+      data:{
+        fileStatus:'ACTIVE',
+        postId:post.id
+      }
+    })
+  }
 
   return {
     success: true,
-    data: db,
+    data: post,
   };
 }
 
