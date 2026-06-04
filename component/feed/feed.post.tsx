@@ -23,6 +23,7 @@ import { FeedDetailProps } from '@/services/feed/feed.dto';
 import Link from 'next/link';
 import { formattedDate } from '@/utils/dateFormateed';
 import { renderFormattedDescription, stripFormatting, truncateText } from '@/utils/feed/ContentFormater';
+import Image from 'next/image';
 
 interface Viewer {
   userClerkId: string | undefined,
@@ -150,10 +151,11 @@ export default function FeedPost({ post, viewer, onZoom, option }: { post: FeedD
           {/* Avatar Area */}
           <div className="relative group cursor-pointer">
             <div className="w-10 h-10 rounded-full bg-linear-to-tr from-indigo-500 via-purple-500 to-pink-500 p-[2px] transition-transform duration-300 group-hover:scale-105">
-              <div className="w-full h-full bg-white dark:bg-zinc-950 rounded-full flex items-center justify-center p-[2px]">
+              <div className="w-full h-full bg-white dark:bg-zinc-950 rounded-full flex items-center justify-center p-[2px] relative">
                 {post.author.avatar ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
+                    fill
+                    sizes='20px, 20px'
                     src={post.author.avatar}
                     alt={post.author.username || 'Author'}
                     className="w-full h-full rounded-full object-cover"

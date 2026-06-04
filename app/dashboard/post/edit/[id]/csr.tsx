@@ -20,13 +20,16 @@ export default function EditPostPageCSR({ id, initialData, tempImage }: { id: st
                 router.push('/dashboard/post')
                 // const data = await res.json()
                 // console.log(data)
+                return true
             } else {
                 console.log('Failed to submit post')
                 console.log(res)
+                return false
             }
 
         } catch (error) {
             console.log(error)
+            return null
         }
     }
 
