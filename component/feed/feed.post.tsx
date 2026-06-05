@@ -8,14 +8,11 @@ import {
   // Bookmark,
   Eye,
   Calendar,
-  Megaphone,
-  Trophy,
-  MessageCircle,
-  Newspaper,
   Check
 } from 'lucide-react';
 import { PostType } from '@/generated/prisma/client';
 import FeedCarousel from './feed.carousel';
+import { getTypeConfig } from './feed.type';
 import FeedMore from './feed.more';
 // import FeedCommentSection from './feed.comment';
 import { FeedDetailProps } from '@/services/feed/feed.dto';
@@ -46,44 +43,8 @@ export default function FeedPost({ post, viewer, onZoom, option }: { post: FeedD
   // Format tanggal Indonesia
 
 
-  // Helper untuk konfigurasi Type Badge
-  const getTypeConfig = (type: PostType) => {
-    switch (type) {
-      case 'ANNOUNCEMENT':
-        return {
-          label: 'Pengumuman',
-          icon: Megaphone,
-          styles: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900/50',
-        };
-      case 'EVENT':
-        return {
-          label: 'Kegiatan',
-          icon: Trophy,
-          styles: 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-100 dark:border-rose-900/50',
-        };
-      case 'DISCUSSION':
-        return {
-          label: 'Diskusi',
-          icon: MessageCircle,
-          styles: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-900/50',
-        };
-      case 'NEWS':
-        return {
-          label: 'Berita',
-          icon: Newspaper,
-          styles: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-100 dark:border-amber-900/50',
-        };
-      default:
-        return {
-          label: type,
-          icon: Megaphone,
-          styles: 'bg-gray-50 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700',
-        };
-    }
-  };
-
   const typeConfig = getTypeConfig(post.type);
-  const TypeIcon = typeConfig.icon;
+  const TypeIcon = typeConfig.icon ?? null;
 
   // Mendapatkan inisial untuk avatar placeholder
   const getInitials = (name: string | null) => {
@@ -193,11 +154,7 @@ export default function FeedPost({ post, viewer, onZoom, option }: { post: FeedD
 
         {/* Action Header & Badge Type */}
         <div className="flex items-center gap-2">
-          {/* Badge Tipe Konten */}
-          <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider ${typeConfig.styles}`}>
-            <TypeIcon size={12} />
-            {typeConfig.label}
-          </span>
+
           {option && (
             <FeedMore>
               {option}
@@ -232,7 +189,16 @@ export default function FeedPost({ post, viewer, onZoom, option }: { post: FeedD
       </div>
 
       {/* 3. MULTIMEDIA ASSETS CAROUSEL (IF ANY) */}
-      {post.assets && post.assets.length > 0 && <FeedCarousel assets={post.assets} onZoom={onZoom} />}
+      {
+        post.assets && post.assets.length > 0 && (
+          <FeedCarousel assets={post.assets} onZoom={onZoom} >
+            {/* Badge Tipe Konten */}
+            <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider ${typeConfig.styles}`}>
+              {TypeIcon && <TypeIcon size={12} />}
+              {typeConfig.label && typeConfig.label}
+            </span>
+          </FeedCarousel>)
+      }
 
       {/* 4. BAR INTERAKSI & METADATA */}
       <div className="p-3 px-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">

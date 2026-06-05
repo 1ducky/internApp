@@ -9,10 +9,11 @@ export interface FeedCarouselProps {
     id: string;
     fileUrl: string;
   }[];
-  onZoom?: (val: string) => void
+  onZoom?: (val: string) => void;
+  children?: React.ReactNode;
 }
 
-export default function FeedCarousel({ assets, onZoom }: FeedCarouselProps) {
+export default function FeedCarousel({ assets, onZoom, children }: FeedCarouselProps) {
   const [activeAssetIndex, setActiveAssetIndex] = useState(0);
 
   const handleNextAsset = () => {
@@ -40,11 +41,14 @@ export default function FeedCarousel({ assets, onZoom }: FeedCarouselProps) {
 
       <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-black/10 pointer-events-none" />
 
-      {assets.length > 1 && (
-        <span className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[11px] font-medium px-2 py-0.5 rounded-full select-none">
-          {activeAssetIndex + 1} / {assets.length}
-        </span>
-      )}
+      <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
+        {children}
+        {assets.length > 1 && (
+          <span className="bg-black/60 backdrop-blur-md text-white text-[11px] font-medium px-2 py-0.5 rounded-full select-none">
+            {activeAssetIndex + 1} / {assets.length}
+          </span>
+        )}
+      </div>
 
       {assets.length > 1 && (
         <>

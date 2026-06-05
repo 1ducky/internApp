@@ -21,13 +21,13 @@ const PostForm = ({ action, initialData, tempImage }: { action: (value: unknown)
         defaultValues: toPostFormValues(initialData)
     })
     const onSubmited = form.handleSubmit(async (values) => {
-        const res = await action(values)
-        if (!res) {
-            console.log('something wrong')
-            return
-        }
-        form.reset(values)
-        // console.log(values)
+        // const res = await action(values)
+        // if (!res) {
+        //     console.log('something wrong')
+        //     return
+        // }
+        // form.reset(values)
+        console.log(values)
 
     }, (error) => {
         console.log(error)
@@ -93,10 +93,11 @@ const PostForm = ({ action, initialData, tempImage }: { action: (value: unknown)
                             {...form.register("type")}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-900"
                         >
-                            <option value="ANNOUNCEMENT">Announcement</option>
-                            <option value="EVENT">Event</option>
-                            <option value="DISCUSSION">Discussion</option>
-                            <option value="NEWS">News</option>
+                            <option value="FEED">Feed</option>
+                            <option value="ANNOUNCEMENT">Pengumuman</option>
+                            <option value="EVENT">Acara</option>
+                            <option value="DISCUSSION">Diskusi</option>
+                            <option value="NEWS">Berita</option>
                         </select>
                     </div>
 
@@ -109,9 +110,8 @@ const PostForm = ({ action, initialData, tempImage }: { action: (value: unknown)
                             {...form.register("status")}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-900"
                         >
-                            <option value="DRAFT">Draft (Default)</option>
-                            <option value="PUBLISHED">Published</option>
-                            <option value="ARCHIVED">Archived</option>
+                            <option value="PUBLISHED">Publikasi</option>
+                            <option value="DRAFT">Draft</option>
                         </select>
                     </div>
                 </div>
