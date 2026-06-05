@@ -29,7 +29,7 @@ export const toPostFormValues = (post?:PostDto) : SubmitPostInput => {
   return{
     title: post ? post.title??  "" : "",
     description: post ? post.description?? "" : "",
-    type: post ? post.type?? "" : "ANNOUNCEMENT",
+    type: post ? post.type?? "" : "FEED",
     status: post ? post.status?? "" : "DRAFT",
     slug:"",
     assets: post?.assets.map(asset => asset.id) ?? []
