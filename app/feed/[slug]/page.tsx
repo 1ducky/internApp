@@ -52,8 +52,10 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ slu
 
 
 async function LazyPreview({ slug }: { slug: string }) {
-    const res = await FeedCache.detailFeed(slug)
-    const user = await getAuthSessionClerk()
+    const [res, user] = await Promise.all([
+        FeedCache.detailFeed(slug),
+        getAuthSessionClerk()
+    ])
     if (!res) return notFound()
     return (
         <article>
