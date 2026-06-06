@@ -53,6 +53,7 @@ export default function FeedCarousel({ assets, onZoom, children }: FeedCarouselP
       {assets.length > 1 && (
         <>
           <button
+            type='button'
             onClick={handlePrevAsset}
             className="absolute left-3 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 border border-white/10"
             aria-label="Previous image"
@@ -60,6 +61,7 @@ export default function FeedCarousel({ assets, onZoom, children }: FeedCarouselP
             <ChevronLeft size={18} />
           </button>
           <button
+            type='button'
             onClick={handleNextAsset}
             className="absolute right-3 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 border border-white/10"
             aria-label="Next image"
@@ -74,6 +76,7 @@ export default function FeedCarousel({ assets, onZoom, children }: FeedCarouselP
           {assets.map((_, i) => (
             <button
               key={i}
+              type='button'
               onClick={() => setActiveAssetIndex(i)}
               className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${i === activeAssetIndex ? 'bg-white w-3' : 'bg-white/40 hover:bg-white/70'}`}
               aria-label={`Go to slide ${i + 1}`}

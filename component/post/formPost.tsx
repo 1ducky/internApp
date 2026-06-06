@@ -21,13 +21,13 @@ const PostForm = ({ action, initialData, tempImage }: { action: (value: unknown)
         defaultValues: toPostFormValues(initialData)
     })
     const onSubmited = form.handleSubmit(async (values) => {
-        // const res = await action(values)
-        // if (!res) {
-        //     console.log('something wrong')
-        //     return
-        // }
-        // form.reset(values)
-        console.log(values)
+        const res = await action(values)
+        if (!res) {
+            console.log('something wrong')
+            return
+        }
+        form.reset(values)
+        // console.log(values)
 
     }, (error) => {
         console.log(error)

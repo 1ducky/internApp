@@ -1,5 +1,5 @@
 "use client"
-import PostForm from "@/component/post/formPost"
+import { FormPostOrchestration } from "@/component/form/post/form.orchestration"
 import { UploadedAssetMetadata } from "@/services/objectStorage/object.dto"
 import { PostDto } from "@/services/post/post.dto"
 import { useRouter } from "next/navigation"
@@ -34,10 +34,11 @@ export default function EditPostPageCSR({ id, initialData, tempImage }: { id: st
     }
 
     return (
-        <PostForm
-            initialData={initialData}
-            action={handlerEditPost}
-            tempImage={tempImage}
-        />
+        // <PostForm
+        //     initialData={initialData}
+        //     action={handlerEditPost}
+        //     tempImage={tempImage}
+        // />
+        <FormPostOrchestration initialData={initialData} temp={tempImage} action={handlerEditPost} />
     )
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 export interface FeedCarouselProps {
   assets: {
@@ -10,7 +10,7 @@ export interface FeedCarouselProps {
   }[];
 }
 
-export default function FeedCarouselPreview({ assets }: FeedCarouselProps) {
+export default function FeedCarouselPreview({ assets, action }: FeedCarouselProps & { action?: (id: string) => void }) {
   const [activeAssetIndex, setActiveAssetIndex] = useState(0);
 
   const handleNextAsset = () => {
@@ -21,24 +21,29 @@ export default function FeedCarouselPreview({ assets }: FeedCarouselProps) {
     setActiveAssetIndex((prev) => (prev - 1 + assets.length) % assets.length);
   };
 
+  const activeAsset = assets[activeAssetIndex] ? assets[activeAssetIndex] : assets[assets.length - 1]
+
   if (assets.length === 0) return null
 
   return (
     <div className="relative w-full aspect-16/10 sm:aspect-video bg-zinc-950 flex items-center justify-center group overflow-hidden border-y border-zinc-100 dark:border-zinc-800">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={assets[activeAssetIndex].fileUrl}
+        src={activeAsset.fileUrl}
         alt={`Slide ${activeAssetIndex + 1}`}
         className="w-full h-full object-cover transition-transform duration-500 hover:scale-[1.02]"
       />
 
       <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-black/10 pointer-events-none" />
 
-      {assets.length > 1 && (
-        <span className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[11px] font-medium px-2 py-0.5 rounded-full select-none">
-          {activeAssetIndex + 1} / {assets.length}
-        </span>
-      )}
+      <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
+        {action && <button type="button" className="bg-black text-white p-2 rounded-full cursor-pointer" onClick={() => action(activeAsset.id)}><X size={20} aria-label="Delete" /></button>}
+        {assets.length > 1 && (
+          <span className="bg-black/60 backdrop-blur-md text-white text-[11px] font-medium px-2 py-0.5 rounded-full select-none">
+            {activeAssetIndex + 1} / {assets.length}
+          </span>
+        )}
+      </div>
 
       {assets.length > 1 && (
         <>

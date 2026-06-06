@@ -5,14 +5,14 @@ type Props = {
 }
 
 export default function ImagePreview({
-    url,onClickAction
+    url, onClickAction
 }: Props) {
 
     if (!url) return null
 
     return (
         <Image
-            onClick={ onClickAction}
+            onClick={onClickAction}
             width={160}
             height={160}
             src={url}

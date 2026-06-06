@@ -10,7 +10,6 @@ import {
   Calendar,
   Check
 } from 'lucide-react';
-import { PostType } from '@/generated/prisma/client';
 import FeedCarousel from './feed.carousel';
 import { getTypeConfig } from './feed.type';
 import FeedMore from './feed.more';
