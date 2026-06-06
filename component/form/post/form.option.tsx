@@ -2,9 +2,14 @@ import { postStatusOptions, postTypeOptions } from "@/services/post/post.option"
 import { SubmitPostInput } from "@/services/post/post.schema";
 import { useFormContext } from "react-hook-form";
 
-export function FormInputSelect({ field }: { field: keyof SubmitPostInput }) {
+interface OptionField {
+    value: string,
+    label: string
+}
+
+export function FormInputSelect({ field, options }: { field: keyof SubmitPostInput, options: OptionField[] }) {
     const { register } = useFormContext<SubmitPostInput>()
-    const options = field === 'type' ? postTypeOptions : field === 'status' ? postStatusOptions : undefined
+
     return (
         <select
             {...register(field)}

@@ -14,6 +14,6 @@ export default async function NewPostPage() {
     })) : []
 
     return (
-        <NewPostPageCsr tempImage={sanitize} />
+        <NewPostPageCsr tempImage={sanitize} role={user.role} />
     )
 }

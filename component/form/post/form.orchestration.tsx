@@ -13,8 +13,10 @@ import { ContentPreview } from "./post.preview"
 import { FormInputSelect } from "./form.option"
 import Link from "next/link"
 import { FormSubmitButton } from "./form.submit"
+import { postStatusOptions, postTypeOptions } from "@/services/post/post.option"
+import { hasPermission } from "@/services/auth/auth.client"
 
-export function FormPostOrchestration({ initialData, temp, action }: { initialData?: PostDto, temp?: UploadedAssetMetadata[], action: (values: unknown) => Promise<boolean | null> }) {
+export function FormPostOrchestration({ initialData, temp, action, role }: { initialData?: PostDto, temp?: UploadedAssetMetadata[], action: (values: unknown) => Promise<boolean | null>, role: string }) {
     const [asset, setAsset] = useState<UploadedAssetMetadata[]>(initialData?.assets ?? [])
     const [tempAsset, setTempAsset] = useState<UploadedAssetMetadata[]>(temp ?? [])
 
@@ -35,6 +37,9 @@ export function FormPostOrchestration({ initialData, temp, action }: { initialDa
     }, (error) => {
         console.log(error)
     })
+
+    const typeoptionInput = postTypeOptions.filter(item => !item.permission || hasPermission(role, item.permission))
+    const statusoptionInput = postStatusOptions
     return (
         <FormProvider {...form}>
             <form className="w-full max-w-7xl mx-auto p-4 sm:p-6 md:p-8 bg-white rounded-xl shadow-md border border-gray-100 flex flex-col gap-5" onSubmit={SubmitPost}>
@@ -47,8 +52,8 @@ export function FormPostOrchestration({ initialData, temp, action }: { initialDa
                 )}
                 <FormInputField field="title" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormInputSelect field="status" />
-                    <FormInputSelect field="type" />
+                    <FormInputSelect field="status" options={statusoptionInput} />
+                    <FormInputSelect field="type" options={typeoptionInput} />
                 </div>
                 <ContentPreview field="description" />
                 <FormTextArea field="description" />
