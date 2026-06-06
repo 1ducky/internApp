@@ -12,6 +12,6 @@ const getAnnoucmentCache = unstable_cache(
     }
 )
 
-export const FeedCache = {
-    detailFeed: getAnnoucmentCache
+export const annoucmentCache = {
+    getAnnoucmentCache
 }

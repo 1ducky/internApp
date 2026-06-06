@@ -7,6 +7,7 @@ import { FeedClient } from "@/component/feed/feed.client"
 import { Flame } from "lucide-react"
 import { feedServices } from "@/services/feed/feed.service"
 import { authService } from "@/services/auth/auth.service"
+import { promise } from "zod"
 
 export const revalidate = 60;
 
@@ -27,8 +28,12 @@ async function LazyPreview() {
   // const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/feed`)
   // const data = await res.json()
   // const feed = data.feed as FeedMetaProps
-  const user = await authService.getSession()
-  const feed = await feedServices.getFeed()
+  // const user = await authService.getSession()
+  // const feed = await feedServices.getFeed()
+  const [user, feed] = await Promise.all([
+    authService.getSession(),
+    feedServices.getFeed()
+  ])
 
 
 

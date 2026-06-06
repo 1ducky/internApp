@@ -1,8 +1,15 @@
+import { annoucmentCache } from '@/services/annoucment/annoucment.cache';
 import { Sparkles, TrendingUp } from 'lucide-react';
+import { Suspense } from 'react';
+import SkeletonAnnoucment from './feed.layzAnnoucment';
+import FeedAnnoucment from './feed.annoucment';
 
 export default function FeedSidebar() {
   return (
     <div className="space-y-6 lg:sticky lg:top-25 top-20 lg:w-[400px]">
+      <Suspense fallback={<SkeletonAnnoucment />}>
+        <LazyAnnoucment />
+      </Suspense>
       {/* Sidebar Card 1: Trending topics */}
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs">
         <h3 className="text-sm font-bold text-zinc-800 dark:text-zinc-200 flex items-center gap-1.5 mb-4 uppercase tracking-wider">
@@ -46,4 +53,10 @@ export default function FeedSidebar() {
       </div>
     </div>
   );
+}
+
+async function LazyAnnoucment() {
+  const annoucment = await annoucmentCache.getAnnoucmentCache('ANNOUNCEMENT')
+  if (annoucment.Feeds.length == 0) return null
+  return <FeedAnnoucment data={annoucment.Feeds} />
 }
