@@ -1,3 +1,4 @@
+import { PostType } from "@/generated/prisma/enums";
 import prisma from "@/libs/db";
 
 export const feedRepository = {
@@ -6,12 +7,13 @@ export const feedRepository = {
   getDetailFeed
 }
 
-async function getRawFeedPost(nextCursor?:string) {
+async function getRawFeedPost(nextCursor?:string,type:PostType = 'FEED') {
   const db = await prisma.post.findMany({
     take:10,
     orderBy:{createdAt:'desc'},
     where:{
       status:'PUBLISHED',
+      type:type
     },
     ...(nextCursor ? {cursor:{id:nextCursor},skip:1}:{}),
     select:{
@@ -49,12 +51,14 @@ async function getRawFeedPost(nextCursor?:string) {
   })
   return db
 }
-async function getRawOwnFeed(userId:string,nextCursor?:string) {
+async function getRawOwnFeed(userId:string,nextCursor?:string, type?:PostType ) {
   const db = await prisma.post.findMany({
     take:10,
     orderBy:{createdAt:'desc'},
     where:{
-      authorId:userId
+      authorId:userId,
+      status:'PUBLISHED',
+      ...(type && {type})
     },
     ...(nextCursor ? {cursor:{id:nextCursor},skip:1}:{}),
     select:{
