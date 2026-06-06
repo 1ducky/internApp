@@ -1,6 +1,6 @@
 import { Megaphone } from 'lucide-react';
 import Link from 'next/link';
-import { FeedMetaProps, FeedPostProps } from '@/services/feed/feed.dto';
+import { FeedPostProps } from '@/services/feed/feed.dto';
 import { stripFormatting, truncateText } from '@/utils/feed/ContentFormater';
 
 

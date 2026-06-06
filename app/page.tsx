@@ -7,7 +7,6 @@ import { FeedClient } from "@/component/feed/feed.client"
 import { Flame } from "lucide-react"
 import { feedServices } from "@/services/feed/feed.service"
 import { authService } from "@/services/auth/auth.service"
-import { promise } from "zod"
 
 export const revalidate = 60;
 
