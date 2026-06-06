@@ -58,6 +58,7 @@ enum PostType {
   EVENT
   DISCUSSION
   NEWS
+  FEED
 }
 
 enum FileStatus {
@@ -76,7 +77,6 @@ enum FileType {
 enum PostStatus {
   DRAFT
   PUBLISHED
-  ARCHIVED
 }
 
 model User {

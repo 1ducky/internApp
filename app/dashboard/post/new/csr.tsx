@@ -1,10 +1,10 @@
 'use client'
 
-import PostForm from "@/component/post/formPost";
+import { FormPostOrchestration } from "@/component/form/post/form.orchestration";
 import { UploadedAssetMetadata } from "@/services/objectStorage/object.dto";
 import { useRouter } from "next/navigation";
 
-export default function NewPostPageCsr({ tempImage }: { tempImage: UploadedAssetMetadata[] }) {
+export default function NewPostPageCsr({ tempImage, role }: { tempImage: UploadedAssetMetadata[], role: string }) {
     const router = useRouter()
     const handlerSubmitPost = async (value: unknown) => {
         console.log(value)
@@ -33,6 +33,6 @@ export default function NewPostPageCsr({ tempImage }: { tempImage: UploadedAsset
         }
     }
     return (
-        <PostForm action={handlerSubmitPost} tempImage={tempImage} />
+        <FormPostOrchestration action={handlerSubmitPost} temp={tempImage} role={role} />
     )
 }

@@ -23,6 +23,6 @@ export default async function EditPostPage({ params }: { params: { id: string } 
 
 
     return (
-        <EditPostPageCSR id={id} initialData={post.data} tempImage={sanitize} />
+        <EditPostPageCSR id={id} initialData={post.data} tempImage={sanitize} role={user.role} />
     )
 }

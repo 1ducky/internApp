@@ -4,6 +4,7 @@ import { failed, ok } from "@/utils/responseMapper"
 import { CosummerPostRepository, postRepository } from "./post.repository"
 import { slugify } from "@/utils/slugify"
 import { toPostDto, toPostDtoList } from "./post.dto"
+import { hasPermission } from "../clerk/clerk.service"
 
 export const postService = {
     submitPost,
@@ -14,7 +15,7 @@ export const postService = {
     getFeedPost
 }
 
-async function submitPost(userId: string, body: unknown) {
+async function submitPost(userId: string, body: unknown,role:string) {
     logger.info(`Post submission request for user ${userId}`, `Post Service`)    
     try {
         const validated = submitPostSchema.safeParse(body)
@@ -23,6 +24,10 @@ async function submitPost(userId: string, body: unknown) {
             return failed(400,validated.error.flatten().fieldErrors, 'Bad Request')
         }
         logger.info(`Post submission request for user ${userId} is valid`, 'Post Service')
+        if(validated.data.type === 'ANNOUNCEMENT' && !hasPermission(role,'post:create:announcement')){
+            logger.warn(`Post submission request for user ${userId} is not authorized to create announcement`, 'Post Service')
+            validated.data.type = 'FEED'
+        }
         validated.data.slug = slugify(validated.data.title) + '-' + userId.slice(0,5)+ '-' + crypto.randomUUID()
         const res = await postRepository.submitPostwithAssets(userId, validated.data)
         if(!res.success || !res.data){
@@ -77,7 +82,7 @@ async function getPostById(id:string){
     }
 }
 
-async function updatePostById(userId:string, body:unknown, id:string){
+async function updatePostById(userId:string, body:unknown, id:string,role:string){
     if(!userId){
         logger.error(`User Id is not present`, 'Post Service')
         return failed(401,{'message:':'user not authenticated'},'Unauthorized')
@@ -90,6 +95,10 @@ async function updatePostById(userId:string, body:unknown, id:string){
             return failed(400,validated.error.flatten().fieldErrors, 'Bad Request')
         }
         logger.info(`Post update request for user ${userId} is valid`, 'Post Service')
+        if(validated.data.type === 'ANNOUNCEMENT' && !hasPermission(role,'post:create:announcement')){
+            logger.warn(`Post update request for user ${userId} is not authorized to create announcement`, 'Post Service')
+            validated.data.type = 'FEED'
+        }
         validated.data.slug = slugify(validated.data.title) + '-' + userId.slice(0,5)+ '-' + crypto.randomUUID()
         const res = await postRepository.updatePostByIdWithAssets(userId as string, validated.data,id)
         if(!res.success){

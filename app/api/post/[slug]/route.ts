@@ -11,7 +11,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ sl
     const user = await authService.getSession()
     const body = await req.json()
     if(!user) return NextResponse.json({message:"User not found",code:401},{status:401})
-    const res = await postService.updatePostById(user.userId,body,slug)
+    const res = await postService.updatePostById(user.userId,body,slug,user.role)
     if(!res.success){
         return NextResponse.json({message:res.message,code:res.status},{status:res.status})
     }
