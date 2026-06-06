@@ -1,4 +1,3 @@
-import { postStatusOptions, postTypeOptions } from "@/services/post/post.option";
 import { SubmitPostInput } from "@/services/post/post.schema";
 import { useFormContext } from "react-hook-form";
 
