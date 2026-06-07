@@ -28,7 +28,7 @@ export const toCommentDto = (rawComment: rawComment) : CommentMetaProps => {
             nextCursor:item.id,
             author:{
                 id:item.author.id,
-                name:item.author.name ?? undefined,
+                name:item.author.name ?? item.author.profile?.userName ?? undefined,
                 avatar:item.author.imageUrl ?? undefined
             }
         }

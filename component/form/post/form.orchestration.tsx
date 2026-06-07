@@ -50,13 +50,13 @@ export function FormPostOrchestration({ initialData, temp, action, role }: { ini
                         setAsset(prev => [...prev, item]); form.setValue('assets', [...(form.getValues('assets') ?? []), item.id], { shouldDirty: true }); setTempAsset(prev => prev.filter(asset => asset.id !== item.id))
                     }} />
                 )}
-                <FormInputField field="title" />
+                <FormInputField field="title" label="Judul" placeholder="Masukkan judul konten..." />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormInputSelect field="status" options={statusoptionInput} />
                     <FormInputSelect field="type" options={typeoptionInput} />
                 </div>
                 <ContentPreview field="description" />
-                <FormTextArea field="description" />
+                <FormTextArea field="description" label="Konten" placeholder="Masukkan konten postingan..." />
                 <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t">
                     <Link href="/dashboard/post"
                         type="button"

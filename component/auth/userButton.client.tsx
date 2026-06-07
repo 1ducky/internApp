@@ -25,7 +25,7 @@ export const UserButtonClient = ({ user, children }: { user: ClerkSession, child
                 className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 overflow-hidden border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-transform hover:scale-105"
             >
                 {user.img ? (
-                    <Image fill sizes="32px,32px" src={user.img} alt={user.name || "User"} className="w-full h-full object-cover" />
+                    <Image fill sizes="32px,32px" src={user.img} alt={user.name || "User"} className="w-full h-full object-cover rounded-full" />
                 ) : (
                     <span className="text-sm font-semibold">{user.name?.charAt(0).toUpperCase() || 'U'}</span>
                 )}
