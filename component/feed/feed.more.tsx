@@ -26,6 +26,8 @@ export default function FeedMore({ children }: { children: ReactNode }) {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
+        name='menu Button'
+        id='menu'
         className="p-1.5 text-zinc-400 dark:text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 rounded-full hover:bg-zinc-50 dark:hover:bg-zinc-850 transition duration-150"
       >
         <MoreHorizontal size={18} />

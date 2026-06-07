@@ -9,13 +9,13 @@ export const feedRepository = {
 
 const maxTake = 100
 
-async function getRawFeedPost(nextCursor?:string,type:PostType = 'FEED',take:number=10 ) {
+async function getRawFeedPost(nextCursor?:string,type?:PostType,take:number=10 ) {
   const db = await prisma.post.findMany({
     take:Math.min(take,maxTake),
     orderBy:{createdAt:'desc'},
     where:{
       status:'PUBLISHED',
-      type:type
+      ...(type && {type})
     },
     ...(nextCursor ? {cursor:{id:nextCursor},skip:1}:{}),
     select:{

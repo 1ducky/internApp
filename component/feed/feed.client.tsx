@@ -6,6 +6,7 @@ import FeedPost from "./feed.post"
 import { FeedHighLight } from "./feed.higlight"
 import { FlagIcon } from "lucide-react"
 import { ClerkSession } from "@/services/clerk/clerk.session"
+import { buildQueryString, QueryOptions } from "@/utils/queryBuilder"
 
 // dapatkan initial state dari server cache
 // dapatkan nilai id terahir untuk cursor
@@ -15,7 +16,7 @@ import { ClerkSession } from "@/services/clerk/clerk.session"
 // jika hasil data kurang dari expeted maka disable fetch
 
 
-export const FeedClient = ({ initialData, viewer }: { initialData: FeedMetaProps, viewer?: ClerkSession }) => {
+export const FeedClient = ({ initialData, viewer, option }: { initialData: FeedMetaProps, viewer?: ClerkSession, option?: QueryOptions }) => {
     const [activeImage, setActiveImage] = useState<string | undefined>(undefined);
 
     const observerRef = useRef<HTMLDivElement>(null)
@@ -28,9 +29,10 @@ export const FeedClient = ({ initialData, viewer }: { initialData: FeedMetaProps
         hasNextPage,
         isFetchingNextPage,
     } = useInfiniteQuery({
-        queryKey: ['feeds'],
+        queryKey: ['feeds', option ?? "all"],
         queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
-            const res = await fetch(`/api/feed?cursor=${pageParam}`)
+            const query = buildQueryString({ ...option, cursor: pageParam })
+            const res = await fetch(`/api/feed${query}`)
             const data = await res.json()
             return data.feed as FeedMetaProps
         },

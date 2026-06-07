@@ -6,6 +6,7 @@ import QueryProvider from "@/provider/query-provider";
 import { ConfirmProvider } from "@/provider/comfirm-provider";
 import Navbar from "@/component/global/navbar";
 import FooterComponent from "@/component/global/footer";
+import { ButtonToTop } from "@/component/global/button.toTop";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -61,6 +62,7 @@ export default function RootLayout({
             <QueryProvider>
               <Navbar />
               {children}
+              <ButtonToTop />
               <FooterComponent />
             </QueryProvider>
           </ConfirmProvider>
