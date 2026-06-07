@@ -7,9 +7,9 @@ export const feedRepository = {
   getDetailFeed
 }
 
-async function getRawFeedPost(nextCursor?:string,type:PostType = 'FEED') {
+async function getRawFeedPost(nextCursor?:string,type:PostType = 'FEED',take:number=10 ) {
   const db = await prisma.post.findMany({
-    take:10,
+    take:take,
     orderBy:{createdAt:'desc'},
     where:{
       status:'PUBLISHED',
@@ -51,9 +51,9 @@ async function getRawFeedPost(nextCursor?:string,type:PostType = 'FEED') {
   })
   return db
 }
-async function getRawOwnFeed(userId:string,nextCursor?:string, type?:PostType ) {
+async function getRawOwnFeed(userId:string,nextCursor?:string, type?:PostType,take:number=10 ) {
   const db = await prisma.post.findMany({
-    take:10,
+    take:take,
     orderBy:{createdAt:'desc'},
     where:{
       authorId:userId,
