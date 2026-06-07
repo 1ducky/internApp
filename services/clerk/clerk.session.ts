@@ -6,6 +6,8 @@ export type ClerkSession = {
     userId: string,
     email: string,
     role: string
+    img?:string
+    name?:string
 }
 
 export type UserPublicMetadata = {
@@ -16,6 +18,8 @@ export type UserPublicMetadata = {
 export async function getAuthSessionClerk() : Promise<ClerkSession | undefined> {
     const user = await currentUser()
     if(!user) return undefined
+    const externalAccountGoogle = user.externalAccounts.find((account) => account.provider === 'oauth_google')
+    const fullname = externalAccountGoogle?.firstName + ' ' + externalAccountGoogle?.lastName
     const metadata = user?.publicMetadata as UserPublicMetadata
     if(!metadata.role && !metadata.id){
         const publicData = await userRepository.userInitializeSession(user.id)
@@ -24,7 +28,9 @@ export async function getAuthSessionClerk() : Promise<ClerkSession | undefined> 
                 userClerkId: user.id,
                 userId: publicData.data.id,
                 email: user.emailAddresses[0].emailAddress,
-                role: publicData.data.role
+                role: publicData.data.role,
+                img:user.imageUrl,
+                name:publicData.data.name ?? user.username ?? fullname
             }
         } 
     }
@@ -32,6 +38,8 @@ export async function getAuthSessionClerk() : Promise<ClerkSession | undefined> 
         userClerkId: user.id,
         userId: metadata.id,
         email: user.emailAddresses[0].emailAddress,
-        role: metadata.role
+        role: metadata.role,
+        img:user.imageUrl,
+        name: user.username ?? fullname
     }
 }

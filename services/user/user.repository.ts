@@ -14,7 +14,8 @@ async function userInitializeSession (clerkId:string ) {
             clerkId:clerkId
         }, select:{
             role:true,
-            id:true
+            id:true,
+            name:true
             // initalize impoertant field
         }
     })

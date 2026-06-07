@@ -8,15 +8,15 @@ export const feedServices = {
   getOwnFeed
 }
 
-async function getFeed(nextCursor?:string,type:string='FEED' ) {
-  const validtype = typeEnum.parse(type)
-  const db = await feedRepository.getRawFeedPost(nextCursor,validtype)
+async function getFeed(nextCursor?:string,type?:string,take:number=10 ) {
+  const validtype = type ? typeEnum.parse(type.toUpperCase()) : undefined
+  const db = await feedRepository.getRawFeedPost(nextCursor,validtype,take)
 
   return toFeedDto(db);
 }
-async function getOwnFeed(userId:string,nextCursor?:string,type?:string) {
-  const validtype = type ? typeEnum.parse(type) : undefined
-  const db = await feedRepository.getRawOwnFeed(userId,nextCursor,validtype)
+async function getOwnFeed(userId:string,nextCursor?:string,type?:string,take:number=10) {
+  const validtype = type ? typeEnum.parse(type.toUpperCase()) : undefined
+  const db = await feedRepository.getRawOwnFeed(userId,nextCursor,validtype,take)
 
   return toFeedDto(db);
 }
