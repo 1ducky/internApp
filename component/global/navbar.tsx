@@ -1,12 +1,13 @@
 
 
 import Link from "next/link"
-import { Show, UserButton } from "@clerk/nextjs"
+import { Show } from "@clerk/nextjs"
+import { AccountButton } from "../auth/userButton"
 
 export default function Navbar() {
 
   return (
-    <header className="w-full border-b bg-white backdrop-blur-md shadow-sm">
+    <header className="w-full border-b bg-white backdrop-blur-md shadow-sm z-50">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/" className="text-lg font-semibold tracking-tight text-black">
           InternApp
@@ -20,13 +21,7 @@ export default function Navbar() {
             >
               Post
             </Link>
-            <Link
-              href="/dashboard"
-              className="rounded-full border border-black px-4 py-2 text-sm font-semibold text-black transition hover:bg-zinc-100"
-            >
-              Dashboard
-            </Link>
-            <UserButton />
+            <AccountButton />
           </Show>
 
           <Show when={'signed-out'}>
