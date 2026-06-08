@@ -1,3 +1,4 @@
+import { cacheTag } from "@/libs/cache";
 import { feedServices } from "@/services/feed/feed.service";
 import { unstable_cache } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
@@ -8,7 +9,14 @@ const getCacheFeed = (type?: string, userid?: string) => unstable_cache(
         return await feedServices.getFeed(cursor, type, take, userid)
     },
     ['feed', type ? type : 'random', userid ?? 'all'],
-    { revalidate: 5 * 60 * 60 }
+    {
+        revalidate: 5 * 60 * 60,
+        tags: [
+            cacheTag.feed.all(),
+            ...(type ? [cacheTag.feed.type(type)] : []),
+            ...(userid ? [cacheTag.feed.user(userid)] : [])
+        ]
+    }
 )
 
 export async function GET(req: NextRequest) {

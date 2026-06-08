@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache"
 import { profileService } from "./profile.service"
+import { cacheTag } from "@/libs/cache"
 
 const getCahcePublicProfile = (userId: string) => unstable_cache(
     async () => {
@@ -8,7 +9,8 @@ const getCahcePublicProfile = (userId: string) => unstable_cache(
     },
     ['public-profile', 'userId', userId],
     {
-        revalidate: 60 * 60
+        revalidate: 60 * 60,
+        tags: [cacheTag.profile.public(userId), cacheTag.profile.user(userId)]
     }
 )
 

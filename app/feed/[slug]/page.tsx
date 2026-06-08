@@ -13,7 +13,7 @@ import { FeedCache } from "@/services/feed/feed.cache"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params
-    const res = await FeedCache.detailFeed(slug)
+    const res = await FeedCache.detailFeed(slug)()
 
     if (!res) {
         return {
@@ -53,7 +53,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ slu
 
 async function LazyPreview({ slug }: { slug: string }) {
     const [res, user] = await Promise.all([
-        FeedCache.detailFeed(slug),
+        FeedCache.detailFeed(slug)(),
         getAuthSessionClerk()
     ])
     if (!res) return notFound()
