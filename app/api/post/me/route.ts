@@ -3,15 +3,16 @@ import { NextResponse } from "next/server";
 
 import { feedServices } from "@/services/feed/feed.service";
 import { unstable_cache } from "next/cache";
-import { NextRequest} from "next/server";
+import { NextRequest } from "next/server";
+import { cacheTag } from "@/libs/cache";
 
-const getCacheFeed = (userId:string) => unstable_cache(
-    async (cursor?:string,type?:string) => { 
+const getCacheFeed = (userId: string) => unstable_cache(
+    async (cursor?: string, type?: string) => {
         console.log('🔴 CACHE MISS - fetching from DB, cursor:', cursor)
-        return await feedServices.getOwnFeed(userId,cursor,type) 
+        return await feedServices.getOwnFeed(userId, cursor, type)
     },
-    ['feed',userId],
-    { revalidate: 5 * 60 * 60 , tags:[`feed-${userId}`]}
+    ['feed', userId],
+    { revalidate: 5 * 60 * 60, tags: [cacheTag.feed.user(userId)] }
 )
 
 export async function GET(req: NextRequest) {
@@ -22,7 +23,7 @@ export async function GET(req: NextRequest) {
     if (cursor && cursor.length < 20) {
         return NextResponse.json({ Feeds: [], NextCursor: null }, { status: 200 })
     }
-    if(!user) return NextResponse.json({message:"User not found",code:401},{status:401})
-    const feed = await getCacheFeed(user.userId)(cursor,type)
+    if (!user) return NextResponse.json({ message: "User not found", code: 401 }, { status: 401 })
+    const feed = await getCacheFeed(user.userId)(cursor, type)
     return NextResponse.json({ feed }, { status: 200 })
 }
