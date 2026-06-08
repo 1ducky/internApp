@@ -14,7 +14,11 @@ export const toPublicProfileDto = (rawProfile: RawPublicProfile) => {
     if (!rawProfile || !rawProfile.success || !rawProfile.data) return null
     const profile: ProfilePublicMetadata = {
         name: rawProfile.data.name ?? rawProfile.data.profile?.userName ?? 'Belum Mengisi Biodatara',
-        joinAt: rawProfile.data.createdAt.toLocaleString('id-ID') ?? '',
+        joinAt: rawProfile.data.createdAt.toLocaleDateString('id-ID', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }) ?? '',
         imageUrl: rawProfile.data.imageUrl ?? '',
         bio: rawProfile.data.profile?.bio ?? 'Belum Mengisi Biodatara'
     }
