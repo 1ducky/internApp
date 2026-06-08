@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import { MapPin, Calendar, Briefcase, Award } from "lucide-react";
+import { Calendar, Briefcase } from "lucide-react";
 import { formattedDate } from "@/utils/dateFormateed";
 import { ProfilePublicMetadata } from "@/services/profile/profile.dto";
 

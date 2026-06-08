@@ -1,4 +1,4 @@
-import { ProfileCache } from "@/services/profile/profile.cache";
+
 import { profileService } from "@/services/profile/profile.service";
 import { NextRequest, NextResponse } from "next/server";
 
