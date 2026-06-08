@@ -134,7 +134,7 @@ export default function FeedPost({ post, viewer, onZoom, option }: { post: FeedD
 
           {/* Author Details & Date */}
           <div>
-            <div className="flex items-center gap-1.5 flex-wrap">
+            <Link href={`/profile/${post.author.id}`} prefetch={false} className="flex items-center gap-1.5 flex-wrap">
               <span className="font-semibold text-sm text-zinc-800 dark:text-zinc-200 hover:underline cursor-pointer">
                 {post.author.username || 'Pengguna InternApp'}
               </span>
@@ -143,7 +143,7 @@ export default function FeedPost({ post, viewer, onZoom, option }: { post: FeedD
                   @{post.author.username}
                 </span>
               )}
-            </div>
+            </Link>
             <div className="flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
               <Calendar size={11} className="inline" />
               <span>{formattedDate(post.createdAt)}</span>

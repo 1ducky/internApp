@@ -9,42 +9,44 @@ export const feedRepository = {
 
 const maxTake = 100
 
-async function getRawFeedPost(nextCursor?:string,type?:PostType,take:number=10 ) {
+async function getRawFeedPost(nextCursor?: string, type?: PostType, take: number = 10, userId?: string) {
+  console.log(userId)
   const db = await prisma.post.findMany({
-    take:Math.min(take,maxTake),
-    orderBy:{createdAt:'desc'},
-    where:{
-      status:'PUBLISHED',
-      ...(type && {type})
+    take: Math.min(take, maxTake),
+    orderBy: { createdAt: 'desc' },
+    where: {
+      status: 'PUBLISHED',
+      ...(type && { type }),
+      ...(userId && { authorId: userId })
     },
-    ...(nextCursor ? {cursor:{id:nextCursor},skip:1}:{}),
-    select:{
-      id:true,
-      title:true,
-      description:true,
-      type:true,
-      status:true,
-      slug:true,
-      viewCount:true,
-      createdAt:true,
-      assets:{
-        where:{
-          fileStatus:'ACTIVE',
-          fileType:'IMAGE'
+    ...(nextCursor ? { cursor: { id: nextCursor }, skip: 1 } : {}),
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      type: true,
+      status: true,
+      slug: true,
+      viewCount: true,
+      createdAt: true,
+      assets: {
+        where: {
+          fileStatus: 'ACTIVE',
+          fileType: 'IMAGE'
         },
-        select:{
-          id:true,
-          fileUrl:true,
+        select: {
+          id: true,
+          fileUrl: true,
         }
       },
-      author:{
-        select:{
-          id:true,
-          name:true,
-          imageUrl:true,
-          profile:{
-            select:{
-              userName:true
+      author: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+          profile: {
+            select: {
+              userName: true
             }
           }
         }
@@ -53,43 +55,43 @@ async function getRawFeedPost(nextCursor?:string,type?:PostType,take:number=10 )
   })
   return db
 }
-async function getRawOwnFeed(userId:string,nextCursor?:string, type?:PostType,take:number=10 ) {
+async function getRawOwnFeed(userId: string, nextCursor?: string, type?: PostType, take: number = 10) {
   const db = await prisma.post.findMany({
-    take:Math.min(take,maxTake),
-    orderBy:{createdAt:'desc'},
-    where:{
-      authorId:userId,
-      status:'PUBLISHED',
-      ...(type && {type})
+    take: Math.min(take, maxTake),
+    orderBy: { createdAt: 'desc' },
+    where: {
+      authorId: userId,
+      status: 'PUBLISHED',
+      ...(type && { type })
     },
-    ...(nextCursor ? {cursor:{id:nextCursor},skip:1}:{}),
-    select:{
-      id:true,
-      title:true,
-      description:true,
-      type:true,
-      status:true,
-      slug:true,
-      viewCount:true,
-      createdAt:true,
-      assets:{
-        where:{
-          fileStatus:'ACTIVE',
-          fileType:'IMAGE'
+    ...(nextCursor ? { cursor: { id: nextCursor }, skip: 1 } : {}),
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      type: true,
+      status: true,
+      slug: true,
+      viewCount: true,
+      createdAt: true,
+      assets: {
+        where: {
+          fileStatus: 'ACTIVE',
+          fileType: 'IMAGE'
         },
-        select:{
-          id:true,
-          fileUrl:true,
+        select: {
+          id: true,
+          fileUrl: true,
         }
       },
-      author:{
-        select:{
-          id:true,
-          name:true,
-          imageUrl:true,
-          profile:{
-            select:{
-              userName:true
+      author: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+          profile: {
+            select: {
+              userName: true
             }
           }
         }
@@ -98,40 +100,40 @@ async function getRawOwnFeed(userId:string,nextCursor?:string, type?:PostType,ta
   })
   return db
 }
-async function getDetailFeed(slug:string) {
+async function getDetailFeed(slug: string) {
   const db = await prisma.post.findFirst({
 
-    where:{
-      slug:slug,
-      status:'PUBLISHED',
+    where: {
+      slug: slug,
+      status: 'PUBLISHED',
     },
-    select:{
-      id:true,
-      title:true,
-      description:true,
-      type:true,
-      status:true,
-      slug:true,
-      viewCount:true,
-      createdAt:true,
-      assets:{
-        where:{
-          fileStatus:'ACTIVE',
-          fileType:'IMAGE'
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      type: true,
+      status: true,
+      slug: true,
+      viewCount: true,
+      createdAt: true,
+      assets: {
+        where: {
+          fileStatus: 'ACTIVE',
+          fileType: 'IMAGE'
         },
-        select:{
-          id:true,
-          fileUrl:true,
+        select: {
+          id: true,
+          fileUrl: true,
         }
       },
-      author:{
-        select:{
-          id:true,
-          name:true,
-          imageUrl:true,
-          profile:{
-            select:{
-              userName:true
+      author: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+          profile: {
+            select: {
+              userName: true
             }
           }
         }

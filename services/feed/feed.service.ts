@@ -8,20 +8,20 @@ export const feedServices = {
   getOwnFeed
 }
 
-async function getFeed(nextCursor?:string,type?:string,take:number=10 ) {
+async function getFeed(nextCursor?: string, type?: string, take: number = 10, userId?: string) {
   const validtype = type ? typeEnum.parse(type.toUpperCase()) : undefined
-  const db = await feedRepository.getRawFeedPost(nextCursor,validtype,take)
+  const db = await feedRepository.getRawFeedPost(nextCursor, validtype, take, userId)
 
   return toFeedDto(db);
 }
-async function getOwnFeed(userId:string,nextCursor?:string,type?:string,take:number=10) {
+async function getOwnFeed(userId: string, nextCursor?: string, type?: string, take: number = 10) {
   const validtype = type ? typeEnum.parse(type.toUpperCase()) : undefined
-  const db = await feedRepository.getRawOwnFeed(userId,nextCursor,validtype,take)
+  const db = await feedRepository.getRawOwnFeed(userId, nextCursor, validtype, take)
 
   return toFeedDto(db);
 }
 
-async function getDetailFeed(slug:string) {
+async function getDetailFeed(slug: string) {
   const db = await feedRepository.getDetailFeed(slug)
 
   return toDetailFeedDto(db);
