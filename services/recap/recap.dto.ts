@@ -6,10 +6,10 @@ export type RecaptDto = {
     type: RecapType;
     value: number
 }
-
+export type GrupedRecap = Partial<Record<RecapType, RecaptDto[]>>
 export type RawRecap = Awaited<ReturnType<typeof recapRepository.getRecap>>
 
-export const toRecapDto = (rawRecap: RawRecap) => {
+export const toRecapDto = (rawRecap: RawRecap): GrupedRecap => {
 
     const recap: RecaptDto[] = rawRecap.map((item) => {
         return {
@@ -18,6 +18,11 @@ export const toRecapDto = (rawRecap: RawRecap) => {
             value: item.total
         }
     })
-    return recap
+
+    const grupedRecap = recap.reduce((acc, item) => {
+        acc[item.type] = [...(acc[item.type] ?? []), item];
+        return acc;
+    }, {} as GrupedRecap)
+    return grupedRecap
 }
 

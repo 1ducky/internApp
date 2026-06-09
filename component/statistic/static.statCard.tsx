@@ -1,4 +1,5 @@
-import { DataPoint, PALETTE } from "./static.data";
+import { RecaptDto } from "@/services/recap/recap.dto";
+import { PALETTE } from "./static.data";
 
 export default function StatCard({
     label,
@@ -6,27 +7,32 @@ export default function StatCard({
     metricKey,
 }: {
     label: string;
-    data: DataPoint[];
+    data: RecaptDto[];
     metricKey: string;
 }) {
     const total = data.reduce((s, d) => s + d.value, 0);
-    const latest = data[data.length - 1].value;
-    const prev = data[data.length - 2].value;
+    const latest = data[data.length - 1]?.value ?? 0;
+    const prev = data[data.length - 2]?.value ?? 0;
     const diff = latest - prev;
     const pct = prev === 0 ? 0 : Math.round((diff / prev) * 100);
-    const pal = PALETTE[metricKey];
+    const pal = PALETTE[metricKey] ?? {
+        stroke: "#fff",
+        accent: "rgba(255,255,255,0.4)",
+        badge: "border-white/20"
+    };
 
     /* mini sparkline */
     const W = 80;
     const H = 32;
     const vals = data.map((d) => d.value);
     const maxV = Math.max(...vals, 1);
-    const pts = vals
-        .map(
-            (v, i) =>
+    const pts = vals.length === 0
+        ? ""
+        : vals.length === 1
+            ? `0,${H} ${W},${H}`  // flat line
+            : vals.map((v, i) =>
                 `${(i / (vals.length - 1)) * W},${H - (v / maxV) * H}`
-        )
-        .join(" ");
+            ).join(" ");
 
     return (
         <div

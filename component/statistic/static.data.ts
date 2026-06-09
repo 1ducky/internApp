@@ -15,13 +15,13 @@ export type PaletteEntry = {
 
 /* ─── Color palette per metric ──────────────────────────── */
 export const PALETTE: Record<string, PaletteEntry> = {
-    post: {
+    POST: {
         stroke: "#818cf8",
         fill: "url(#grad-post)",
         accent: "#6366f1",
         badge: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
     },
-    user: {
+    USER: {
         stroke: "#34d399",
         fill: "url(#grad-user)",
         accent: "#10b981",

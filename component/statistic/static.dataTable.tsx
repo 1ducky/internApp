@@ -1,11 +1,12 @@
+import { RecaptDto } from "@/services/recap/recap.dto";
 import { DataPoint, PALETTE, MetricKey, METRICS } from "./static.data";
 
 export default function DataTable({
     data,
     activeMetric,
 }: {
-    data: DataPoint[];
-    activeMetric: MetricKey;
+    data: RecaptDto[];
+    activeMetric: "POST" | "USER";
 }) {
     const pal = PALETTE[activeMetric as string];
 
@@ -50,12 +51,12 @@ export default function DataTable({
                                     className="border-t transition-colors hover:bg-white/[0.02]"
                                     style={{ borderColor: "rgba(255,255,255,0.05)" }}
                                 >
-                                    <td className="px-6 py-3 text-white/50">{d.date}</td>
+                                    <td className="px-6 py-3 text-white/50">{new Date(d.recapAt).toISOString().split("T")[0]}</td>
                                     <td className="px-6 py-3">
                                         <span
                                             className={`text-xs px-2 py-0.5 rounded-full border ${pal.badge}`}
                                         >
-                                            {d.name}
+                                            {d.type}
                                         </span>
                                     </td>
                                     <td className="px-6 py-3 font-semibold text-white">

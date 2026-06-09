@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { DataPoint, PALETTE } from "./static.data";
+import { RecaptDto } from "@/services/recap/recap.dto";
 
 export default function BarChart({
     data,
     metricKey,
 }: {
-    data: DataPoint[];
+    data: RecaptDto[];
     metricKey: string;
 }) {
     const [hovered, setHovered] = useState<number | null>(null);
@@ -114,7 +115,7 @@ export default function BarChart({
                             fontSize="10"
                             fill="rgba(255,255,255,0.4)"
                         >
-                            {d.date}
+                            {new Date(d.recapAt).toISOString().split("T")[0]}
                         </text>
                     </g>
                 );
