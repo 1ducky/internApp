@@ -14,6 +14,10 @@ export const cacheTag = {
     },
     comment: {
         post: (postId: string) => `comment:post:${postId}`,
+    },
+    recap: {
+        type: (type?: string) => `recap:${type ?? 'all'}`,
+        date: (start: Date, end: Date) => `recap:date:${start.toISOString()}-${end.toISOString()}`
     }
 }
 

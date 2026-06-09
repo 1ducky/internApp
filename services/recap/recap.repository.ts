@@ -1,9 +1,11 @@
+import { RecapType } from "@/generated/prisma/enums";
 import { logger } from "@/infrastructure/lib/logger";
 import prisma from "@/libs/db"
 
 export const recapRepository = {
     DailyRecapPost,
-    DailyRecapUser
+    DailyRecapUser,
+    getRecap
 }
 
 async function DailyRecapPost(start: Date, end: Date) {
@@ -64,4 +66,17 @@ async function DailyRecapUser(start: Date, end: Date) {
     })
     return userCount
 
+}
+
+async function getRecap(start: Date, end: Date, type?: RecapType) {
+    const db = await prisma.dailyRecap.findMany({
+        where: {
+            recapAt: {
+                gte: start,
+                lte: end
+            },
+            ...(type && { type })
+        }
+    })
+    return db
 }
