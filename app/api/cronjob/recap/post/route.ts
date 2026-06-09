@@ -9,7 +9,9 @@ export async function GET(req: NextRequest) {
     if (!cronSecret || token !== cronSecret) {
         return Response.json({ message: "Unauthorized" }, { status: 401 })
     }
-    const now = new Date()
-    const user = await recapService.DailyRecapUser(now)
-    return NextResponse.json({ message: `Successfully Recap User: ${user.userTotal}`, recapAt: user.recapAt.toISOString() })
+    const query = await req.nextUrl.searchParams
+    const date = query.get('date')
+    const now = date ? new Date(date) : new Date()
+    const post = await recapService.DailyRecapPost(now)
+    return NextResponse.json({ message: `Successfully Recap Post: ${post.postTotal}`, recapAt: post.recapAt.toISOString() })
 }
