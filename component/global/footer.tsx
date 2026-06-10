@@ -74,7 +74,7 @@ export default function FooterComponent() {
                         </div>
 
                         <div className="text-xs text-gray-500 tracking-wide pt-4">
-                            &copy; 2026 InternApp. Made by <a href="#" className="hover:underline text-gray-400">Studio Meta</a>. All rights reserved.
+                            &copy; 2026 InternApp. Own By <a href="#" className="hover:underline text-gray-400">SMK Sunan Giri Menganti Gresik</a>. All rights reserved.
                         </div>
                     </div>
 

@@ -45,114 +45,117 @@ export default function BarChart({
     const pal = PALETTE[metricKey];
 
     return (
-        <svg
-            viewBox={`0 0 ${W} ${H}`}
-            className="w-full h-full"
-            style={{ overflow: "visible" }}
-            onMouseLeave={() => setHovered(null)}
-        >
-            <defs>
-                <linearGradient id={`bgrad-${metricKey}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={pal.stroke} stopOpacity="0.9" />
-                    <stop offset="100%" stopColor={pal.stroke} stopOpacity="0.3" />
-                </linearGradient>
-            </defs>
+        <>
+            <svg
+                viewBox={`0 0 ${W} ${H}`}
+                className="w-full h-full"
+                style={{ overflow: "visible" }}
+                onMouseLeave={() => setHovered(null)}
+            >
+                <defs>
+                    <linearGradient id={`bgrad-${metricKey}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={pal.stroke} stopOpacity="0.9" />
+                        <stop offset="100%" stopColor={pal.stroke} stopOpacity="0.3" />
+                    </linearGradient>
+                </defs>
 
-            {/* Grid */}
-            {[0, 0.25, 0.5, 0.75, 1].map((t) => {
-                const y = PAD.top + t * innerH;
-                return (
-                    <g key={t}>
-                        <line
-                            x1={PAD.left}
-                            x2={W - PAD.right}
-                            y1={y}
-                            y2={y}
-                            stroke="rgba(255,255,255,0.06)"
-                            strokeWidth="1"
-                        />
-                        <text
-                            x={PAD.left - 6}
-                            y={y + 4}
-                            textAnchor="end"
-                            fontSize="10"
-                            fill="rgba(255,255,255,0.3)"
-                        >
-                            {Math.round(maxV * (1 - t))}
-                        </text>
-                    </g>
-                );
-            })}
-
-            {allSlots.map((s, i) => {
-                const bh = (s.value / maxV) * innerH;
-                const bx = PAD.left + i * barW + gap / 2;
-                const by = PAD.top + innerH - bh;
-                const isPhantom = s.label === null;
-                const isHovered = hovered === i;
-
-                return (
-                    <g
-                        key={i}
-                        onMouseEnter={() => !isPhantom && setHovered(i)}
-                        onMouseLeave={() => setHovered(null)}
-                        style={{ cursor: isPhantom ? "default" : "pointer" }}
-                    >
-                        {/* Bar — phantom slots render as empty (height 0, invisible) */}
-                        {!isPhantom && (
-                            <rect
-                                x={bx}
-                                y={by}
-                                width={bwFinal}
-                                height={bh}
-                                rx={4}
-                                fill={`url(#bgrad-${metricKey})`}
-                                opacity={hovered === null || isHovered ? 1 : 0.4}
-                                style={{ transition: "opacity 0.2s" }}
+                {/* Grid */}
+                {[0, 0.25, 0.5, 0.75, 1].map((t) => {
+                    const y = PAD.top + t * innerH;
+                    return (
+                        <g key={t}>
+                            <line
+                                x1={PAD.left}
+                                x2={W - PAD.right}
+                                y1={y}
+                                y2={y}
+                                stroke="currentColor"
+                                strokeWidth="1"
+                                className="text-zinc-200 dark:text-white/[0.06]"
                             />
-                        )}
+                            <text
+                                x={PAD.left - 6}
+                                y={y + 4}
+                                textAnchor="end"
+                                fontSize="10"
+                                className="fill-zinc-400 dark:fill-white/30"
+                            >
+                                {Math.round(maxV * (1 - t))}
+                            </text>
+                        </g>
+                    );
+                })}
 
-                        {/* Tooltip */}
-                        {isHovered && !isPhantom && (
-                            <g>
+                {allSlots.map((s, i) => {
+                    const bh = (s.value / maxV) * innerH;
+                    const bx = PAD.left + i * barW + gap / 2;
+                    const by = PAD.top + innerH - bh;
+                    const isPhantom = s.label === null;
+                    const isHovered = hovered === i;
+
+                    return (
+                        <g
+                            key={i}
+                            onMouseEnter={() => !isPhantom && setHovered(i)}
+                            onMouseLeave={() => setHovered(null)}
+                            style={{ cursor: isPhantom ? "default" : "pointer" }}
+                        >
+                            {!isPhantom && (
                                 <rect
-                                    x={bx + bwFinal / 2 - 20}
-                                    y={by - 30}
-                                    width={40}
-                                    height={22}
-                                    rx="5"
-                                    fill="rgba(15,15,30,0.92)"
-                                    stroke={pal.stroke}
-                                    strokeWidth="1"
+                                    x={bx}
+                                    y={by}
+                                    width={bwFinal}
+                                    height={bh}
+                                    rx={4}
+                                    fill={`url(#bgrad-${metricKey})`}
+                                    opacity={hovered === null || isHovered ? 1 : 0.4}
+                                    style={{ transition: "opacity 0.2s" }}
                                 />
+                            )}
+
+                            {/* Tooltip */}
+                            {isHovered && !isPhantom && (
+                                <g>
+                                    <rect
+                                        x={bx + bwFinal / 2 - 20}
+                                        y={by - 30}
+                                        width={40}
+                                        height={22}
+                                        rx="5"
+                                        fill="currentColor"
+                                        stroke={pal.stroke}
+                                        strokeWidth="1"
+                                        className="text-white dark:text-zinc-950"
+                                    />
+                                    <text
+                                        x={bx + bwFinal / 2}
+                                        y={by - 14}
+                                        textAnchor="middle"
+                                        fontSize="11"
+                                        fontWeight="600"
+                                        className="fill-zinc-900 dark:fill-white"
+                                    >
+                                        {s.value}
+                                    </text>
+                                </g>
+                            )}
+
+                            {/* X label */}
+                            {!isPhantom && (
                                 <text
                                     x={bx + bwFinal / 2}
-                                    y={by - 14}
+                                    y={H - PAD.bottom + 18}
                                     textAnchor="middle"
-                                    fontSize="11"
-                                    fill="#fff"
-                                    fontWeight="600"
+                                    fontSize="10"
+                                    className="fill-zinc-400 dark:fill-white/40"
                                 >
-                                    {s.value}
+                                    {s.label}
                                 </text>
-                            </g>
-                        )}
-
-                        {/* X label — only for real slots */}
-                        {!isPhantom && (
-                            <text
-                                x={bx + bwFinal / 2}
-                                y={H - PAD.bottom + 18}
-                                textAnchor="middle"
-                                fontSize="10"
-                                fill="rgba(255,255,255,0.4)"
-                            >
-                                {s.label}
-                            </text>
-                        )}
-                    </g>
-                );
-            })}
-        </svg>
+                            )}
+                        </g>
+                    );
+                })}
+            </svg>
+        </>
     );
 }

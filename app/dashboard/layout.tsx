@@ -2,7 +2,7 @@
 
 export default function dashboardLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="bg-black mt-10">
+        <div className=" mt-10">
             {/* <Sidebar /> */}
             {children}
         </div>

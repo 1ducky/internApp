@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { PALETTE } from "./static.data";
 import { RecaptDto } from "@/services/recap/recap.dto";
+import useIsDarkTheme from "@/hooks/UI/useIsDark";
 
 // Maximum number of visible slots (adjust as needed)
 
@@ -17,6 +18,7 @@ export default function LineChart({
     backDay: number
 }) {
     const [hovered, setHovered] = useState<number | null>(null);
+    const isDark = useIsDarkTheme()
     const MAX_SLOTS = backDay;
 
     const W = 560;
@@ -66,161 +68,158 @@ export default function LineChart({
         : "";
 
     return (
-        <svg
-            viewBox={`0 0 ${W} ${H}`}
-            className="w-full h-full"
-            style={{ overflow: "visible" }}
-            onMouseLeave={() => setHovered(null)}
-        >
-            <defs>
-                <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={pal.stroke} stopOpacity="0.35" />
-                    <stop offset="100%" stopColor={pal.stroke} stopOpacity="0" />
-                </linearGradient>
-                <filter id={`glow-${metricKey}`}>
-                    <feGaussianBlur stdDeviation="3" result="blur" />
-                    <feMerge>
-                        <feMergeNode in="blur" />
-                        <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                </filter>
-            </defs>
+        <>
+            {/* Definisikan CSS vars berdasarkan dark/light mode */}
+            <svg
+                viewBox={`0 0 ${W} ${H}`}
+                className="w-full h-full"
+                style={{ overflow: "visible" }}
+                onMouseLeave={() => setHovered(null)}
+            >
+                <defs>
+                    <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={pal.stroke} stopOpacity="0.35" />
+                        <stop offset="100%" stopColor={pal.stroke} stopOpacity="0" />
+                    </linearGradient>
+                    <filter id={`glow-${metricKey}`}>
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feMerge>
+                            <feMergeNode in="blur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                </defs>
 
-            {/* Grid lines */}
-            {[0, 0.25, 0.5, 0.75, 1].map((t) => {
-                const y = PAD.top + t * chartH;
-                const val = Math.round(maxV - t * range);
-                return (
-                    <g key={t}>
-                        <line
-                            x1={PAD.left}
-                            x2={W - PAD.right}
-                            y1={y}
-                            y2={y}
-                            stroke="rgba(255,255,255,0.06)"
-                            strokeWidth="1"
-                        />
-                        <text
-                            x={PAD.left - 6}
-                            y={y + 4}
-                            textAnchor="end"
-                            fontSize="10"
-                            fill="rgba(255,255,255,0.3)"
-                        >
-                            {val}
-                        </text>
-                    </g>
-                );
-            })}
-
-            {/* Empty state: dashed baseline from right to 0 */}
-            {!hasData && (
-                <line
-                    x1={PAD.left}
-                    x2={W - PAD.right}
-                    y1={PAD.top + chartH}
-                    y2={PAD.top + chartH}
-                    stroke={pal.stroke}
-                    strokeWidth="1.5"
-                    strokeDasharray="4 4"
-                    opacity="0.3"
-                />
-            )}
-
-            {hasData && (
-                <>
-                    {/* Area fill */}
-                    <path d={areaPath} fill={pal.fill} />
-
-                    {/* Line — only spans from first data point to last (right-anchored) */}
-                    <polyline
-                        points={points}
-                        fill="none"
-                        stroke={pal.stroke}
-                        strokeWidth="2.5"
-                        strokeLinejoin="round"
-                        strokeLinecap="round"
-                        filter={`url(#glow-${metricKey})`}
-                    />
-
-                    {/* Dashed extension from leftmost data point to x=PAD.left (if data < MAX_SLOTS) */}
-                    {trimmed.length < MAX_SLOTS && (
-                        <line
-                            x1={PAD.left}
-                            x2={px(0)}
-                            y1={PAD.top + chartH}
-                            y2={PAD.top + chartH}
-                            stroke={pal.stroke}
-                            strokeWidth="1.5"
-                            strokeDasharray="4 4"
-                            opacity="0.25"
-                        />
-                    )}
-
-                    {/* Dots + tooltips + X labels */}
-                    {trimmed.map((d, i) => (
-                        <g
-                            key={i}
-                            onMouseEnter={() => setHovered(i)}
-                            style={{ cursor: "pointer" }}
-                        >
-                            {/* Hover zone */}
-                            <rect
-                                x={px(i) - 20}
-                                y={PAD.top}
-                                width={40}
-                                height={chartH}
-                                fill="transparent"
+                {/* Grid lines */}
+                {[0, 0.25, 0.5, 0.75, 1].map((t) => {
+                    const y = PAD.top + t * chartH;
+                    const val = Math.round(maxV - t * range);
+                    return (
+                        <g key={t}>
+                            <line
+                                x1={PAD.left}
+                                x2={W - PAD.right}
+                                y1={y}
+                                y2={y}
+                                stroke="currentColor"
+                                strokeWidth="1"
+                                className="text-zinc-200 dark:text-white/[0.06]"
                             />
-                            {/* Dot */}
-                            <circle
-                                cx={px(i)}
-                                cy={py(d.value)}
-                                r={hovered === i ? 6 : 4}
-                                fill={hovered === i ? "#fff" : pal.stroke}
-                                stroke={pal.stroke}
-                                strokeWidth="2"
-                                style={{ transition: "r 0.15s" }}
-                            />
-                            {/* Tooltip */}
-                            {hovered === i && (
-                                <g>
-                                    <rect
-                                        x={px(i) - 26}
-                                        y={py(d.value) - 36}
-                                        width={52}
-                                        height={26}
-                                        rx="6"
-                                        fill="rgba(15,15,30,0.92)"
-                                        stroke={pal.stroke}
-                                        strokeWidth="1"
-                                    />
-                                    <text
-                                        x={px(i)}
-                                        y={py(d.value) - 18}
-                                        textAnchor="middle"
-                                        fontSize="11"
-                                        fill="#fff"
-                                        fontWeight="600"
-                                    >
-                                        {d.value}
-                                    </text>
-                                </g>
-                            )}
-                            {/* X label */}
                             <text
-                                x={px(i)}
-                                y={H - PAD.bottom + 18}
-                                textAnchor="middle"
+                                x={PAD.left - 6}
+                                y={y + 4}
+                                textAnchor="end"
                                 fontSize="10"
-                                fill="rgba(255,255,255,0.4)"
+                                className="fill-zinc-400 dark:fill-white/30"
                             >
-                                {new Date(d.recapAt).toISOString().split("T")[0]}
+                                {val}
                             </text>
                         </g>
-                    ))}
-                </>
-            )}
-        </svg>
+                    );
+                })}
+
+                {/* Empty state */}
+                {!hasData && (
+                    <line
+                        x1={PAD.left}
+                        x2={W - PAD.right}
+                        y1={PAD.top + chartH}
+                        y2={PAD.top + chartH}
+                        stroke={pal.stroke}
+                        strokeWidth="1.5"
+                        strokeDasharray="4 4"
+                        opacity="0.3"
+                    />
+                )}
+
+                {hasData && (
+                    <>
+                        <path d={areaPath} fill={pal.fill} />
+
+                        <polyline
+                            points={points}
+                            fill="none"
+                            stroke={pal.stroke}
+                            strokeWidth="2.5"
+                            strokeLinejoin="round"
+                            strokeLinecap="round"
+                            filter={`url(#glow-${metricKey})`}
+                        />
+
+                        {trimmed.length < MAX_SLOTS && (
+                            <line
+                                x1={PAD.left}
+                                x2={px(0)}
+                                y1={PAD.top + chartH}
+                                y2={PAD.top + chartH}
+                                stroke={pal.stroke}
+                                strokeWidth="1.5"
+                                strokeDasharray="4 4"
+                                opacity="0.25"
+                            />
+                        )}
+
+                        {trimmed.map((d, i) => (
+                            <g
+                                key={i}
+                                onMouseEnter={() => setHovered(i)}
+                                style={{ cursor: "pointer" }}
+                            >
+                                <rect
+                                    x={px(i) - 20}
+                                    y={PAD.top}
+                                    width={40}
+                                    height={chartH}
+                                    fill="transparent"
+                                />
+                                <circle
+                                    cx={px(i)}
+                                    cy={py(d.value)}
+                                    r={hovered === i ? 6 : 4}
+                                    fill={hovered === i ? (isDark ? "#fff" : "#1a1a1a") : pal.stroke}
+                                    stroke={pal.stroke}
+                                    strokeWidth="2"
+                                    style={{ transition: "r 0.15s" }}
+                                />
+                                {hovered === i && (
+                                    <g>
+                                        <rect
+                                            x={px(i) - 26}
+                                            y={py(d.value) - 36}
+                                            width={52}
+                                            height={26}
+                                            rx="6"
+                                            fill="currentColor"
+                                            stroke={pal.stroke}
+                                            strokeWidth="1"
+                                            className="text-white dark:text-zinc-950"
+                                        />
+                                        <text
+                                            x={px(i)}
+                                            y={py(d.value) - 18}
+                                            textAnchor="middle"
+                                            fontSize="11"
+                                            fontWeight="600"
+                                            className="fill-zinc-900 dark:fill-white"
+                                        >
+                                            {d.value}
+                                        </text>
+                                    </g>
+                                )}
+                                <text
+                                    x={px(i)}
+                                    y={H - PAD.bottom + 18}
+                                    textAnchor="middle"
+                                    fontSize="10"
+                                    className="fill-zinc-400 dark:fill-white/40"
+                                >
+                                    {new Date(d.recapAt).toISOString().split("T")[0]}
+                                </text>
+                            </g>
+                        ))}
+                    </>
+                )}
+            </svg>
+        </>
     );
 }

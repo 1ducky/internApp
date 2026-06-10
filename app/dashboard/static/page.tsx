@@ -9,7 +9,7 @@ export default async function StaticPage() {
 
     return (
         <>
-            <div className="min-h-screen bg-[#080810] text-white px-4 py-8 md:px-10">
+            <div className="min-h-screen dark:bg-[#080810] bg-white dark:text-white px-4 py-8 md:px-10">
                 <RecapCsr res={res} backDay={backDay} />
             </div>
         </>

@@ -5,6 +5,7 @@ import DataTable from "@/component/statistic/static.dataTable";
 import { StatisticHeader } from "@/component/statistic/static.header";
 import StatCard from "@/component/statistic/static.statCard";
 import { GrupedRecap, Metrickey } from "@/services/recap/recap.dto";
+import { ChartColumnBig, ChartLine } from "lucide-react";
 import { useState } from "react";
 
 export default function RecapCsr({ res, backDay }: { res: GrupedRecap, backDay: number }) {
@@ -57,41 +58,41 @@ export default function RecapCsr({ res, backDay }: { res: GrupedRecap, backDay: 
                                 <button
                                     key={i}
                                     onClick={() => setActiveMetric(key)}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200"
-                                    style={{
-                                        background: active ? "rgba(255,255,255,0.12)" : "transparent",
-                                        color: active ? "#fff" : "rgba(255,255,255,0.4)",
-                                        boxShadow: "none",
-                                    }}
+                                    className={`
+                                    flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium
+                                    transition-all duration-200 border
+                                    ${active
+                                            ? "bg-white dark:bg-white/10 border-zinc-200 dark:border-white/15 text-zinc-900 dark:text-white"
+                                            : "bg-transparent border-transparent text-zinc-400 dark:text-white/40 hover:text-zinc-700 dark:hover:text-white/70"
+                                        }
+  `}
+
                                 >
-                                    <span className="capitalize">{key}</span>
+                                    <span className="capitalize dark:text-white text-black">{key}</span>
                                 </button>
                             );
                         })}
                     </div>
 
                     {/* Chart type toggle */}
-                    <div
-                        className="flex rounded-xl p-1 gap-1"
-                        style={{ background: "rgba(255,255,255,0.06)" }}
-                    >
+                    <div className="flex rounded-xl p-1 gap-1 bg-zinc-100 dark:bg-white/6">
                         {(["line", "bar"] as ChartType[]).map((t) => (
                             <button
                                 key={t}
                                 onClick={() => setChartType(t)}
-                                className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 capitalize"
-                                style={{
-                                    background:
-                                        chartType === t
-                                            ? "rgba(255,255,255,0.12)"
-                                            : "transparent",
-                                    color:
-                                        chartType === t
-                                            ? "#fff"
-                                            : "rgba(255,255,255,0.4)",
-                                }}
+                                className={`
+                                    px-3 py-1.5 rounded-lg text-xs font-medium
+                                    transition-all duration-200 capitalize
+                                    ${chartType === t
+                                        ? "bg-white dark:bg-white/12 text-zinc-900 dark:text-white shadow-sm"
+                                        : "bg-transparent text-zinc-400 dark:text-white/40 hover:text-zinc-600 dark:hover:text-white/60"
+                                    }
+                                `}
                             >
-                                {t === "line" ? "📈 Line" : "📊 Bar"}
+                                {t === "line"
+                                    ? <div className="flex items-center gap-1.5"><ChartLine size={20} /> Garis</div>
+                                    : <div className="flex items-center gap-1.5"><ChartColumnBig size={20} /> Bar</div>
+                                }
                             </button>
                         ))}
                     </div>
@@ -107,7 +108,7 @@ export default function RecapCsr({ res, backDay }: { res: GrupedRecap, backDay: 
                         { label: "Puncak", value: peak },
                     ].map((s) => (
                         <div key={s.label}>
-                            <p className="text-xs text-white/30 mb-0.5">{s.label}</p>
+                            <p className="text-xs dark:text-white/30 text-zinc-600 mb-0.5">{s.label}</p>
                             <p
                                 className="text-xl font-bold"
                             >
