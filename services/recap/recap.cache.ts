@@ -1,5 +1,4 @@
 import { RecapType } from "@/generated/prisma/enums"
-import { recapRepository } from "./recap.repository"
 import { unstable_cache } from "next/cache"
 import { cacheTag } from "@/libs/cache"
 import { recapService } from "./recap.service"

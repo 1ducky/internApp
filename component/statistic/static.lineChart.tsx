@@ -1,38 +1,69 @@
 "use client";
 
 import { useState } from "react";
-import { DataPoint, PALETTE } from "./static.data";
+import { PALETTE } from "./static.data";
 import { RecaptDto } from "@/services/recap/recap.dto";
+
+// Maximum number of visible slots (adjust as needed)
+
 
 export default function LineChart({
     data,
     metricKey,
+    backDay
 }: {
     data: RecaptDto[];
     metricKey: string;
+    backDay: number
 }) {
     const [hovered, setHovered] = useState<number | null>(null);
+    const MAX_SLOTS = backDay;
+
     const W = 560;
     const H = 200;
     const PAD = { top: 20, right: 24, bottom: 40, left: 40 };
 
-    const values = data.map((d) => d.value);
-    const maxV = Math.max(...values, 1);
-    const minV = Math.min(...values);
+    const chartW = W - PAD.left - PAD.right;
+    const chartH = H - PAD.top - PAD.bottom;
+
+    // Use at most MAX_SLOTS recent entries, already right-aligned
+    const slotCount = MAX_SLOTS;
+    const slotWidth = chartW / (slotCount - 1);
+
+    // Take only the last MAX_SLOTS items; oldest first
+    const trimmed = data.slice(-MAX_SLOTS).reverse();
+
+    const values = trimmed.map((d) => d.value);
+    const hasData = values.length > 0;
+
+    const maxV = hasData ? Math.max(...values, 1) : 1;
+    const minV = hasData ? Math.min(...values) : 0;
     const range = maxV - minV || 1;
 
-    const px = (i: number) =>
-        PAD.left + (i / (data.length - 1)) * (W - PAD.left - PAD.right);
-    const py = (v: number) =>
-        PAD.top + (1 - (v - minV) / range) * (H - PAD.top - PAD.bottom);
+    // Map index in `trimmed` to an x position, anchored from the RIGHT
+    // Index 0 in trimmed = oldest = left side of occupied segment
+    // Index trimmed.length-1 = newest = rightmost (W - PAD.right)
+    const px = (i: number) => {
+        const slotFromRight = trimmed.length - 1 - i; // 0 = rightmost
+        return PAD.left + chartW - slotFromRight * slotWidth;
+    };
 
-    const points = data.map((d, i) => `${px(i)},${py(d.value)}`).join(" ");
-    const areaPath = `M ${px(0)},${py(data[0].value)} ${data
-        .map((d, i) => `L ${px(i)},${py(d.value)}`)
-        .join(" ")} L ${px(data.length - 1)},${H - PAD.bottom} L ${px(0)},${H - PAD.bottom} Z`;
+    const py = (v: number) =>
+        PAD.top + (1 - (v - minV) / range) * chartH;
 
     const pal = PALETTE[metricKey];
     const gradId = `grad-${metricKey}`;
+
+    const points = hasData
+        ? trimmed.map((d, i) => `${px(i)},${py(d.value)}`).join(" ")
+        : "";
+
+    const areaPath = hasData
+        ? `M ${px(0)},${py(trimmed[0].value)} ` +
+        trimmed.map((d, i) => `L ${px(i)},${py(d.value)}`).join(" ") +
+        ` L ${px(trimmed.length - 1)},${H - PAD.bottom}` +
+        ` L ${px(0)},${H - PAD.bottom} Z`
+        : "";
 
     return (
         <svg
@@ -57,7 +88,7 @@ export default function LineChart({
 
             {/* Grid lines */}
             {[0, 0.25, 0.5, 0.75, 1].map((t) => {
-                const y = PAD.top + t * (H - PAD.top - PAD.bottom);
+                const y = PAD.top + t * chartH;
                 const val = Math.round(maxV - t * range);
                 return (
                     <g key={t}>
@@ -82,82 +113,114 @@ export default function LineChart({
                 );
             })}
 
-            {/* Area fill */}
-            <path d={areaPath} fill={pal.fill} />
+            {/* Empty state: dashed baseline from right to 0 */}
+            {!hasData && (
+                <line
+                    x1={PAD.left}
+                    x2={W - PAD.right}
+                    y1={PAD.top + chartH}
+                    y2={PAD.top + chartH}
+                    stroke={pal.stroke}
+                    strokeWidth="1.5"
+                    strokeDasharray="4 4"
+                    opacity="0.3"
+                />
+            )}
 
-            {/* Line */}
-            <polyline
-                points={points}
-                fill="none"
-                stroke={pal.stroke}
-                strokeWidth="2.5"
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                filter={`url(#glow-${metricKey})`}
-            />
+            {hasData && (
+                <>
+                    {/* Area fill */}
+                    <path d={areaPath} fill={pal.fill} />
 
-            {/* X-axis labels + interactive dots */}
-            {data.map((d, i) => (
-                <g
-                    key={i}
-                    onMouseEnter={() => setHovered(i)}
-                    style={{ cursor: "pointer" }}
-                >
-                    {/* hover zone */}
-                    <rect
-                        x={px(i) - 20}
-                        y={PAD.top}
-                        width={40}
-                        height={H - PAD.top - PAD.bottom}
-                        fill="transparent"
-                    />
-                    {/* dot */}
-                    <circle
-                        cx={px(i)}
-                        cy={py(d.value)}
-                        r={hovered === i ? 6 : 4}
-                        fill={hovered === i ? "#fff" : pal.stroke}
+                    {/* Line — only spans from first data point to last (right-anchored) */}
+                    <polyline
+                        points={points}
+                        fill="none"
                         stroke={pal.stroke}
-                        strokeWidth="2"
-                        style={{ transition: "r 0.15s" }}
+                        strokeWidth="2.5"
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        filter={`url(#glow-${metricKey})`}
                     />
-                    {/* tooltip */}
-                    {hovered === i && (
-                        <g>
+
+                    {/* Dashed extension from leftmost data point to x=PAD.left (if data < MAX_SLOTS) */}
+                    {trimmed.length < MAX_SLOTS && (
+                        <line
+                            x1={PAD.left}
+                            x2={px(0)}
+                            y1={PAD.top + chartH}
+                            y2={PAD.top + chartH}
+                            stroke={pal.stroke}
+                            strokeWidth="1.5"
+                            strokeDasharray="4 4"
+                            opacity="0.25"
+                        />
+                    )}
+
+                    {/* Dots + tooltips + X labels */}
+                    {trimmed.map((d, i) => (
+                        <g
+                            key={i}
+                            onMouseEnter={() => setHovered(i)}
+                            style={{ cursor: "pointer" }}
+                        >
+                            {/* Hover zone */}
                             <rect
-                                x={px(i) - 26}
-                                y={py(d.value) - 36}
-                                width={52}
-                                height={26}
-                                rx="6"
-                                fill="rgba(15,15,30,0.92)"
-                                stroke={pal.stroke}
-                                strokeWidth="1"
+                                x={px(i) - 20}
+                                y={PAD.top}
+                                width={40}
+                                height={chartH}
+                                fill="transparent"
                             />
+                            {/* Dot */}
+                            <circle
+                                cx={px(i)}
+                                cy={py(d.value)}
+                                r={hovered === i ? 6 : 4}
+                                fill={hovered === i ? "#fff" : pal.stroke}
+                                stroke={pal.stroke}
+                                strokeWidth="2"
+                                style={{ transition: "r 0.15s" }}
+                            />
+                            {/* Tooltip */}
+                            {hovered === i && (
+                                <g>
+                                    <rect
+                                        x={px(i) - 26}
+                                        y={py(d.value) - 36}
+                                        width={52}
+                                        height={26}
+                                        rx="6"
+                                        fill="rgba(15,15,30,0.92)"
+                                        stroke={pal.stroke}
+                                        strokeWidth="1"
+                                    />
+                                    <text
+                                        x={px(i)}
+                                        y={py(d.value) - 18}
+                                        textAnchor="middle"
+                                        fontSize="11"
+                                        fill="#fff"
+                                        fontWeight="600"
+                                    >
+                                        {d.value}
+                                    </text>
+                                </g>
+                            )}
+                            {/* X label */}
                             <text
                                 x={px(i)}
-                                y={py(d.value) - 18}
+                                y={H - PAD.bottom + 18}
                                 textAnchor="middle"
-                                fontSize="11"
-                                fill="#fff"
-                                fontWeight="600"
+                                fontSize="10"
+                                fill="rgba(255,255,255,0.4)"
                             >
-                                {d.value}
+                                {new Date(d.recapAt).toISOString().split("T")[0]}
                             </text>
                         </g>
-                    )}
-                    {/* X label */}
-                    <text
-                        x={px(i)}
-                        y={H - PAD.bottom + 18}
-                        textAnchor="middle"
-                        fontSize="10"
-                        fill="rgba(255,255,255,0.4)"
-                    >
-                        {new Date(d.recapAt).toISOString().split("T")[0]}
-                    </text>
-                </g>
-            ))}
+                    ))}
+                </>
+            )}
         </svg>
     );
 }

@@ -1,12 +1,12 @@
-import { RecaptDto } from "@/services/recap/recap.dto";
-import { DataPoint, PALETTE, MetricKey, METRICS } from "./static.data";
+import { Metrickey, RecaptDto, } from "@/services/recap/recap.dto";
+import { PALETTE, METRICS } from "./static.data";
 
 export default function DataTable({
     data,
     activeMetric,
 }: {
     data: RecaptDto[];
-    activeMetric: "POST" | "USER";
+    activeMetric: Metrickey;
 }) {
     const pal = PALETTE[activeMetric as string];
 
@@ -26,65 +26,70 @@ export default function DataTable({
                     Rincian Data · {METRICS.find((m) => m.key === activeMetric)?.label}
                 </p>
             </div>
-            <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                    <thead>
-                        <tr style={{ background: "rgba(255,255,255,0.02)" }}>
-                            {["Tanggal", "Metrik", "Nilai", "Perubahan"].map((h) => (
-                                <th
-                                    key={h}
-                                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-widest text-white/30"
-                                >
-                                    {h}
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {[...data].reverse().map((d, i) => {
-                            const idx = data.length - 1 - i;
-                            const prev = data[idx - 1];
-                            const diff = prev ? d.value - prev.value : null;
-                            return (
-                                <tr
-                                    key={i}
-                                    className="border-t transition-colors hover:bg-white/[0.02]"
-                                    style={{ borderColor: "rgba(255,255,255,0.05)" }}
-                                >
-                                    <td className="px-6 py-3 text-white/50">{new Date(d.recapAt).toISOString().split("T")[0]}</td>
-                                    <td className="px-6 py-3">
-                                        <span
-                                            className={`text-xs px-2 py-0.5 rounded-full border ${pal.badge}`}
-                                        >
-                                            {d.type}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-3 font-semibold text-white">
-                                        {d.value}
-                                    </td>
-                                    <td className="px-6 py-3">
-                                        {diff !== null ? (
+            {data.length !== 0 ?
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                        <thead>
+                            <tr style={{ background: "rgba(255,255,255,0.02)" }}>
+                                {["Tanggal", "Metrik", "Nilai", "Perubahan"].map((h) => (
+                                    <th
+                                        key={h}
+                                        className="px-6 py-3 text-left text-xs font-medium uppercase tracking-widest text-white/30"
+                                    >
+                                        {h}
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {[...data].reverse().map((d, i) => {
+                                const idx = data.length - 1 - i;
+                                const prev = data[idx - 1];
+                                const diff = prev ? d.value - prev.value : null;
+                                return (
+                                    <tr
+                                        key={i}
+                                        className="border-t transition-colors hover:bg-white/2"
+                                        style={{ borderColor: "rgba(255,255,255,0.05)" }}
+                                    >
+                                        <td className="px-6 py-3 text-white/50">{new Date(d.recapAt).toISOString().split("T")[0]}</td>
+                                        <td className="px-6 py-3">
                                             <span
-                                                className={`text-xs font-medium ${diff > 0
-                                                    ? "text-emerald-400"
-                                                    : diff < 0
-                                                        ? "text-red-400"
-                                                        : "text-white/30"
-                                                    }`}
+                                                className={`text-xs px-2 py-0.5 rounded-full border ${pal.badge}`}
                                             >
-                                                {diff > 0 ? "▲" : diff < 0 ? "▼" : "—"}{" "}
-                                                {Math.abs(diff)}
+                                                {d.type}
                                             </span>
-                                        ) : (
-                                            <span className="text-white/20 text-xs">—</span>
-                                        )}
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
+                                        </td>
+                                        <td className="px-6 py-3 font-semibold text-white">
+                                            {d.value}
+                                        </td>
+                                        <td className="px-6 py-3">
+                                            {diff !== null ? (
+                                                <span
+                                                    className={`text-xs font-medium ${diff > 0
+                                                        ? "text-emerald-400"
+                                                        : diff < 0
+                                                            ? "text-red-400"
+                                                            : "text-white/30"
+                                                        }`}
+                                                >
+                                                    {diff > 0 ? "▲" : diff < 0 ? "▼" : "—"}{" "}
+                                                    {Math.abs(diff)}
+                                                </span>
+                                            ) : (
+                                                <span className="text-white/20 text-xs">—</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div> :
+                <div className="flex justify-center items-center h-64">
+                    <p className="text-white/50 text-sm">Tidak ada data</p>
+                </div>
+            }
         </div>
     );
 }

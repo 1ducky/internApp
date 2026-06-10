@@ -1,41 +1,36 @@
 'use client'
-
-import BarChart from "@/component/statistic/static.barChart";
+import { StatView } from "@/component/statistic/static.chartView";
 import { ChartType } from "@/component/statistic/static.data";
 import DataTable from "@/component/statistic/static.dataTable";
-import LineChart from "@/component/statistic/static.lineChart";
+import { StatisticHeader } from "@/component/statistic/static.header";
 import StatCard from "@/component/statistic/static.statCard";
-import { GrupedRecap } from "@/services/recap/recap.dto";
+import { GrupedRecap, Metrickey } from "@/services/recap/recap.dto";
 import { useState } from "react";
 
-export default function RecapCsr({ res }: { res: GrupedRecap }) {
-    const [activeMetric, setActiveMetric] = useState<keyof GrupedRecap>(Object.keys(res)[0] as keyof GrupedRecap)
+export default function RecapCsr({ res, backDay }: { res: GrupedRecap, backDay: number }) {
+    const matricKey = Object.keys(res) as Metrickey[]
+    const [activeMetric, setActiveMetric] = useState<Metrickey>(matricKey[0])
+
     const [chartType, setChartType] = useState<ChartType>("line");
 
-    const data = res[activeMetric];
+    const data = res[activeMetric] ?? [];
 
-    const total7 = data?.reduce((s, d) => s + d.value, 0) ?? 0;
-    const avg = (total7 / 7).toFixed(1);
-    const peak = Math.max(...(data?.map((d) => d.value) ?? [0])) ?? 0;
+    const total = data?.reduce((s, d) => s + d.value, 0) ?? 0;
+    const avg = (total / backDay).toFixed(1);
+    const peak = data?.length === 0 ? 0 : Math.max(...(data?.map((d) => d.value) ?? [0]));
+
     return (
         <>
             {/* Header */}
-            <div className="mb-8">
-                <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-                    📊 Dashboard Statistik
-                </h1>
-                <p className="text-sm text-white/40 mt-1">
-                    Data 7 hari terakhir · Diperbarui hari ini
-                </p>
-            </div>
+            <StatisticHeader backDay={backDay} />
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-                {Object.entries(res).map(([type, data]) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                {matricKey.map((key, i) => (
                     <StatCard
-                        key={type}
-                        label={type}
-                        data={data}
-                        metricKey={type}
+                        key={i}
+                        label={key}
+                        data={res[key] || []}
+                        metricKey={key}
                     />
                 ))}
             </div>
@@ -56,12 +51,12 @@ export default function RecapCsr({ res }: { res: GrupedRecap }) {
                         className="flex rounded-xl p-1 gap-1"
                         style={{ background: "rgba(255,255,255,0.06)" }}
                     >
-                        {Object.entries(res).map(([key, value]) => {
+                        {matricKey.map((key, i) => {
                             const active = activeMetric === key;
                             return (
                                 <button
-                                    key={key}
-                                    onClick={() => setActiveMetric(key as keyof GrupedRecap)}
+                                    key={i}
+                                    onClick={() => setActiveMetric(key)}
                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200"
                                     style={{
                                         background: active ? "rgba(255,255,255,0.12)" : "transparent",
@@ -107,7 +102,7 @@ export default function RecapCsr({ res }: { res: GrupedRecap }) {
                 {/* Quick stats row */}
                 <div className="flex gap-6 mb-6">
                     {[
-                        { label: "Total 7 Hari", value: total7 },
+                        { label: "Total 7 Hari", value: total },
                         { label: "Rata-rata / Hari", value: avg },
                         { label: "Puncak", value: peak },
                     ].map((s) => (
@@ -123,14 +118,8 @@ export default function RecapCsr({ res }: { res: GrupedRecap }) {
                 </div>
 
                 {/* Chart */}
-                {data &&
-                    <div className="h-52 w-full">
-                        {chartType === "line" ? (
-                            <LineChart data={data} metricKey={activeMetric} />
-                        ) : (
-                            <BarChart data={data} metricKey={activeMetric} />
-                        )}
-                    </div>
+                {data && data.length !== 0 &&
+                    <StatView chartType={chartType} data={data} metricKey={activeMetric} backDay={backDay} />
                 }
 
             </div>

@@ -1,5 +1,7 @@
 /* ─── Shared Types & Data for Static Dashboard ──────────── */
 
+import { Metrickey } from "@/services/recap/recap.dto";
+
 export type DataPoint = {
     name: string;
     value: number;
@@ -61,11 +63,10 @@ export const DATASETS: Record<string, DataPoint[]> = {
     application: generateWeek("application", 38, 30),
 };
 
-export type MetricKey = keyof typeof DATASETS;
-export type ChartType = "line" | "bar";
 
-export const METRICS: { key: MetricKey; label: string; icon: string }[] = [
-    { key: "post", label: "Post", icon: "📝" },
-    { key: "user", label: "User", icon: "👤" },
-    { key: "application", label: "Lamaran", icon: "📋" },
+export type ChartType = "line" | "bar"; //a
+
+export const METRICS: { key: Metrickey; label: string; icon: string }[] = [
+    { key: "POST", label: "Post", icon: "📝" },
+    { key: "USER", label: "User", icon: "👤" },
 ];

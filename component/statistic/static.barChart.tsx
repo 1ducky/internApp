@@ -1,26 +1,47 @@
 "use client";
 
 import { useState } from "react";
-import { DataPoint, PALETTE } from "./static.data";
+import { PALETTE } from "./static.data";
 import { RecaptDto } from "@/services/recap/recap.dto";
 
 export default function BarChart({
     data,
     metricKey,
+    backDay
 }: {
     data: RecaptDto[];
     metricKey: string;
+    backDay: number
 }) {
     const [hovered, setHovered] = useState<number | null>(null);
+    const MAX_SLOTS = backDay;
+
     const W = 560;
     const H = 200;
     const PAD = { top: 20, right: 24, bottom: 40, left: 40 };
     const innerW = W - PAD.left - PAD.right;
     const innerH = H - PAD.top - PAD.bottom;
 
-    const maxV = Math.max(...data.map((d) => d.value), 1);
-    const barW = innerW / data.length;
+    // Sort oldest → newest, take last MAX_SLOTS
+    const trimmed = data
+        .slice(-MAX_SLOTS)
+        .sort((a, b) => new Date(a.recapAt).getTime() - new Date(b.recapAt).getTime());
+
+    // Build full MAX_SLOTS array: phantom nulls on left, real data on right
+    type Slot = { value: number; label: string | null };
+    const emptyCount = MAX_SLOTS - trimmed.length;
+    const allSlots: Slot[] = [
+        ...Array.from({ length: emptyCount }, (): Slot => ({ value: 0, label: null })),
+        ...trimmed.map((d): Slot => ({
+            value: d.value,
+            label: new Date(d.recapAt).toISOString().split("T")[0],
+        })),
+    ];
+
+    const maxV = Math.max(...trimmed.map((d) => d.value), 1);
+    const barW = innerW / MAX_SLOTS;
     const gap = barW * 0.3;
+    const bwFinal = barW - gap;
     const pal = PALETTE[metricKey];
 
     return (
@@ -63,28 +84,36 @@ export default function BarChart({
                 );
             })}
 
-            {data.map((d, i) => {
-                const bh = (d.value / maxV) * innerH;
+            {allSlots.map((s, i) => {
+                const bh = (s.value / maxV) * innerH;
                 const bx = PAD.left + i * barW + gap / 2;
                 const by = PAD.top + innerH - bh;
-                const bwFinal = barW - gap;
+                const isPhantom = s.label === null;
+                const isHovered = hovered === i;
+
                 return (
                     <g
                         key={i}
-                        onMouseEnter={() => setHovered(i)}
-                        style={{ cursor: "pointer" }}
+                        onMouseEnter={() => !isPhantom && setHovered(i)}
+                        onMouseLeave={() => setHovered(null)}
+                        style={{ cursor: isPhantom ? "default" : "pointer" }}
                     >
-                        <rect
-                            x={bx}
-                            y={by}
-                            width={bwFinal}
-                            height={bh}
-                            rx={4}
-                            fill={`url(#bgrad-${metricKey})`}
-                            opacity={hovered === null || hovered === i ? 1 : 0.4}
-                            style={{ transition: "opacity 0.2s" }}
-                        />
-                        {hovered === i && (
+                        {/* Bar — phantom slots render as empty (height 0, invisible) */}
+                        {!isPhantom && (
+                            <rect
+                                x={bx}
+                                y={by}
+                                width={bwFinal}
+                                height={bh}
+                                rx={4}
+                                fill={`url(#bgrad-${metricKey})`}
+                                opacity={hovered === null || isHovered ? 1 : 0.4}
+                                style={{ transition: "opacity 0.2s" }}
+                            />
+                        )}
+
+                        {/* Tooltip */}
+                        {isHovered && !isPhantom && (
                             <g>
                                 <rect
                                     x={bx + bwFinal / 2 - 20}
@@ -104,19 +133,23 @@ export default function BarChart({
                                     fill="#fff"
                                     fontWeight="600"
                                 >
-                                    {d.value}
+                                    {s.value}
                                 </text>
                             </g>
                         )}
-                        <text
-                            x={bx + bwFinal / 2}
-                            y={H - PAD.bottom + 18}
-                            textAnchor="middle"
-                            fontSize="10"
-                            fill="rgba(255,255,255,0.4)"
-                        >
-                            {new Date(d.recapAt).toISOString().split("T")[0]}
-                        </text>
+
+                        {/* X label — only for real slots */}
+                        {!isPhantom && (
+                            <text
+                                x={bx + bwFinal / 2}
+                                y={H - PAD.bottom + 18}
+                                textAnchor="middle"
+                                fontSize="10"
+                                fill="rgba(255,255,255,0.4)"
+                            >
+                                {s.label}
+                            </text>
+                        )}
                     </g>
                 );
             })}

@@ -6,7 +6,9 @@ export type RecaptDto = {
     type: RecapType;
     value: number
 }
-export type GrupedRecap = Partial<Record<RecapType, RecaptDto[]>>
+
+export type Metrickey = "POST" | "USER"
+export type GrupedRecap = Partial<Record<Metrickey, RecaptDto[]>>
 export type RawRecap = Awaited<ReturnType<typeof recapRepository.getRecap>>
 
 export const toRecapDto = (rawRecap: RawRecap): GrupedRecap => {
