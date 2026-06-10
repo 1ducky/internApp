@@ -5,10 +5,11 @@ import { recapService } from "./recap.service"
 
 
 const RecapCache = (start: Date, end: Date, type?: RecapType) => unstable_cache(async () => {
+    console.log("🔴 CACHE MISS - Fetching Recap", start, end)
     return await recapService.getRecap(start, end, type)
 }, ["recap", type ?? 'all', start.toISOString(), end.toISOString()], {
-    revalidate: 60,
-    tags: [cacheTag.recap.type(type), ...(start && end ? [cacheTag.recap.date(start, end)] : [])]
+    revalidate: 60 * 60 * 24,
+    tags: [cacheTag.recap.type(type), cacheTag.recap.date(start, end)]
 })
 
 

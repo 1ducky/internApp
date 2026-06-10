@@ -2,14 +2,13 @@ import { logger } from "@/infrastructure/lib/logger";
 import prisma from "@/libs/db";
 import { uploadThingService } from "@/services/UploadThing/uploadthing.service";
 import { NextRequest, NextResponse } from "next/server";
+import { cronJobService } from "@/services/cronjob/cron.service";
 
 export async function GET(req: NextRequest) {
     const authHeader = req.headers.get('Authorization');
-    const cronSecret = process.env.CRON_SECRET?.trim();
-    const token = authHeader
-
-    if (!cronSecret || token !== cronSecret) {
-        return Response.json({ message: "Unauthorized" }, { status: 401 })
+    const cronAuth = cronJobService.cronAuth(authHeader);
+    if (!cronAuth) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
     const temp = await prisma.files.findMany({

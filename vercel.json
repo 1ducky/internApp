@@ -6,11 +6,11 @@
         },
         {
             "path": "/api/cronjob/recap/post",
-            "schedule": "0 1 * * *"
+            "schedule": "5 1 * * *"
         },
         {
             "path": "/api/cronjob/recap/user",
-            "schedule": "0 1 * * *"
+            "schedule": "10 1 * * *"
         }
     ]
 }
