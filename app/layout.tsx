@@ -30,9 +30,9 @@ export const metadata: Metadata = {
     siteName: "InternApp",
     images: [
       {
-        url: "/icon.svg",
-        width: 630,
-        height: 630,
+        url: "/og-image.jpeg",
+        width: 1200,
+        height: 600,
         alt: "Thumbnail InternApp",
       },
     ],
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "InternApp",
     description: "Cari info SMK Sunan Giri Menganti Gresik?, diskusi seru, dan agenda acara? Temukan juga peluang magang dan lowongan kerja dari perusahaan mitra resmi sekolah di sini!",
-    images: ["/icon.svg"], // TODO: Ganti dengan path gambar thumbnail yang sama
+    images: ["/og-image.jpeg"], // TODO: Ganti dengan path gambar thumbnail yang sama
   },
 };
 
