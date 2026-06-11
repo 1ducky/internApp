@@ -14,18 +14,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     select: {
       slug: true,
       updatedAt: true,
-      assets:{
-        where:{
-          fileStatus:'ACTIVE',
-          fileType:'IMAGE'
+      assets: {
+        where: {
+          fileStatus: 'ACTIVE',
+          fileType: 'IMAGE'
         },
-        select:{
-          fileUrl:true
+        select: {
+          fileUrl: true
         }
       },
-      author:{
-        select:{
-          imageUrl:true
+      author: {
+        select: {
+          imageUrl: true
         }
       }
     },
@@ -39,7 +39,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: post.updatedAt,
     changeFrequency: 'weekly',
     priority: 0.8,
-    images: post.assets.map((asset) => asset.fileUrl) || [post.author.imageUrl] || undefined,
   }));
 
   return [

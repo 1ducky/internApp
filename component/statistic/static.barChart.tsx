@@ -71,7 +71,7 @@ export default function BarChart({
                                 y2={y}
                                 stroke="currentColor"
                                 strokeWidth="1"
-                                className="text-zinc-200 dark:text-white/[0.06]"
+                                className="text-zinc-200 dark:text-white/6"
                             />
                             <text
                                 x={PAD.left - 6}
