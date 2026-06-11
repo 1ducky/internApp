@@ -20,17 +20,18 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "InternApp",
+  icons: { icon: "/icon.svg", },
   metadataBase: new URL('https://sgintern.my.id'),
-  description: "Aplikasi magang terbaik untuk menemukan dan melamar pekerjaan.",
+  description: "Cari info SMK Sunan Giri Menganti Gresik?, diskusi seru, dan agenda acara? Temukan juga peluang magang dan lowongan kerja dari perusahaan mitra resmi sekolah di sini!",
   openGraph: {
     title: "InternApp",
-    description: "Aplikasi magang terbaik untuk menemukan dan melamar pekerjaan.",
+    description: "Cari info SMK Sunan Giri Menganti Gresik?, diskusi seru, dan agenda acara? Temukan juga peluang magang dan lowongan kerja dari perusahaan mitra resmi sekolah di sini!",
     url: "https://sgintern.my.id",
     siteName: "InternApp",
     images: [
       {
-        url: "/thumbnail.png",
-        width: 1200,
+        url: "/icon.svg",
+        width: 630,
         height: 630,
         alt: "Thumbnail InternApp",
       },
@@ -41,8 +42,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "InternApp",
-    description: "Aplikasi magang terbaik untuk menemukan dan melamar pekerjaan.",
-    images: ["/thumbnail.png"], // TODO: Ganti dengan path gambar thumbnail yang sama
+    description: "Cari info SMK Sunan Giri Menganti Gresik?, diskusi seru, dan agenda acara? Temukan juga peluang magang dan lowongan kerja dari perusahaan mitra resmi sekolah di sini!",
+    images: ["/icon.svg"], // TODO: Ganti dengan path gambar thumbnail yang sama
   },
 };
 

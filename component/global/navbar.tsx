@@ -3,13 +3,17 @@
 import Link from "next/link"
 import { Show } from "@clerk/nextjs"
 import { AccountButton } from "../auth/userButton"
+import Image from "next/image"
 
 export default function Navbar() {
 
   return (
     <header className="w-full border-b bg-white backdrop-blur-md shadow-sm z-50">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link href="/" className="text-lg font-semibold tracking-tight text-black">
+        <Link href="/" className="text-lg font-semibold tracking-tight text-black flex items-center gap-2">
+          <div className="relative w-10 h-10">
+            <Image src="/icon.svg" alt="InternApp" fill sizes="40px" className="inline object-contain" />
+          </div>
           InternApp
         </Link>
 
