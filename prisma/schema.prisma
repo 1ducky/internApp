@@ -79,6 +79,11 @@ enum PostStatus {
   PUBLISHED
 }
 
+enum RecapType {
+  POST
+  USER
+}
+
 model User {
   id String @id @default(cuid())
 
@@ -168,6 +173,20 @@ model Post {
 
   @@index([authorId])
   @@index([status, createdAt(sort: Desc)])
+}
+
+model DailyRecap {
+  id String @id @default(cuid())
+
+  recapAt DateTime
+  type    RecapType
+  total   Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([recapAt, type])
+  @@index([recapAt, type])
 }
 
 model Files {
