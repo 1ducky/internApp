@@ -7,7 +7,7 @@ const getCahceDetailFeed = (slug: string) => unstable_cache(
         console.log('🔴 CACHE MISS - fetching from DB, cursor:', slug)
         return await feedServices.getDetailFeed(slug)
     },
-    ['detail-feed', 'slug'],
+    ['detail-feed', 'slug', slug],
     {
         revalidate: 60 * 60 * 60, //1 hour
         tags: [cacheTag.feed.slug(slug)]

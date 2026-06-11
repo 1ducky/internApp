@@ -20,6 +20,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "InternApp",
+  icons: { icon: "/icon.svg", },
   metadataBase: new URL('https://sgintern.my.id'),
   description: "Cari info SMK Sunan Giri Menganti Gresik?, diskusi seru, dan agenda acara? Temukan juga peluang magang dan lowongan kerja dari perusahaan mitra resmi sekolah di sini!",
   openGraph: {
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     siteName: "InternApp",
     images: [
       {
-        url: "/vercel.svg",
+        url: "/icon.svg",
         width: 630,
         height: 630,
         alt: "Thumbnail InternApp",
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "InternApp",
     description: "Cari info SMK Sunan Giri Menganti Gresik?, diskusi seru, dan agenda acara? Temukan juga peluang magang dan lowongan kerja dari perusahaan mitra resmi sekolah di sini!",
-    images: ["/vercel.svg"], // TODO: Ganti dengan path gambar thumbnail yang sama
+    images: ["/icon.svg"], // TODO: Ganti dengan path gambar thumbnail yang sama
   },
 };
 
