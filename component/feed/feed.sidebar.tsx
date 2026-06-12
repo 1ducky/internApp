@@ -56,7 +56,7 @@ export default function FeedSidebar() {
 }
 
 async function LazyAnnoucment() {
-  const annoucment = await annoucmentCache.getAnnoucmentCache('ANNOUNCEMENT')
+  const annoucment = await annoucmentCache.getAnnoucmentCache('ANNOUNCEMENT')()
   if (annoucment.Feeds.length == 0) return null
   return <FeedAnnoucment data={annoucment.Feeds} />
 }
