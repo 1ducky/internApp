@@ -10,6 +10,7 @@ export const PERMISSIONS_CONFIG = {
         "post:update:announcement",
         "post:delete",
         "file:upload",
+        "read:recap",
     ],
 
     USER: [

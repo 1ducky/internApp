@@ -1,8 +1,15 @@
 import { getRecapCache } from "@/services/recap/recap.cache";
 import { getDateRangeByDays } from "@/utils/date/dateRange";
 import RecapCsr from "./csr";
+import { authService } from "@/services/auth/auth.service";
+import { forbidden, unauthorized } from "next/navigation";
+import { hasPermission } from "@/services/clerk/clerk.service";
 
 export default async function StaticPage() {
+    const user = await authService.getSession()
+    if (!user) return unauthorized()
+    if (!hasPermission(user.role, "read:recap")) return forbidden()
+
     const backDay = 7
     const { end, start } = getDateRangeByDays(backDay, new Date())
     const res = await getRecapCache.RecapCache(start, end, undefined)()

@@ -76,6 +76,9 @@ async function getRecap(start: Date, end: Date, type?: RecapType) {
                 lte: end
             },
             ...(type && { type })
+        },
+        orderBy: {
+            recapAt: 'desc'
         }
     })
     return db
