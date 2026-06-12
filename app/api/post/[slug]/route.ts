@@ -15,7 +15,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ sl
     if (!res.success) {
         return NextResponse.json({ message: res.message, code: res.status }, { status: res.status })
     }
-    revokeCache(cacheTag.feed.user(user.userId), cacheTag.profile.public(user.userId), cacheTag.feed.slug(slug))
+    revokeCache(cacheTag.feed.user(user.userId), cacheTag.profile.public(user.userId), cacheTag.feed.slug(slug), cacheTag.feed.type(res.data.type))
     return NextResponse.json({ message: "Submited", code: 200 }, { status: 200 })
 }
 
