@@ -33,13 +33,25 @@ export function getDayRange(date: Date = new Date()): { start: Date; end: Date }
  * @param date    - tanggal akhir (default: today)
  * @param days    - berapa hari mundur
  */
-export function getDateRangeByDays(days: number, date: Date = new Date()): { start: Date; end: Date } {
-    const end = new Date(date);
-    end.setHours(23, 59, 59, 999);
+export function getDateRangeByDays(
+    days: number,
+    date: Date = new Date()
+): { start: Date; end: Date } {
+    const end = new Date(Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate(),
+        23, 59, 59, 999
+    ));
 
-    const start = new Date(date);
-    start.setDate(start.getDate() - days);
-    start.setHours(0, 0, 0, 0);
+    const start = new Date(Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate(),
+        0, 0, 0, 0
+    ));
+
+    start.setUTCDate(start.getUTCDate() - days);
 
     return { start, end };
 }
