@@ -24,15 +24,17 @@ export function useCropImage(options?: UseCropImageOptions) {
     const rejectRef = useRef<((reason?: unknown) => void) | null>(null)
     const fileRef = useRef<File | null>(null)
 
-    const ratios = useMemo(() => {
-        if (!options?.aspectRatios) return DEFAULT_ASPECT_RATIOS
+    const aspectRatioOption = options?.aspectRatios
 
-        const input = Array.isArray(options.aspectRatios)
-            ? options.aspectRatios
-            : [options.aspectRatios]
+    const ratios = useMemo(() => {
+        if (!aspectRatioOption) return DEFAULT_ASPECT_RATIOS
+
+        const input = Array.isArray(aspectRatioOption)
+            ? aspectRatioOption
+            : [aspectRatioOption]
 
         return DEFAULT_ASPECT_RATIOS.filter(r => input.includes(r.value))
-    }, [options?.aspectRatios])
+    }, [aspectRatioOption])
 
     const cropImage = (file: File): Promise<File> => {
         cleanUp()

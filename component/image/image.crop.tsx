@@ -23,7 +23,7 @@ export default function ImageCropper({ imageUrl, onCropDone, onCancel, aspectRat
     }
 
     return (
-        <div className="w-full h-screen fixed -inset-0">
+        <div className="w-full h-screen fixed inset-0">
             <div className="relative w-full h-full">
                 <Cropper
                     image={imageUrl}

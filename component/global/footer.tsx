@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function FooterComponent() {
     return (
         <>
@@ -10,10 +12,10 @@ export default function FooterComponent() {
                         <div>
                             <h4 className="text-sm font-bold tracking-wider uppercase mb-4 text-gray-300">Halaman</h4>
                             <ul className="space-y-2 text-sm text-gray-400">
-                                <li><a href="#" className="hover:text-white transition">Beranda</a></li>
-                                <li><a href="#" className="hover:text-white transition">Berita</a></li>
-                                <li><a href="#" className="hover:text-white transition">Produk</a></li>
-                                <li><a href="#" className="hover:text-white transition">Event</a></li>
+                                <li><Link prefetch={false} href="/" className="hover:text-white transition">Beranda</Link></li>
+                                <li><Link prefetch={false} href="/?type=NEWS" className="hover:text-white transition">Berita</Link></li>
+                                <li><Link prefetch={false} href="/?type=ANNOUNCEMENT" className="hover:text-white transition">Pengumuman</Link></li>
+                                <li><Link prefetch={false} href="/?type=EVENT" className="hover:text-white transition">Kegiatan</Link></li>
                             </ul>
                         </div>
 
@@ -29,7 +31,7 @@ export default function FooterComponent() {
                         <div>
                             <h4 className="text-sm font-bold tracking-wider uppercase mb-4 text-gray-300">Tentang Aplikasi</h4>
                             <ul className="space-y-2 text-sm text-gray-400">
-                                <li><a href="#" className="hover:text-white transition">Tentang</a></li>
+                                <li><Link prefetch={false} href="/tentang" className="hover:text-white transition">Tentang</Link></li>
                                 <li><a href="#" className="hover:text-white transition">Karir</a></li>
                                 <li><a href="#" className="hover:text-white transition">Ketentuan Penggunaan</a></li>
                                 <li><a href="#" className="hover:text-white transition">Notifikasi Legal</a></li>
