@@ -1,5 +1,6 @@
 'use client'
 
+import { useCropImage } from '@/component/image/image.hooks';
 import { ProfileInput, ProfileSchema } from '@/services/profile/profile.schema';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,6 +12,7 @@ import { useForm } from 'react-hook-form';
 
 export const UserProfileForm = ({ action, email, profileData }: { action: (e: unknown) => void, email: string, profileData: ProfileInput | null }) => {
     const { user } = useUser()
+    const { cropImage, CropModal } = useCropImage({ aspectRatios: 1 / 1 })
     function formatNumber(num: string) {
 
         const sanitized = num.replace(/\D/g, '');
@@ -31,10 +33,12 @@ export const UserProfileForm = ({ action, email, profileData }: { action: (e: un
         };
 
         try {
-            await user.setProfileImage({ file });
+            const croped = await cropImage(file)
+            await user.setProfileImage({ file: croped });
             await user.reload();
-        } catch (error) {
-            console.error("Gagal upload gambar:", error);
+        } catch (error: any) {
+            // console.error("Gagal upload gambar:", error.message);
+            e.target.value = '';
         }
     };
     const form = useForm<ProfileInput>({
@@ -162,6 +166,7 @@ export const UserProfileForm = ({ action, email, profileData }: { action: (e: un
                     <input disabled={!form.formState.isDirty || form.formState.isSubmitting} type="submit" className={`w-full sm:w-auto px-5 py-2 text-white rounded-lg text-sm font-medium transition ${form.formState.isSubmitting || !form.formState.isDirty ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`} value={form.formState.isSubmitting ? "Processing..." : "Save Changes"} />
                 </div>
             </form>
+            {CropModal}
         </div>
     );
 };
