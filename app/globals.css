@@ -16,6 +16,10 @@
   --color-border-secondary: #E5E7EB;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;

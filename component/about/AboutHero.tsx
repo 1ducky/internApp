@@ -1,4 +1,5 @@
 import { ArrowRight, BookOpen, Users, Award, ShieldCheck } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function AboutHero() {
@@ -59,6 +60,7 @@ export default function AboutHero() {
 
               {/* Main Decorative Frame */}
               <div className="aspect-square w-full rounded-3xl bg-linear-to-tr from-blue-600 via-indigo-500 to-purple-600 p-8 shadow-2xl relative overflow-hidden flex flex-col justify-between text-white">
+                <Image src={'/about/hero-image.webp'} alt="SMK Sunan Giri Menganti Gresik" fill className="object-cover opacity-30" sizes='600px' />
                 <div className="absolute top-0 right-0 -mt-10 -mr-10 h-40 w-40 rounded-full bg-white/10 blur-xl" />
                 <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-black/20 blur-2xl" />
 
