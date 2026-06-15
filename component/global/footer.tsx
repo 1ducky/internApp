@@ -22,9 +22,8 @@ export default function FooterComponent() {
                         <div>
                             <h4 className="text-sm font-bold tracking-wider uppercase mb-4 text-gray-300">Butuh Bantuan?</h4>
                             <ul className="space-y-2 text-sm text-gray-400">
-                                <li><a href="#" className="hover:text-white transition">Hubungi Kami</a></li>
-                                <li><a href="#" className="hover:text-white transition">Pusat Bantuan</a></li>
-                                <li><a href="#" className="hover:text-white transition">Karir</a></li>
+                                <li><Link prefetch={false} href="/tentang#contact" className="hover:text-white transition">Hubungi Kami</Link></li>
+                                <li><Link prefetch={false} href="/tentang#contact" className="hover:text-white transition">Pusat Bantuan</Link></li>
                             </ul>
                         </div>
 
@@ -32,9 +31,8 @@ export default function FooterComponent() {
                             <h4 className="text-sm font-bold tracking-wider uppercase mb-4 text-gray-300">Tentang Aplikasi</h4>
                             <ul className="space-y-2 text-sm text-gray-400">
                                 <li><Link prefetch={false} href="/tentang" className="hover:text-white transition">Tentang</Link></li>
-                                <li><a href="#" className="hover:text-white transition">Karir</a></li>
-                                <li><a href="#" className="hover:text-white transition">Ketentuan Penggunaan</a></li>
-                                <li><a href="#" className="hover:text-white transition">Notifikasi Legal</a></li>
+                                <li><Link prefetch={false} href="/tentang#karir" className="hover:text-white transition">Karir</Link></li>
+                                <li><Link prefetch={false} href="/ketentuan-penggunaan" className="hover:text-white transition">Ketentuan Penggunaan</Link></li>
                             </ul>
                         </div>
                         <div>

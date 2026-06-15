@@ -63,9 +63,9 @@ export default function WhyChooseUs() {
   ];
 
   return (
-    <section className="bg-white py-16 lg:py-24">
+    <section className="bg-white py-16 lg:py-24" id="karir">
       <div className="container mx-auto px-6 lg:px-8">
-        
+
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16 lg:mb-20">
           <h2 className="text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
@@ -82,15 +82,15 @@ export default function WhyChooseUs() {
           {advantages.map((item) => {
             const IconComponent = item.icon;
             return (
-              <div 
-                key={item.id} 
+              <div
+                key={item.id}
                 className="group flex flex-col items-center text-center space-y-4 transition-all duration-300 transform hover:-translate-y-1"
               >
                 {/* Round Icon */}
                 <div className={`flex h-16 w-16 items-center justify-center rounded-2xl ${item.iconBgColor} ${item.iconColor} transition-colors duration-300 shadow-sm`}>
                   <IconComponent className="h-8 w-8" />
                 </div>
-                
+
                 {/* Text Content */}
                 <div className="space-y-2">
                   <h3 className="text-lg font-bold text-zinc-900 group-hover:text-blue-600 transition-colors duration-200">

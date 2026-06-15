@@ -4,22 +4,23 @@ import AboutHero from '@/component/about/AboutHero';
 import SchoolPurpose from '@/component/about/SchoolPurpose';
 import WhyChooseUs from '@/component/about/WhyChooseUs';
 import MajorList from '@/component/about/MajorList';
+import SchoolMap from '@/component/schoolMap/SchoolMap';
 
 export const metadata: Metadata = {
   title: 'Tentang Kami | SMKS Sunan Giri Menganti',
   description: 'Halaman informasi lengkap mengenai profil, visi, misi, sejarah, program keahlian, statistik, dan fasilitas SMKS Sunan Giri Menganti Gresik.',
   icons: '/icon.svg',
-  metadataBase: new URL('https://sgintern.my.id'),
+  metadataBase: new URL('https://sgintern.my.id/tentang'),
   openGraph: {
-    title: "InternApp",
-    description: "Cari info SMK Sunan Giri Menganti Gresik?, diskusi seru, dan agenda acara? Temukan juga peluang magang dan lowongan kerja dari perusahaan mitra resmi sekolah di sini!",
-    url: "https://sgintern.my.id",
+    title: "Tentang Kami | SMKS Sunan Giri Menganti",
+    description: "SMK Sunan Giri Menganti Gresik - Sekolah Menengah Kejuruan Terdepan.Program Keahlian TKJ, Multimedia, Teknik Mesin",
+    url: "https://sgintern.my.id/tentang",
     siteName: "InternApp",
     images: [
       {
-        url: "/og-image.jpeg",
+        url: "/about/about-metadata.webp",
         width: 1200,
-        height: 600,
+        height: 630,
         alt: "Thumbnail InternApp",
       },
     ],
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "InternApp",
     description: "Cari info SMK Sunan Giri Menganti Gresik?, diskusi seru, dan agenda acara? Temukan juga peluang magang dan lowongan kerja dari perusahaan mitra resmi sekolah di sini!",
-    images: ["/og-image.jpeg"], // TODO: Ganti dengan path gambar thumbnail yang sama
+    images: ["/about/about-metadata.webp"], // TODO: Ganti dengan path gambar thumbnail yang sama
   },
 };
 
@@ -41,6 +42,7 @@ export default function TentangPage() {
       <SchoolPurpose />
       <WhyChooseUs />
       <MajorList />
+      <SchoolMap />
     </main>
   );
 }
