@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     siteName: "InternApp",
     images: [
       {
-        url: "/about/about-metadata.webp",
+        url: "/about/hero-image.webp",
         width: 1200,
         height: 630,
         alt: "Thumbnail InternApp",
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "InternApp",
-    description: "Cari info SMK Sunan Giri Menganti Gresik?, diskusi seru, dan agenda acara? Temukan juga peluang magang dan lowongan kerja dari perusahaan mitra resmi sekolah di sini!",
-    images: ["/about/about-metadata.webp"], // TODO: Ganti dengan path gambar thumbnail yang sama
+    description: "SMK Sunan Giri Menganti Gresik - Sekolah Menengah Kejuruan Terdepan.Program Keahlian TKJ, Multimedia, Teknik Mesin",
+    images: ["/about/hero-image.webp"], // TODO: Ganti dengan path gambar thumbnail yang sama
   },
 };
 
