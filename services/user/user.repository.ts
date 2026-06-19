@@ -8,26 +8,28 @@ export const userRepository = {
     userInitializeSession
 }
 
-async function userInitializeSession (clerkId:string ) {
+async function userInitializeSession(clerkId: string) {
     const db = await prisma.user.findUnique({
-        where:{
-            clerkId:clerkId
-        }, select:{
-            role:true,
-            id:true,
-            name:true
+        where: {
+            clerkId: clerkId
+        }, select: {
+            role: true,
+            id: true,
+            name: true,
+            bannedCode: true,
+            status: true
             // initalize impoertant field
         }
     })
-    if(!db){
-        return {success:false}
+    if (!db) {
+        return { success: false }
     }
-    return {success: true, data: db}
+    return { success: true, data: db }
 }
 
-async function userCreate (input: UserCreatedInput) {
+async function userCreate(input: UserCreatedInput) {
     const db = await prisma.user.upsert({
-        where:{
+        where: {
             email: input.email,
         },
         update: {
@@ -37,7 +39,7 @@ async function userCreate (input: UserCreatedInput) {
             imageUrl: input.imageUrl,
             createdAt: input.createdAt,
             updatedAt: input.updatedAt,
-            
+            status: 'ACTIVE'
         },
         create: {
             clerkId: input.clerkId,
@@ -47,26 +49,28 @@ async function userCreate (input: UserCreatedInput) {
             createdAt: input.createdAt,
             updatedAt: input.updatedAt,
         },
-        select:{
-            role:true,
+        select: {
+            role: true,
             clerkId: true,
-            id:true
+            id: true,
+            bannedCode: true,
+            status: true
         }
     })
-    if(!db){
-        return {success: false}
+    if (!db) {
+        return { success: false }
     }
-    return {success: true, data: db}
+    return { success: true, data: db }
 }
 
 
-async function userUpdate (input: UserUpdatedInput) {
+async function userUpdate(input: UserUpdatedInput) {
     const db = await prisma.user.upsert({
-        where:{
+        where: {
             email: input.email,
         },
         update: {
-            clerkId:input.clerkId,
+            clerkId: input.clerkId,
             email: input.email,
             name: input.username,
             imageUrl: input.imageUrl,
@@ -77,31 +81,37 @@ async function userUpdate (input: UserUpdatedInput) {
             clerkId: input.clerkId,
             email: input.email,
             name: input.username,
-            imageUrl: input.imageUrl, 
+            imageUrl: input.imageUrl,
             createdAt: input.createdAt,
             updatedAt: input.updatedAt,
         },
-        select:{
-            role:true,
+        select: {
+            role: true,
             clerkId: true,
-            id:true
+            id: true,
+            bannedCode: true,
+            status: true
         }
     })
-    if(!db){
-        return {success: false}
+    if (!db) {
+        return { success: false }
     }
-    return {success: true, data: db}
+    return { success: true, data: db }
 }
 
-async function userDelete (input: UserDeletedInput) {
-    const db = await prisma.user.delete({
+async function userDelete(input: UserDeletedInput) {
+    const db = await prisma.user.update({
         where: {
             clerkId: input.clerkId,
+        },
+        data: {
+            status: 'DELETED',
+            deletedAt: new Date(),
         }
     })
-    if(!db){
+    if (!db) {
         // tech Debt
-        return {success: true}
+        return { success: true }
     }
-    return {success: true}
+    return { success: true }
 }

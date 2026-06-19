@@ -51,7 +51,11 @@
 //     )
 // }
 
-export default function TestPage() {
+import { authService } from "@/services/auth/auth.service"
+
+export default async function TestPage() {
+    const user = await authService.getSession()
+    console.log(user)
     return (
         <>test</>
     )
