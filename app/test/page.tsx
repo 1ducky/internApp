@@ -51,11 +51,12 @@
 //     )
 // }
 
-import { authService } from "@/services/auth/auth.service"
+import { AuthGuard } from "@/services/auth/auth.helper"
+import { forbidden } from "next/navigation"
 
 export default async function TestPage() {
-    const user = await authService.getSession()
-    console.log(user)
+    const auth = await AuthGuard({ role: ['USER', 'ADMIN', 'PROVIDER'], status: 'ACTIVE' })
+    if (!auth) return forbidden()
     return (
         <>test</>
     )

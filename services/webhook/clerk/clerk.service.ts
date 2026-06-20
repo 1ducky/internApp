@@ -1,5 +1,5 @@
-import { clerkClient, WebhookEvent } from "@clerk/nextjs/server"
-import { normalizeClerkUser, userCreatedSchema, userDeletedSchema, userMetaDataSchema, userUpdatedSchema } from "./clerk.schema"
+import { WebhookEvent } from "@clerk/nextjs/server"
+import { normalizeClerkUser, userCreatedSchema, userDeletedSchema, userUpdatedSchema } from "./clerk.schema"
 import { userRepository } from "@/services/user/user.repository"
 import { logger } from "@/infrastructure/lib/logger"
 import { failed, ok } from "@/utils/responseMapper"

@@ -29,12 +29,15 @@ export async function getAuthSessionClerk(): Promise<ClerkSession | undefined> {
     const fullname = externalAccountGoogle?.firstName + ' ' + externalAccountGoogle?.lastName
     const metadata = user?.publicMetadata as UserPublicMetadata
     if (!metadata.role && !metadata.id || !metadata.status) {
+        console.log(metadata)
+        logger.debug('MetaData Miss & hit db')
         const publicData = await userRepository.userInitializeSession(user.id)
         if (!publicData.success || !publicData.data) {
             logger.error('Failed to initialize session', 'getAuthSessionClerk')
             return undefined
         }
         if (publicData.data) {
+            logger.info('User data in db', 'getAuthSessionClerk')
             await setUserMetaData(user.id, publicData.data)
             return {
                 userClerkId: user.id,
@@ -51,6 +54,7 @@ export async function getAuthSessionClerk(): Promise<ClerkSession | undefined> {
     const metaDataVersion = user.publicMetadata.version || '0'
     const currentVerssion = process.env.NEXT_PUBLIC_METADATA_VERSION || '0'
     if (metaDataVersion !== currentVerssion) {
+        logger.info('MetaData Version MisMatch', 'getAuthSessionClerk')
         await setUserMetaData(user.id, user.publicMetadata)
     }
     return {

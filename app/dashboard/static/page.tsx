@@ -3,7 +3,7 @@ import { getDateRangeByDays } from "@/utils/date/dateRange";
 import RecapCsr from "./csr";
 import { authService } from "@/services/auth/auth.service";
 import { forbidden, unauthorized } from "next/navigation";
-import { hasPermission } from "@/services/clerk/clerk.service";
+import { hasPermission } from "@/services/auth/auth.client";
 
 export default async function StaticPage() {
     const user = await authService.getSession()

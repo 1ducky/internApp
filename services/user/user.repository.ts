@@ -1,11 +1,16 @@
 import prisma from "@/libs/db"
 import { UserCreatedInput, UserDeletedInput, UserUpdatedInput } from "../webhook/clerk/clerk.schema"
+import { TUserStatus } from "./user.domain"
 
 export const userRepository = {
     userCreate,
     userUpdate,
     userDelete,
     userInitializeSession
+}
+
+export const userRepositoryTransaction = {
+    updateUserStatus
 }
 
 async function userInitializeSession(clerkId: string) {
@@ -114,4 +119,29 @@ async function userDelete(input: UserDeletedInput) {
         return { success: true }
     }
     return { success: true }
+}
+
+async function updateUserStatus(userId: string, statusTo: TUserStatus) {
+    const db = await prisma.$transaction(async tx => {
+        const user = await tx.user.update({
+            where: {
+                id: userId
+            },
+            data: {
+                status: statusTo
+            },
+            select: {
+                role: true,
+                clerkId: true,
+                id: true,
+                bannedCode: true,
+                status: true
+            }
+        })
+        return user
+    })
+    if (!db) {
+        return { success: false }
+    }
+    return { success: true, data: db }
 }
