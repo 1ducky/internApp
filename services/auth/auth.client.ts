@@ -1,8 +1,9 @@
-import { PERMISSIONS_CONFIG, ROLES, ROLES_TYPE } from "@/config/auth/auth.config"
+import { PERMISSIONS_CONFIG } from "@/config/auth/auth.config"
+import { userDomain } from "../user/user.domain"
 
-export function hasPermission(role: unknown, permission: string) {
-    if (typeof role === 'string' && ROLES.includes(role as ROLES_TYPE)) {
-        return PERMISSIONS_CONFIG[role as ROLES_TYPE].includes(permission)
+export function hasPermission(role: string, permission: string) {
+    if (userDomain.isUserRole(role)) {
+        return PERMISSIONS_CONFIG[role].includes(permission)
     }
     return false
 }

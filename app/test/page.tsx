@@ -51,7 +51,7 @@
 //     )
 // }
 
-export default function TestPage() {
+export default async function TestPage() {
     return (
         <>test</>
     )

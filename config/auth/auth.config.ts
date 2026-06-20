@@ -1,6 +1,19 @@
+import { TUserRole, } from "@/services/user/user.domain"
 
-export const ROLES = ['ADMIN', 'USER', 'PROVIDER'] as const
-export type ROLES_TYPE = typeof ROLES[number]
+
+export const PERMISSIONS = [
+    'post:create',
+    'post:create:announcement',
+    'post:update',
+    'post:update:announcement',
+    'post:delete',
+    'file:upload',
+    'read:recap',
+] as const
+
+export type Permission =
+    typeof PERMISSIONS[number]
+export type ROLES_TYPE = TUserRole
 
 export const PERMISSIONS_CONFIG = {
     ADMIN: [

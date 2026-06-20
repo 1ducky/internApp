@@ -4,7 +4,7 @@ import { failed, ok } from "@/utils/responseMapper"
 import { CosummerPostRepository, postRepository } from "./post.repository"
 import { slugify } from "@/utils/slugify"
 import { toPostDto, toPostDtoList } from "./post.dto"
-import { hasPermission } from "../clerk/clerk.service"
+import { hasPermission } from "../auth/auth.client"
 
 export const postService = {
     submitPost,

@@ -1,18 +1,19 @@
 import { postService } from "@/services/post/post.service"
 import EditPostPageCSR from "./csr"
-import { authService } from "@/services/auth/auth.service"
+
 import { objectStorageService } from "@/services/objectStorage/obj.service"
-import { unauthorized } from "next/navigation"
+import { forbidden, unauthorized } from "next/navigation"
+import { AuthGuard } from "@/services/auth/auth.helper"
 
 
-export default async function EditPostPage({ params }: { params: { id: string } }) {
+export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
 
     const { id } = await params
 
     const post = await postService.getPostById(id)
-    const user = await authService.getSession()
-    if (!user) unauthorized()
-    const tempImage = await objectStorageService.getTempFileImage(user.userId)
+    const user = await AuthGuard({ status: 'ACTIVE', onUnauthorized: () => unauthorized(), onForbidden: () => forbidden(), permissions: ['post:update'] })
+    if (!user.success || !user.data) throw new Error("Something went wrong")
+    const tempImage = await objectStorageService.getTempFileImage(user.data.userId)
     const sanitize = tempImage.success && tempImage.data ? tempImage.data.map(item => ({
         ...item,
         authorId: item.authorId as string,
@@ -23,6 +24,6 @@ export default async function EditPostPage({ params }: { params: { id: string } 
 
 
     return (
-        <EditPostPageCSR id={id} initialData={post.data} tempImage={sanitize} role={user.role} />
+        <EditPostPageCSR id={id} initialData={post.data} tempImage={sanitize} role={user.data.role} />
     )
 }

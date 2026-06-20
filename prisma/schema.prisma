@@ -84,15 +84,37 @@ enum RecapType {
   USER
 }
 
+enum UserStatus {
+  ACTIVE
+  BANNED
+  DELETED
+}
+
+enum BannedCode {
+  SPAM
+  HARASSMENT
+  OFFENSIVE
+  OTHER
+}
+
 model User {
   id String @id @default(cuid())
 
-  clerkId  String  @unique
-  email    String  @unique
+  clerkId  String     @unique
+  email    String     @unique
   name     String?
   imageUrl String?
+  status   UserStatus @default(ACTIVE)
 
   role Role @default(USER)
+
+  // bannedReason String?  @db.Text
+  bannedCode BannedCode?
+
+  // bannedAt   DateTime?
+  // unbannedAt DateTime?
+
+  deletedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
