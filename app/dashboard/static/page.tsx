@@ -1,14 +1,16 @@
 import { getRecapCache } from "@/services/recap/recap.cache";
 import { getDateRangeByDays } from "@/utils/date/dateRange";
 import RecapCsr from "./csr";
-import { authService } from "@/services/auth/auth.service";
+import { AuthGuard } from "@/services/auth/auth.helper";
 import { forbidden, unauthorized } from "next/navigation";
-import { hasPermission } from "@/services/auth/auth.client";
 
 export default async function StaticPage() {
-    const user = await authService.getSession()
-    if (!user) return unauthorized()
-    if (!hasPermission(user.role, "read:recap")) return forbidden()
+    const auth = await AuthGuard({ role: ['ADMIN'], permissions: ['read:recap'], onForbidden: () => forbidden(), onUnauthorized: () => unauthorized() })
+
+    if (!auth.success || !auth.data) {
+        throw new Error("Something went wrong")
+    }
+
 
     const backDay = 7
     const { end, start } = getDateRangeByDays(backDay, new Date())

@@ -9,6 +9,9 @@ type AuthGuardType = {
     status?: TUserStatus
     role?: TUserRole[]
     permissions?: Permission[]
+
+    onUnauthorized?: () => never
+    onForbidden?: () => never
 }
 
 export async function AuthGuard(options?: AuthGuardType) {
@@ -50,9 +53,16 @@ export async function AuthGuard(options?: AuthGuardType) {
         return ok(session, 'Successfully authenticated')
     } catch (e) {
         if (e instanceof AppError) {
+            if (options?.onForbidden && e.code === 403) {
+                return options.onForbidden()
+            }
+            if (options?.onUnauthorized && e.code === 401) {
+                return options.onUnauthorized()
+
+            }
             return failed(e.code, e.error, e.message)
         }
-        return failed(500, 'INTERNAL_SERVER_ERROR', 'Internal Server Error')
+        return failed(500, 'INTERNAL_ERROR', 'Internal Server Error')
     }
 
 

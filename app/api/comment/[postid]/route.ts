@@ -1,5 +1,5 @@
 import { cacheTag, revokeCache } from "@/libs/cache";
-import { getAuthSessionClerk } from "@/services/clerk/clerk.session";
+import { AuthGuard } from "@/services/auth/auth.helper";
 import { commentService } from "@/services/comment/comment.service";
 import { unstable_cache } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
@@ -22,16 +22,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ postid:
     if (!postid) {
         return NextResponse.json({ error: "Feed not found" }, { status: 404 })
     }
-    const user = await getAuthSessionClerk()
-    if (!user) {
-        return NextResponse.json({ error: "unauthorized" }, { status: 401 })
+    const user = await AuthGuard({ status: 'ACTIVE' })
+    if (!user.success || !user.data) {
+        return NextResponse.json({ error: user.message }, { status: user.status })
     }
     const body = await req.json()
     if (!body.content || !postid) {
         console.log(body, postid)
         return NextResponse.json({ error: "Invalid data" }, { status: 400 })
     }
-    const comment = await commentService.addComment(user.userId, body.content, postid)
+    const comment = await commentService.addComment(user.data.userId, body.content, postid)
     if (!comment) {
         return NextResponse.json({ error: "Failed to add comment" }, { status: 500 })
     }

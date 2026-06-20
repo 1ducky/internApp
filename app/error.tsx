@@ -23,7 +23,7 @@ export default function Error({
       <div className="absolute right-1/4 bottom-1/4 -z-10 h-96 w-96 rounded-full bg-orange-500/10 blur-3xl dark:bg-orange-500/20" />
 
       {/* Decorative Grid Pattern */}
-      <div className="absolute inset-0 -z-20 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+      <div className="absolute inset-0 -z-20 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size[14px_24px] mask-[radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
 
       <div className="relative w-full max-w-xl text-center">
         {/* Animated Icon Badge */}
@@ -32,7 +32,7 @@ export default function Error({
         </div>
 
         {/* Status Code with Premium Gradient */}
-        <h1 className="mb-4 bg-gradient-to-r from-red-600 via-rose-600 to-orange-600 bg-clip-text text-8xl font-black tracking-tight text-transparent dark:from-red-400 dark:via-rose-400 dark:to-orange-400 sm:text-9xl">
+        <h1 className="mb-4 bg-linear-to-r from-red-600 via-rose-600 to-orange-600 bg-clip-text text-8xl font-black tracking-tight text-transparent dark:from-red-400 dark:via-rose-400 dark:to-orange-400 sm:text-9xl">
           500
         </h1>
 
@@ -70,7 +70,7 @@ export default function Error({
           </button>
           <Link
             href="/"
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 px-5 text-sm font-semibold text-white shadow-lg shadow-red-500/20 transition-all hover:from-red-500 hover:to-rose-500 hover:shadow-red-500/30 dark:shadow-red-500/10 sm:w-auto"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-red-600 to-rose-600 px-5 text-sm font-semibold text-white shadow-lg shadow-red-500/20 transition-all hover:from-red-500 hover:to-rose-500 hover:shadow-red-500/30 dark:shadow-red-500/10 sm:w-auto"
           >
             <Home className="h-4 w-4" />
             Ke Beranda
