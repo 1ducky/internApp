@@ -31,7 +31,7 @@ export function UserManagementCSR({ initialData, options, limit, nextCursor }: {
 
     useInfiniteObserver(observerRef, hasNextPage, isFetchingNextPage, () => hasNextPage ?? fetchNextPage())
 
-    const users = data?.pages.flatMap((page) => page.user)
+    const users = data?.pages.flatMap((page) => page.user) || []
 
     const handleUpdateAuthorized = async (userId: string, newStatus: TUserStatus, newRole: TUserRole) => {
         setLoadingIds((prev) => [...prev, userId]);
