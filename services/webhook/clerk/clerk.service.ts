@@ -14,7 +14,7 @@ export const clerkService = {
 
 async function sessionCreated(evt: WebhookEvent) {
     logger.debug(evt.type, 'ClerkService')
-    const clerkId = evt.data.id
+    const clerkId = evt.type === 'session.created' ? evt.data.user_id : undefined
     if (!clerkId) {
         logger.error('Validate Error', 'sessionCreated')
         return failed(400, { message: 'Validate Error' }, 'Validate Error')

@@ -71,12 +71,12 @@ async function userCreate(input: UserCreatedInput) {
     const db = await prisma.user.upsert({
         where: {
             email: input.email,
+            status: { notIn: ['ACTIVE', 'BANNED'] }
         },
         update: {
             clerkId: input.clerkId,
             email: input.email,
             name: input.username,
-            imageUrl: input.imageUrl,
             createdAt: input.createdAt,
             updatedAt: input.updatedAt,
             status: 'ACTIVE'
