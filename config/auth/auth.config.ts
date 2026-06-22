@@ -9,6 +9,10 @@ export const PERMISSIONS = [
     'post:delete',
     'file:upload',
     'read:recap',
+    'user:update',
+    'user:management',
+    'user:banning',
+    'user:unbanning'
 ] as const
 
 export type Permission =
@@ -24,6 +28,10 @@ export const PERMISSIONS_CONFIG = {
         "post:delete",
         "file:upload",
         "read:recap",
+        'user:update',
+        'user:management',
+        'user:banning',
+        'user:unbanning'
     ],
 
     USER: [

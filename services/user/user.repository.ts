@@ -1,16 +1,51 @@
 import prisma from "@/libs/db"
 import { UserCreatedInput, UserDeletedInput, UserUpdatedInput } from "../webhook/clerk/clerk.schema"
-import { TUserStatus } from "./user.domain"
+import { TUserRole, TUserStatus } from "./user.domain"
 
 export const userRepository = {
     userCreate,
     userUpdate,
     userDelete,
-    userInitializeSession
+    userInitializeSession,
+    getUserManagement
 }
 
 export const userRepositoryTransaction = {
-    updateUserStatus
+    updateUserStatus,
+    updateUserAuthorized
+}
+
+async function getUserManagement(email?: string, cursor?: string, limit: number = 10) {
+    const db = await prisma.user.findMany({
+        ...(email && {
+            where: {
+                email: {
+                    contains: email
+                }
+            }
+        }),
+        take: limit,
+        ...(cursor && {
+            cursor: {
+                id: cursor
+            }
+        }),
+        orderBy: {
+            createdAt: 'desc'
+        },
+        select: {
+            id: true,
+            role: true,
+            status: true,
+            email: true,
+            name: true,
+            imageUrl: true
+        }
+    })
+    if (!db) {
+        return { success: false }
+    }
+    return { success: true, data: db }
 }
 
 async function userInitializeSession(clerkId: string) {
@@ -129,6 +164,31 @@ async function updateUserStatus(userId: string, statusTo: TUserStatus) {
             },
             data: {
                 status: statusTo
+            },
+            select: {
+                role: true,
+                clerkId: true,
+                id: true,
+                bannedCode: true,
+                status: true
+            }
+        })
+        return user
+    })
+    if (!db) {
+        return { success: false }
+    }
+    return { success: true, data: db }
+}
+async function updateUserAuthorized(userId: string, statusTo: TUserStatus, roleTo: TUserRole) {
+    const db = await prisma.$transaction(async tx => {
+        const user = await tx.user.update({
+            where: {
+                id: userId
+            },
+            data: {
+                status: statusTo,
+                role: roleTo
             },
             select: {
                 role: true,
