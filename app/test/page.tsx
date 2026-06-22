@@ -1,6 +1,8 @@
 // 'use client'
 // import { useFileInput } from "@/utils/input/useFileInput"
 
+import { userService } from "@/services/user/user.service"
+
 // export default function UploadForm() {
 //     const {
 //         files, isDragging, errors,
@@ -52,6 +54,7 @@
 // }
 
 export default async function TestPage() {
+    await userService.ChangeUserAuthorizedFromId('cmpm3q10s0002eonawjymnu0i', 'ACTIVE', 'ADMIN')
     return (
         <>test</>
     )

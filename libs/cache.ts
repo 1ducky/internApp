@@ -18,6 +18,12 @@ export const cacheTag = {
     recap: {
         type: (type?: string) => `recap:${type ?? 'all'}`,
         date: (start: Date, end: Date) => `recap:date:${start.toISOString()}-${end.toISOString()}`
+    },
+    user: {
+        all: () => 'user:all',
+        email: (email?: string) => `user:email:${email ?? 'all'}`,
+        limit: (limit: number) => `user:limit:${limit.toString()}`,
+        cursor: (cursor?: string) => `user:cursor:${cursor ?? 'all'}`
     }
 }
 
