@@ -1,11 +1,14 @@
 "use client"
 import { FormPostOrchestration } from "@/component/form/post/form.orchestration"
 import { UploadedAssetMetadata } from "@/services/objectStorage/object.dto"
-import { PostDto } from "@/services/post/post.dto"
+import { PostDto, ResponsePostApi } from "@/services/post/post.dto"
 import { useRouter } from "next/navigation"
+import { postUpdateCacheClient } from "../../post.cache-client"
+import { useQueryClient } from "@tanstack/react-query"
 
 export default function EditPostPageCSR({ id, initialData, tempImage, role }: { id: string, initialData: PostDto, tempImage?: UploadedAssetMetadata[] | [], role: string }) {
     const router = useRouter()
+    const queryClient = useQueryClient()
 
     async function handlerEditPost(value: unknown) {
         try {
@@ -16,7 +19,11 @@ export default function EditPostPageCSR({ id, initialData, tempImage, role }: { 
                 },
                 body: JSON.stringify(value),
             })
+            const post = await res.json() as ResponsePostApi
             if (res.status === 200) {
+                if (post.data && post.data.id) {
+                    postUpdateCacheClient(queryClient, post.data.id, post.data)
+                }
                 router.push('/dashboard/post')
                 // const data = await res.json()
                 // console.log(data)

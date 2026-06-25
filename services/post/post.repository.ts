@@ -19,38 +19,38 @@ export const CosummerPostRepository = {
 
 async function getFeedPost() {
   const db = await prisma.post.findMany({
-    take:10,
-    orderBy:{createdAt:'desc'},
-    where:{
-      status:'PUBLISHED',
+    take: 10,
+    orderBy: { createdAt: 'desc' },
+    where: {
+      status: 'PUBLISHED',
     },
-    select:{
-      id:true,
-      title:true,
-      description:true,
-      type:true,
-      status:true,
-      slug:true,
-      viewCount:true,
-      createdAt:true,
-      assets:{
-        where:{
-          fileStatus:'ACTIVE',
-          fileType:'IMAGE'
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      type: true,
+      status: true,
+      slug: true,
+      viewCount: true,
+      createdAt: true,
+      assets: {
+        where: {
+          fileStatus: 'ACTIVE',
+          fileType: 'IMAGE'
         },
-        select:{
-          id:true,
-          fileUrl:true,
+        select: {
+          id: true,
+          fileUrl: true,
         }
       },
-      author:{
-        select:{
-          id:true,
-          name:true,
-          imageUrl:true,
-          profile:{
-            select:{
-              userName:true
+      author: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+          profile: {
+            select: {
+              userName: true
             }
           }
         }
@@ -83,33 +83,64 @@ async function CreatePost(userId: string, data: SubmitPostInput) {
 
 async function submitPostwithAssets(userId: string, data: SubmitPostInput) {
   const assetIds = [...new Set(data.assets ?? [])];
-  
+
 
   const post = await prisma.post.create({
     data: {
-        authorId: userId,
-        description: data.description,
-        slug: data.slug,
-        status: data.status,
-        title: data.title,
-        type: data.type,
+      authorId: userId,
+      description: data.description,
+      slug: data.slug,
+      status: data.status,
+      title: data.title,
+      type: data.type,
+    }, select: {
+      id: true,
+      title: true,
+      description: true,
+      type: true,
+      status: true,
+      slug: true,
+      viewCount: true,
+      createdAt: true,
+      assets: {
+        where: {
+          fileStatus: 'ACTIVE',
+          fileType: 'IMAGE'
+        },
+        select: {
+          id: true,
+          fileUrl: true,
+        }
+      },
+      author: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+          profile: {
+            select: {
+              userName: true
+            }
+          }
+        }
       }
     }
+  }
   )
-  if(assetIds.length > 0 ){
-    await prisma.files.updateMany({
-      where:{
-        id:{
-          in:assetIds
+  if (assetIds.length > 0) {
+    post.assets = await prisma.files.updateManyAndReturn({
+      where: {
+        id: {
+          in: assetIds
         },
-        fileStatus:'TEMP',
-        postId:null,
-        authorId:userId
+        fileStatus: 'TEMP',
+        postId: null,
+        authorId: userId
       },
-      data:{
-        fileStatus:'ACTIVE',
-        postId:post.id
-      }
+      data: {
+        fileStatus: 'ACTIVE',
+        postId: post.id
+      }, select: { id: true, fileUrl: true }
     })
   }
 
@@ -163,6 +194,38 @@ async function updatePostByIdWithAssets(
         title: data.title,
         type: data.type,
       },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        type: true,
+        status: true,
+        slug: true,
+        viewCount: true,
+        createdAt: true,
+        assets: {
+          where: {
+            fileStatus: 'ACTIVE',
+            fileType: 'IMAGE'
+          },
+          select: {
+            id: true,
+            fileUrl: true,
+          }
+        },
+        author: {
+          select: {
+            id: true,
+            name: true,
+            imageUrl: true,
+            profile: {
+              select: {
+                userName: true
+              }
+            }
+          }
+        }
+      }
     });
     return post;
   });
@@ -252,8 +315,8 @@ async function getPostById(id: string) {
 
 async function GetAllUserPost(userId: string) {
   const db = await prisma.post.findMany({
-    orderBy:{
-      updatedAt:'desc'
+    orderBy: {
+      updatedAt: 'desc'
     },
     where: {
       authorId: userId,

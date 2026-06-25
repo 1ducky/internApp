@@ -5,6 +5,7 @@ import { CosummerPostRepository, postRepository } from "./post.repository"
 import { slugify } from "@/utils/slugify"
 import { toPostDto, toPostDtoList } from "./post.dto"
 import { hasPermission } from "../auth/auth.client"
+import { toDetailFeedDto } from "../feed/feed.dto"
 
 export const postService = {
     submitPost,
@@ -35,7 +36,7 @@ async function submitPost(userId: string, body: unknown, role: string) {
             return failed(500, 'INTERNAL', 'internal')
         }
         logger.info(`Post submission request for user ${userId} success`, 'Post Service')
-        return ok(toPostDto(res.data), 'Submited')
+        return ok(toDetailFeedDto(res.data), 'Submited')
     } catch (error) {
         logger.error(`Post submission request for user ${userId} Internak Error`, 'Post Service')
         console.log(error)
@@ -106,7 +107,7 @@ async function updatePostById(userId: string, body: unknown, id: string, role: s
             return failed(500, 'INTERNAL', 'internal')
         }
         logger.info(`Post update request for user ${userId} success`, 'Post Service')
-        return ok(res.data, 'Updated')
+        return ok(toDetailFeedDto(res.data), 'Updated')
     } catch (error) {
         logger.error(`Post update request for user ${userId} Internak Error`, 'Post Service')
         console.log(error)
