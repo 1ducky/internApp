@@ -101,8 +101,8 @@ export const FeedManagement = ({ viewer }: { viewer: ClerkSession }) => {
     const feeds = data?.pages.flatMap((page) => page.Feeds)
     return (
         <>
-            {feeds?.map((feed) => (
-                <FeedPost key={feed.id} post={feed} viewer={viewer} onZoom={onZoom} option={
+            {feeds?.map((feed, i) => (
+                <FeedPost key={feed.id + i} post={feed} viewer={viewer} onZoom={onZoom} option={
                     <>
                         <Link href={`/dashboard/post/edit/${feed.id}`} className="w-full text-left px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-150 flex gap-4">
                             <PenBoxIcon size={20} /> Edit Feed
